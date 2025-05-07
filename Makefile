@@ -1,4 +1,3 @@
-```makefile
 # Noesis Project Makefile
 
 # Compiler
@@ -52,6 +51,4 @@ test: $(TARGET)
 clean:
 	rm -f $(CORE_DIR)/*.o $(SRC_DIR)/*.o $(TARGET) $(TEST_TARGET)
 
-# Phony targets
 .PHONY: all clean test
-```
