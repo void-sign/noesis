@@ -1,6 +1,6 @@
 // perception.c - Implementation of perception system in the Noesis project
 
-#include "core/perception.h"
+#include "../../include/core/perception.h"
 
 // Variable to store the current perception data
 static int perception_data = 0;

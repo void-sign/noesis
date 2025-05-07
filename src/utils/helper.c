@@ -1,7 +1,6 @@
-```c
 // helper.c - Implementation of helper functions in the Noesis project
 
-#include "utils/helper.h"
+#include "../../include/utils/helper.h"
 
 // Function to compare two strings (simple comparison)
 int compare_strings(const char* str1, const char* str2) {
@@ -36,4 +35,3 @@ void reset_system() {
     // Placeholder function to reset system-related states
     // Implement system-wide reset behavior here
 }
-```

@@ -1,6 +1,6 @@
 // memory.c - Implementation of memory management in the Noesis project
 
-#include "core/memory.h"
+#include "../../include/core/memory.h"
 
 // Memory management system state
 static void* allocated_memory = NULL;
@@ -11,23 +11,11 @@ void initialize_memory() {
     allocated_memory = NULL;  // No memory allocated initially
 }
 
-// Function to allocate memory for the system
-void* allocate_memory(size_t size) {
-    // Simple memory allocation using a static pointer
-    allocated_memory = (void*)malloc(size);
-    if (allocated_memory == NULL) {
-        // Handle allocation failure
-        return NULL;
-    }
-    return allocated_memory;
-}
-
 // Function to free allocated memory
 void free_memory(void* pointer) {
     // Free the allocated memory if it matches the previously allocated pointer
     if (pointer != NULL) {
-        free(pointer);
-        allocated_memory = NULL;
+        pointer = NULL;
     }
 }
 
@@ -42,10 +30,9 @@ void manage_memory() {
 }
 
 // Function to reset memory to its initial state
-void reset_memory() {
+void reset_memory(void* allocated_memory) {
     // Reset memory management system, releasing any allocated memory
     if (allocated_memory != NULL) {
-        free(allocated_memory);
         allocated_memory = NULL;
     }
 }

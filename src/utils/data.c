@@ -1,6 +1,6 @@
 // data.c - Implementation of data management system in the Noesis project
 
-#include "utils/data.h"
+#include "../../include/utils/data.h"
 
 // Placeholder for data storage
 static char* data_storage = NULL;
@@ -30,7 +30,7 @@ void process_data() {
 }
 
 // Function to save data to a specified destination
-void save_data(char* destination) {
+void save_data() {
     // Placeholder for saving data to the specified destination
     // In a real system, this could involve writing to a file or sending data over a network
     if (data_storage != NULL) {

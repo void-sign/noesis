@@ -1,7 +1,6 @@
-```c
 // timer.c - Implementation of timer utilities in the Noesis project
 
-#include "utils/timer.h"
+#include "../../include/utils/timer.h"
 
 // Variable to store the start time of the timer
 static unsigned long start_time = 0;
@@ -36,4 +35,3 @@ void reset_timer() {
     // Reset the timer by setting the start time to 0
     start_time = 0;
 }
-```

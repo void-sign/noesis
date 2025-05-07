@@ -1,9 +1,9 @@
 // main.c - Entry point for the Noesis project
 
-#include "core/memory.h"
-#include "core/perception.h"
-#include "core/logic.h"
-#include "core/emotion.h"
+#include "../../include/core/memory.h"
+#include "../../include/core/perception.h"
+#include "../../include/core/logic.h"
+#include "../../include/core/emotion.h"
 
 // Main function: Entry point for the program
 int main() {

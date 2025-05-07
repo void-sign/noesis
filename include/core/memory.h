@@ -3,11 +3,13 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+#define NULL (void*)0
+
 // Function to initialize the memory system
 void initialize_memory();
 
-// Function to allocate memory for the system
-void* allocate_memory(size_t size);
+// memory.h - Header file for memory management in the Noesis project
+void* allocate_memory(unsigned int size);
 
 // Function to free allocated memory
 void free_memory(void* pointer);

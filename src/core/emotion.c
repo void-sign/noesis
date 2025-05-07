@@ -1,6 +1,6 @@
 // emotion.c - Implementation of emotion simulation in the Noesis project
 
-#include "core/emotion.h"
+#include "../../include/core/emotion.h"
 
 // Variable to store the current emotional state
 static int current_emotion = 0;

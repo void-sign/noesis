@@ -4,26 +4,29 @@
 CC = gcc
 
 # Directories
-SRC_DIR = .
-CORE_DIR = core
+CORE_DIR = src/core
+UTILS_DIR = src/utils
 TEST_DIR = tests
+OBJ_DIR = obj
 
 # Source Files
-SRCS = $(SRC_DIR)/main.c \
+SRCS = $(CORE_DIR)/main.c \
        $(CORE_DIR)/emotion.c \
        $(CORE_DIR)/logic.c \
        $(CORE_DIR)/memory.c \
        $(CORE_DIR)/perception.c \
-       $(CORE_DIR)/data.c \
-       $(CORE_DIR)/helper.c \
-       $(CORE_DIR)/timer.c
+       $(UTILS_DIR)/data.c \
+       $(UTILS_DIR)/helper.c \
+       $(UTILS_DIR)/timer.c
 
 TESTS = $(TEST_DIR)/core_tests.c \
         $(TEST_DIR)/main_tests.c \
         $(TEST_DIR)/utils_tests.c
 
-# Object Files
-OBJS = $(SRCS:.c=.o)
+ALL_C_FILES = $(SRCS)
+
+# Object file names (flattened to obj/)
+OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
 
 # Executable
 TARGET = noesis
@@ -35,20 +38,22 @@ CFLAGS = -Wall -Wextra -std=c99
 # Default target
 all: $(TARGET)
 
-# Link
+# Link main target
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET)
 
-# Compile source files
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# General rule: compile any .c to obj/*.o
+$(OBJ_DIR)/%.o:
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $(shell find $(CORE_DIR) $(UTILS_DIR) -name $(notdir $*.c)) -o $@
 
 # Build test executable
 test: $(TARGET)
 	$(CC) $(CFLAGS) $(SRCS) $(TESTS) -o $(TEST_TARGET)
 
-# Clean build files
+# Clean
 clean:
-	rm -f $(CORE_DIR)/*.o $(SRC_DIR)/*.o $(TARGET) $(TEST_TARGET)
+	rm -f $(OBJ_DIR)/*.o $(TARGET) $(TEST_TARGET)
+	rm -rf $(OBJ_DIR)
 
 .PHONY: all clean test

@@ -1,6 +1,6 @@
 // logic.c - Implementation of logic processing in the Noesis project
 
-#include "core/logic.h"
+#include "../../include/core/logic.h"
 
 // Variable to store the current state of the logic system
 static int logic_state = 0;
