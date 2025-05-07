@@ -45,8 +45,28 @@
 # Kernel Module Compile Results
 *.mod*
 *.cmd
-.tmp_versions/
+*.tmp_versions/
 modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# macOS
+.DS_Store
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
+
+# Makefile
+Makefile.user
+Makefile.debug
+
+# VSCode
+.vscode/
+
+# CLion
+.idea/
