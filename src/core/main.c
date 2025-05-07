@@ -13,8 +13,10 @@ int main() {
     initialize_logic();       // Initialize logic processing
     initialize_emotion();     // Initialize emotion simulation
 
+    char do_it = '1';
+
     // Main loop: continuously run the consciousness process
-    while (1) {
+    while ( do_it == '1' ) {
         // Process perception: Gathering and processing sensory data
         process_perception();
 
@@ -26,6 +28,8 @@ int main() {
 
         // Manage memory: Handle memory allocation and cleanup
         manage_memory();
+
+        do_it = '0';
     }
 
     // Program will never reach here, since it's in an infinite loop
