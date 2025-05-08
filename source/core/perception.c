@@ -77,7 +77,7 @@ long syscall(long number, ...)
     va_end(args);
 
     long result;
-    asm volatile (
+    __asm__ volatile (
         "syscall"
         : "=a" (result)
         : "a" (number), "D" (arg1), "S" (arg2), "d" (arg3)

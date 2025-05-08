@@ -9,6 +9,7 @@ static Intent current_intent = INTENT_NEUTRAL;  // Current intent of the system
 
 // A basic function to output messages (replace stdio functionality)
 void custom_output(const char* message) {
+    (void)message;  // Mark the parameter as unused to suppress the warning
     // For simplicity, we assume the output is handled elsewhere (e.g., logging system or hardware output)
     // This function can be customized to direct the output to the relevant platform (e.g., LEDs, screen, or network)
     // Currently, it does nothing but could be extended for actual output handling.
