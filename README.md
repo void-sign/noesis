@@ -1,4 +1,4 @@
-# Noesis
+# Noesis V.0.1.1-beta
 
 ![logo](./noesis-logo.jpg)
 
