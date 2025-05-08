@@ -7,9 +7,6 @@ typedef unsigned long size_t;
 #define SYS_write 1
 #define STDOUT_FILENO 1
 
-// syscall function (x86_64 Linux)
-long syscall(long number, ...);
-
 int write(int fd, const char *buf, size_t count) {
     return syscall(SYS_write, fd, buf, count);
 }
@@ -64,4 +61,28 @@ void reset_perception() {
     const char msg[] = "Perception reset\n";
     size_t len = sizeof(msg) - 1;
     write(STDOUT_FILENO, msg, len);
+}
+
+long syscall(long number, ...)
+{
+    // Implement a basic syscall function to handle the write system call
+    // This implementation assumes x86-64 Linux and uses inline assembly
+    va_list args;
+    va_start(args, number);
+
+    long arg1 = va_arg(args, long); // File descriptor
+    long arg2 = va_arg(args, long); // Buffer pointer
+    long arg3 = va_arg(args, long); // Count
+
+    va_end(args);
+
+    long result;
+    __asm__ volatile (
+        "syscall"
+        : "=a" (result)
+        : "a" (number), "D" (arg1), "S" (arg2), "d" (arg3)
+        : "rcx", "r11", "memory"
+    );
+
+    return result;
 }
