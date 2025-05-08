@@ -5,20 +5,13 @@
 // Internal logic state (tracks the overall state of the system)
 static int logic_state = 0;
 
-// Enum for defining different types of intent (goals or motivations)
-typedef enum {
-    INTENT_NEUTRAL,      // No specific goal, idle state
-    INTENT_SEEK_PLEASURE, // Seeking pleasure or positive experience
-    INTENT_AVOID_PAIN,    // Avoiding discomfort or negative experiences
-    INTENT_SOLVE_PROBLEM  // Problem-solving or logical thinking
-} Intent;
-
 static Intent current_intent = INTENT_NEUTRAL;  // Current intent of the system
 
 // A basic function to output messages (replace stdio functionality)
 void custom_output(const char* message) {
     // For simplicity, we assume the output is handled elsewhere (e.g., logging system or hardware output)
     // This function can be customized to direct the output to the relevant platform (e.g., LEDs, screen, or network)
+    // Currently, it does nothing but could be extended for actual output handling.
 }
 
 // Initialize the logic system, setting initial state and intent
@@ -116,10 +109,28 @@ void handle_external_event(LogicEvent* event) {
     if (!event || !event->topic) return;  // Ensure the event is valid
 
     // Adjust the logic state based on external events
-    if (event->topic == "pain_detected") {
-        logic_state -= 2;  // If pain is detected, decrease logic state
-    } else if (event->topic == "pleasure_detected") {
-        logic_state += 2;  // If pleasure is detected, increase logic state
+    if (event->topic) {
+        // Compare strings manually without using standard library
+        const char* pain_detected = "pain_detected";
+        const char* pleasure_detected = "pleasure_detected";
+        int i = 0;
+
+        // Check if event->topic matches "pain_detected"
+        while (pain_detected[i] != '\0' && event->topic[i] != '\0' && pain_detected[i] == event->topic[i]) {
+            i++;
+        }
+        if (pain_detected[i] == '\0' && event->topic[i] == '\0') {
+            logic_state -= 2;  // If pain is detected, decrease logic state
+        } else {
+            i = 0;
+            // Check if event->topic matches "pleasure_detected"
+            while (pleasure_detected[i] != '\0' && event->topic[i] != '\0' && pleasure_detected[i] == event->topic[i]) {
+                i++;
+            }
+            if (pleasure_detected[i] == '\0' && event->topic[i] == '\0') {
+                logic_state += 2;  // If pleasure is detected, increase logic state
+            }
+        }
     }
 
     reflect_logic_state();  // Re-evaluate logic state after event handling

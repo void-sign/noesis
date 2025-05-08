@@ -3,11 +3,24 @@
 #ifndef LOGIC_H
 #define LOGIC_H
 
+#define NULL (void*)0
+
 // Structure for event handling (for external platform communication)
 typedef struct {
     const char* topic;  // Topic of the event
     void* payload;      // Data associated with the event
 } LogicEvent;
+
+// Enum for defining different types of intent (goals or motivations)
+typedef enum {
+    INTENT_NEUTRAL,      // No specific goal, idle state
+    INTENT_SEEK_PLEASURE, // Seeking pleasure or positive experience
+    INTENT_AVOID_PAIN,    // Avoiding discomfort or negative experiences
+    INTENT_SOLVE_PROBLEM  // Problem-solving or logical thinking
+} Intent;
+
+// A basic function to output messages (replace stdio functionality)
+void custom_output(const char* message);
 
 // Initialize the logic system (starting state of the logic)
 void initialize_logic();
@@ -16,7 +29,7 @@ void initialize_logic();
 void process_logic();
 
 // Manage deeper logic, for future expansion (like advanced reasoning)
-void manage_logic();
+int manage_logic(int input_pain, int input_pleasure);
 
 // Reflect on the current state of the logic system (like mindfulness)
 void reflect_logic_state();
@@ -34,6 +47,6 @@ void reset_logic();
 void handle_external_event(LogicEvent* event);
 
 // Generate an output event to communicate with other systems (e.g., movement, UI)
-LogicEvent generate_output_event();
+LogicEvent generate_output_event(void); // Explicitly specify the return type
 
 #endif // LOGIC_H
