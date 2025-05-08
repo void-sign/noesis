@@ -9,4 +9,5 @@
 ## Reporting a Vulnerability
 
 You can report vulnerabilities at [lopanapol@gmail.com](mailto:lopanapol@gmail.com).  
-Thank you for being a part of the beginning in creating Syntactic Consciousness for the benefit of humanity.
+
+Thank you for being a part of the beginning in creating Syntactic Conscious for the benefit of humanity.
