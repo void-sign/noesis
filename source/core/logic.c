@@ -1,5 +1,4 @@
-// logic.c - Central logic processing as Sankhara in the Noesis project
-// No use of standard library (e.g., stdio.h, string.h)
+// logic.c - Central logic processing
 
 #include "../../include/core/logic.h"
 
@@ -79,10 +78,30 @@ void process_logic() {
     decide_action();        // Decide what action to take based on the intent
 }
 
-// Manage deeper logic and advanced reasoning (future scope for AI or deeper reasoning)
-void manage_logic() {
-    custom_output("[LOGIC] Managing deeper logic\n");
-    // Placeholder for more complex decision-making or emotional processing in the future
+// manage_logic() - Manage deeper logic, decision-making, or emotional processing
+// This function now accepts input and returns a result
+
+int manage_logic(int input_pain, int input_pleasure) {
+    int decision_result = 0;  // Default result (no action)
+
+    // Example of deeper decision-making based on pain and pleasure inputs
+    if (input_pain > 5) {
+        // High pain detected, avoid further harm
+        custom_output("[LOGIC] High pain detected, retreating\n");
+        decision_result = -1;  // Decision: retreat or avoid
+    }
+    else if (input_pleasure > 5) {
+        // High pleasure detected, approach or engage more
+        custom_output("[LOGIC] High pleasure detected, engaging further\n");
+        decision_result = 1;  // Decision: approach or engage
+    }
+    else {
+        // Neutral input, proceed with analysis
+        custom_output("[LOGIC] Neutral input, analyzing situation\n");
+        decision_result = 0;  // Decision: analyze or wait
+    }
+
+    return decision_result;  // Return the result of the decision-making process
 }
 
 // Reset the logic system to its initial state
