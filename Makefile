@@ -4,10 +4,10 @@
 CC = gcc
 
 # Directories
-CORE_DIR = src/core
-UTILS_DIR = src/utils
+CORE_DIR = source/core
+UTILS_DIR = source/utils
 TEST_DIR = tests
-OBJ_DIR = obj
+OBJ_DIR = object
 
 # Source Files
 SRCS = $(CORE_DIR)/main.c \
