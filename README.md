@@ -96,4 +96,16 @@ make clean
 
 ## License
 
-This project is licensed under the [Noesis License](LICENSE), a permissive open license designed specifically for this project.
+The [Noesis License](LICENSE) introduces unique terms and conditions that distinguish it from standard open-source licenses such as the MIT License. Below are the key differences:
+
+1. **Attribution in Production or Commercial Use**: The license mandates clear attribution to the original author(s) for any use of the software in production or commercial environments.
+
+2. **Prohibition of Harmful Use**: The license explicitly prohibits the use of the software for unlawful purposes or in ways that could harm humans, animals, or other living beings, either directly or indirectly.
+
+3. **Profit Sharing with Charities**: If the software serves as a core component in a profit-generating system, the user is required to donate 10% of the net profits directly resulting from such use to a recognized non-profit or charitable organization.
+
+4. **Transparency and Licensing of Modifications**: Any modifications to the software must be clearly documented and released under the same Noesis License or a compatible license.
+
+5. **Redistribution Requirements**: Redistribution of the software or its modifications must include the original copyright notice and the terms of this license.
+
+These additional clauses aim to ensure ethical use, promote transparency, and support charitable causes while maintaining the flexibility of an open-source model.
