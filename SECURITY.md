@@ -8,6 +8,6 @@
 
 ## Reporting a Vulnerability
 
-You can report vulnerabilities at [lopanapol@gmail.com](mailto:lopanapol@gmail.com).  
+You can report vulnerabilities at [mail@noesis.run](mailto:mail@noesis.run).  
 
 Thank you for being a part of the beginning in creating Syntactic Conscious for the benefit of humanity.
