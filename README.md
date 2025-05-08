@@ -1,5 +1,7 @@
 # Noesis
 
+![logo](./noesis-logo.jpg)
+
 Noesis is a C project that simulates a synthetic conscious system without using any external libraries, focusing solely on low-level logic and memory structures.
 
 ## Concept
