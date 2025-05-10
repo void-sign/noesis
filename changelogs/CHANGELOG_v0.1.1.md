@@ -35,6 +35,3 @@ This version builds upon the foundation of Noesis, a synthetic consciousness sim
 ### Retained Features
 - Core components for perception, memory, emotion, and logic remain consistent with v0.1.1-beta.
 - Quantum middleware and utility enhancements introduced in v0.1.1-beta are preserved.
-
-## Contributors
-- [@plugio](https://github.com/plugio)
