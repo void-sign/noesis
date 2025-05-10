@@ -12,66 +12,62 @@ The core idea behind Noesis is to explore how minimal cognitive components such 
 
 ```
 noesis/
-├── src/                            # Main code base
-│   ├── core/                       # Core system functions for synthetic consciousness
-│   │   ├── memory.c                # Memory management
-│   │   ├── perception.c            # Perception logic
-│   │   ├── logic.c                 # Logical processing
-│   │   └── emotion.c               # Emotion processing
-│   ├── quantum/                    # Module from libc_quantum_middleware
-│   │   ├── quantum.c               # Core quantum circuit & gate operations
-│   │   ├── compiler.c              # Logic parsing and translation to quantum format
-│   │   ├── export_qasm.c           # Export circuit to QASM format
-│   │   ├── export_json.c           # Export to JSON (for Braket)
-│   │   ├── backend_ibm.c           # Connect to IBM Q API
-│   │   └── backend_stub.c          # Dummy simulator (for offline test)
-│   ├── tools/                      # CLI tools from quantum middleware
-│   │   ├── qbuild.c                # Compile logic to QASM format
-│   │   └── qrun.c                  # Send QASM to quantum backend
-│   ├── utils/                      # Utility functions
-│   │   ├── timer.c                 # Timer utilities
-│   │   ├── data.c                  # Data management utilities
-│   │   └── helper.c                # Helper functions
-│   └── main.c                      # Entry point of the system
-│
+├── LICENSE
+├── Makefile
+├── noesis-logo.jpg
+├── README.md
+├── SECURITY.md
+├── data/
+│   └── gate_defs.h
 ├── include/
-│   ├── core/                       # Core system headers
-│   │   ├── memory.h                # Memory management header
-│   │   ├── perception.h            # Perception header
-│   │   ├── logic.h                 # Logic processing header
-│   │   └── emotion.h               # Emotion processing header
-│   ├── quantum/                    # Quantum middleware headers
-│   │   ├── quantum.h               # Header for quantum operations
-│   │   ├── compiler.h              # Compiler header for logic to quantum
-│   │   ├── export.h                # Export functions header (QASM/JSON)
-│   │   └── backend.h               # Quantum hardware backend interface
-│   ├── utils/                      # Utility headers
-│   │   ├── timer.h                 # Timer utilities header
-│   │   ├── data.h                  # Data management header
-│   │   └── helper.h                # Helper functions header
-│
-├── data/                           # Quantum gate constants
-│   └── gate_defs.h                 # Gate definitions
-│
-├── logic_input/                    # Input logic files for the compiler
-│   └── example.logic               # Example logic file
-│
-├── out_qasm/                       # Output directory for compiled QASM files
-│   └── circuit.qasm                # Output QASM file
-│
-├── build/                          # Compiled files directory
-│
-├── docs/                           # Documentation for the system
-│
-├── tests/                          # Unit tests
-│   ├── core_tests.c                # Core system tests
-│   ├── utils_tests.c               # Utility function tests
-│   ├── main_tests.c                # Main system tests
-│   └── test_circuit.c              # Quantum circuit tests (from quantum middleware)
-│
-├── Makefile                        # Build script for the entire system
-├── README.md                       # Project documentation
-└── LICENSE                         # License file for the project
+│   ├── core/
+│   │   ├── emotion.h
+│   │   ├── logic.h
+│   │   ├── memory.h
+│   │   └── perception.h
+│   ├── quantum/
+│   │   ├── backend.h
+│   │   ├── compiler.h
+│   │   ├── export.h
+│   │   ├── quantum.h
+│   │   └── field/
+│   │       └── quantum_field.h
+│   └── utils/
+│       ├── data.h
+│       ├── helper.h
+│       └── timer.h
+├── logic_input/
+│   └── example.logic
+├── out_qasm/
+│   └── circuit.qasm
+├── source/
+│   ├── core/
+│   │   ├── emotion.c
+│   │   ├── logic.c
+│   │   ├── main.c
+│   │   ├── memory.c
+│   │   └── perception.c
+│   ├── quantum/
+│   │   ├── backend_ibm.c
+│   │   ├── backend_stub.c
+│   │   ├── compiler.c
+│   │   ├── export_json.c
+│   │   ├── export_qasm.c
+│   │   ├── quantum.c
+│   │   └── field/
+│   │       └── quantum_field.c
+│   ├── tools/
+│   │   ├── qbuild.c
+│   │   └── qrun.c
+│   └── utils/
+│       ├── data.c
+│       ├── helper.c
+│       └── timer.c
+├── tests/
+│   ├── core_tests.c
+│   ├── main_tests.c
+│   ├── qlogic_tests.c
+│   └── utils_tests.c
 ```
 
 ## Build
