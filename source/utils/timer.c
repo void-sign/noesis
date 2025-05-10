@@ -1,6 +1,7 @@
 // timer.c - Implementation of timer utilities in the Noesis project
 
 #include "../../include/utils/timer.h"
+#include "../../include/utils/noesis_lib.h"
 
 // Variable to store the start time of the timer
 static unsigned long start_time = 0;
@@ -9,13 +10,14 @@ static unsigned long start_time = 0;
 void initialize_timer() {
     // Initialize the start time to 0
     start_time = 0;
+    noesis_print("Timer initialized.\n");
 }
 
 // Function to start the timer
 void start_timer() {
-    // Set the start time to a system-specific value (e.g., a system tick or counter)
-    // For simplicity, we will simulate it using a simple counter
-    start_time = 1; // This should be replaced with actual time tracking
+    // Set the start time to a simulated system tick value
+    start_time = noesis_get_time(); // Use Noesis-specific time simulation
+    noesis_print("Timer started.\n");
 }
 
 // Function to stop the timer and return the elapsed time

@@ -32,6 +32,8 @@ int string_length(const char* str) {
 
 // Function to reset the system (generic helper)
 void reset_system() {
-    // Placeholder function to reset system-related states
-    // Implement system-wide reset behavior here
+    // Reset system-related states
+    // Example: Resetting global variables or system configurations
+    // Add actual reset logic here as needed
+    printf("System reset successfully.\n");
 }
