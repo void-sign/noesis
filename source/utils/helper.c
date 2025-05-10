@@ -35,5 +35,5 @@ void reset_system() {
     // Reset system-related states
     // Example: Resetting global variables or system configurations
     // Add actual reset logic here as needed
-    printf("System reset successfully.\n");
+    custom_output("System reset successfully.\n");
 }

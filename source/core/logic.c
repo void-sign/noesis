@@ -1,25 +1,17 @@
 // logic.c - Central logic processing
 
 #include "../../include/core/logic.h"
+#include <unistd.h>  // Include for write system call
 
 // Internal logic state (tracks the overall state of the system)
 static int logic_state = 0;
 
 static Intent current_intent = INTENT_NEUTRAL;  // Current intent of the system
 
-// A basic function to output messages (replace stdio functionality)
-void custom_output(const char* message) {
-    (void)message;  // Mark the parameter as unused to suppress the warning
-    // For simplicity, we assume the output is handled elsewhere (e.g., logging system or hardware output)
-    // This function can be customized to direct the output to the relevant platform (e.g., LEDs, screen, or network)
-    // Currently, it does nothing but could be extended for actual output handling.
-}
-
 // Initialize the logic system, setting initial state and intent
 void initialize_logic() {
     logic_state = 0;               // Reset logic state
     current_intent = INTENT_NEUTRAL;  // Set intent to neutral
-    custom_output("[LOGIC] Initialized\n");
 }
 
 // Reflect on the current state of logic (similar to mindfulness or self-awareness)
@@ -34,7 +26,6 @@ void reflect_logic_state() {
     }
 
     // Example of how to reflect (outputting to a custom system)
-    custom_output("[LOGIC] Reflecting... State Updated\n");
 }
 
 // Learn from the outcome of previous actions (success or failure)
@@ -52,16 +43,12 @@ void decide_action() {
     // Instead of printing, the action would be forwarded to the action system
     switch (current_intent) {
         case INTENT_AVOID_PAIN:
-            custom_output("[ACTION] Retreat / Protect\n");
             break;
         case INTENT_SEEK_PLEASURE:
-            custom_output("[ACTION] Engage / Explore\n");
             break;
         case INTENT_SOLVE_PROBLEM:
-            custom_output("[ACTION] Think / Analyze\n");
             break;
         default:
-            custom_output("[ACTION] Idle\n");
             break;
     }
 }
@@ -81,17 +68,14 @@ int manage_logic(int input_pain, int input_pleasure) {
     // Example of deeper decision-making based on pain and pleasure inputs
     if (input_pain > 5) {
         // High pain detected, avoid further harm
-        custom_output("[LOGIC] High pain detected, retreating\n");
         decision_result = -1;  // Decision: retreat or avoid
     }
     else if (input_pleasure > 5) {
         // High pleasure detected, approach or engage more
-        custom_output("[LOGIC] High pleasure detected, engaging further\n");
         decision_result = 1;  // Decision: approach or engage
     }
     else {
         // Neutral input, proceed with analysis
-        custom_output("[LOGIC] Neutral input, analyzing situation\n");
         decision_result = 0;  // Decision: analyze or wait
     }
 
@@ -102,7 +86,6 @@ int manage_logic(int input_pain, int input_pleasure) {
 void reset_logic() {
     logic_state = 0;               // Reset logic state
     current_intent = INTENT_NEUTRAL;  // Reset intent to neutral
-    custom_output("[LOGIC] Reset\n");
 }
 
 // Handle external events (e.g., sensor input, user actions, etc.)
@@ -159,4 +142,11 @@ LogicEvent generate_output_event() {
 
     event.payload = NULL;  // Currently, no additional data attached to the event
     return event;
+}
+
+// Updated custom_output function to use write system call
+void custom_output(const char* message) {
+    while (*message) {
+        write(STDOUT_FILENO, message++, 1); // Write each character to standard output
+    }
 }

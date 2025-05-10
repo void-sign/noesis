@@ -17,7 +17,8 @@ SRCS = $(CORE_DIR)/main.c \
        $(CORE_DIR)/perception.c \
        $(UTILS_DIR)/data.c \
        $(UTILS_DIR)/helper.c \
-       $(UTILS_DIR)/timer.c
+       $(UTILS_DIR)/timer.c \
+       $(UTILS_DIR)/noesis_lib.c
 
 TESTS = $(TEST_DIR)/core_tests.c \
         $(TEST_DIR)/main_tests.c \
