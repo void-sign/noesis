@@ -8,7 +8,7 @@
 #define NOESIS_NULL ((void*)0)
 #endif
 
-// Function to simulate printing (character by character)
+// Function to write a message to the terminal
 void noesis_print(const char* message);
 
 // Function to simulate getting the current time (in seconds since epoch)
