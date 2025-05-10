@@ -7,14 +7,11 @@
 #include "utils/data.h"
 #include "utils/helper.h"
 #include "utils/timer.h"
+#include "../../include/utils/noesis_lib.h"
 
 // Function to simulate printing (since no external libraries are used)
 void print(const char* message) {
-    while (*message) {
-        // Simple loop to print each character (you can replace with actual printing logic)
-        // For example, in embedded systems, you could use a serial print function here
-        message++;
-    }
+    noesis_print(message);
 }
 
 // Test function for emotion system

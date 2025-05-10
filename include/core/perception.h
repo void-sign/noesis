@@ -20,7 +20,4 @@ void update_perception();
 // Function to reset the perception system to its initial state
 void reset_perception();
 
-// syscall function (x86_64 Linux)
-long syscall(long number, ...);
-
 #endif // PERCEPTION_H

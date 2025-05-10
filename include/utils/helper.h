@@ -15,4 +15,7 @@ int string_length(const char* str);
 // Function to reset the system (generic helper)
 void reset_system();
 
+// Declare custom_output as extern
+extern void custom_output(const char* str);
+
 #endif // HELPER_H
