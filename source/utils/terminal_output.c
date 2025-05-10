@@ -1,50 +1,20 @@
 // Implementation of terminal output functions without using stdlib
 
-// Function to write a message to the terminal using /dev/tty
+// Declare the external write_message function from write.s
+extern void write_message(const char* message, long length);
+
+// For debugging output
+
 void noesis_print(const char* message) {
-    // Open /dev/tty for writing using a custom syscall
-    long fd;
-    const char* tty_path = "/dev/tty";
-    asm volatile (
-        "movq $2, %%rax\n"          // syscall: open
-        "movq %1, %%rdi\n"         // filename pointer
-        "movq $1, %%rsi\n"         // flags: O_WRONLY
-        "movq $0, %%rdx\n"         // mode: 0 (not used for opening existing files)
-        "syscall\n"
-        "movq %%rax, %0\n"         // store file descriptor in fd
-        : "=r"(fd)                 // output
-        : "r"(tty_path)            // input
-        : "rax", "rdi", "rsi", "rdx" // clobbered registers
-    );
+    // Debugging output removed to eliminate stdlib dependency
 
-    // Fail silently if /dev/tty cannot be opened
-    if (fd < 0) return;
+    // Calculate the length of the message
+    long length = 0;
+    const char* temp = message;
+    while (*temp++) length++;
 
-    // Write each character to the file descriptor using a custom syscall
-    while (*message) {
-        long result;
-        asm volatile (
-            "movq $1, %%rax\n"      // syscall: write
-            "movq %1, %%rdi\n"     // file descriptor
-            "movq %2, %%rsi\n"     // message pointer
-            "movq $1, %%rdx\n"     // message length (1 character)
-            "syscall\n"
-            "movq %%rax, %0\n"     // store result in result
-            : "=r"(result)         // output
-            : "r"(fd), "r"(message) // inputs
-            : "rax", "rdi", "rsi", "rdx" // clobbered registers
-        );
-        if (result < 0) break; // Break if write fails
-        message++;
-    }
-
-    // Close the file descriptor using a custom syscall
-    asm volatile (
-        "movq $3, %%rax\n"          // syscall: close
-        "movq %0, %%rdi\n"         // file descriptor
-        "syscall\n"
-        :                          // no output
-        : "r"(fd)                  // input
-        : "rax", "rdi"             // clobbered registers
-    );
+    // Call the write_message function to handle terminal output
+    write_message(message, length);
 }
+
+// Removed the _exit function and ____start entry point to make this file part of the project
