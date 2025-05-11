@@ -94,3 +94,19 @@ void free_all_intentions(void) {
     }
     intention_count = 0;
 }
+
+// Add a function to handle input and output using noesis_lib
+void handle_io() {
+    char input[256];
+    while (1) {
+        noesis_print("Enter input: ");
+        noesis_read(input, sizeof(input)); // Assuming noesis_read is implemented in noesis_lib.c
+        if (strcmp(input, "exit") == 0) {
+            noesis_print("Exiting program.\n");
+            break;
+        }
+        noesis_print("You entered: ");
+        noesis_print(input);
+        noesis_print("\n");
+    }
+}

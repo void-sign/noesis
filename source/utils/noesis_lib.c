@@ -41,22 +41,9 @@ typedef char* noesis_va_list;
 #define noesis_va_arg(ap, type) (*(type*)((ap += sizeof(type)) - sizeof(type)))
 #define noesis_va_end(ap) (ap = 0) // Replaced NULL with 0 to avoid dependency
 
-// Function to print a message to the terminal
-void noesis_print(const char* message) {
-    while (*message) {
-        __asm__ volatile (
-            "movq $0x2000004, %%rax\n"  // syscall: write on macOS
-            "movq $1, %%rdi\n"          // file descriptor: stdout
-            "movq %0, %%rsi\n"         // pointer to message
-            "movq $1, %%rdx\n"         // write 1 byte
-            "syscall\n"
-            :
-            : "r"(message)
-            : "rax", "rdi", "rsi", "rdx"
-        );
-        message++;
-    }
-}
+// External assembly functions for I/O operations
+extern void noesis_print(const char* message);
+extern void noesis_read(char* buffer, unsigned long size);
 
 // Function to simulate getting the current time (in seconds since epoch)
 unsigned long noesis_get_time() {
@@ -115,42 +102,6 @@ void* allocate_memory(noesis_size_t size) {
     return noesis_malloc(size);
 }
 
-// Static file descriptor for log file
-static int log_fd = -1;
-
-// Function to read input from the user
-void noesis_read(char* buffer, unsigned long size) {
-    unsigned long i = 0;
-    char c;
-    while (i < size - 1) {
-        __asm__ volatile (
-            "movq $0x2000003, %%rax\n"  // syscall: read on macOS
-            "movq $0, %%rdi\n"          // file descriptor: stdin
-            "movq %1, %%rsi\n"         // pointer to buffer
-            "movq $1, %%rdx\n"         // read 1 byte
-            "syscall\n"
-            : "=r"(c)
-            : "r"(&buffer[i])
-            : "rax", "rdi", "rsi", "rdx"
-        );
-        if (c == '\n') {
-            buffer[i] = '\0'; // Replace newline with null terminator
-            break;
-        }
-        buffer[i++] = c;
-    }
-    buffer[i] = '\0'; // Ensure null termination if input exceeds buffer size
-
-    // Trim trailing whitespace or non-printable characters
-    while (i > 0 && (buffer[i - 1] == ' ' || buffer[i - 1] == '\t' || buffer[i - 1] == '\n' || buffer[i - 1] == '\r')) {
-        buffer[--i] = '\0';
-    }
-
-    // Debug log to verify buffer content and length after reading
-    unsigned long len = 0;
-    while (buffer[len] != '\0') len++;
-}
-
 // Enhanced string comparison to handle null terminators and edge cases
 int noesis_strcmp(const char* str1, const char* str2) {
     while (*str1 && *str2) {
@@ -191,4 +142,13 @@ void noesis_sbuffer(char* buffer, unsigned long size, const char* format, ...) {
     }
     buffer[i] = '\0';
     noesis_va_end(args);
+}
+
+// Simplify the _noesis_log_debug function further to avoid using printf
+#include <stdio.h>
+
+void noesis_log_debug(void* rsi, void* rdx) {
+    // Log only static messages to avoid formatting issues
+    puts("Debugging _noesis_read:");
+    puts("RSI and RDX values captured.");
 }

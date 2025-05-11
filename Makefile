@@ -29,7 +29,7 @@ ALL_C_FILES = $(SRCS)
 # Object file names (flattened to obj/)
 OBJS = $(patsubst $(CORE_DIR)/%.c, $(OBJ_DIR)/core/%.o, $(filter $(CORE_DIR)/%, $(SRCS))) \
        $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/utils/%.o, $(filter $(UTILS_DIR)/%, $(SRCS))) \
-       $(OBJ_DIR)/asm/repeat_input.o $(OBJ_DIR)/asm/mcopy.o $(OBJ_DIR)/asm/scomp.o $(OBJ_DIR)/asm/slen.o $(OBJ_DIR)/asm/write.o
+       $(OBJ_DIR)/asm/repeat_input.o $(OBJ_DIR)/asm/mcopy.o $(OBJ_DIR)/asm/scomp.o $(OBJ_DIR)/asm/slen.o $(OBJ_DIR)/asm/write.o $(OBJ_DIR)/asm/io.o
 
 # Executable
 TARGET = noesis
