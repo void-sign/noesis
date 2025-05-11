@@ -72,8 +72,6 @@ Makefile.debug
 .idea/
 
 # Ignore build artifacts and binaries
-/noesis
-/noesis_lib_tests
 /object/
 *.o
 *.out
@@ -87,3 +85,11 @@ Makefile.debug
 
 # Ignore generated files
 /tests/test
+
+# Ignore all files without an extension
+*.
+
+# Unignore specific files
+!LICENSE
+!Dockerfile
+!Makefile
