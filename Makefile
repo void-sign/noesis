@@ -38,6 +38,7 @@ TEST_TARGET = noesis_tests
 
 # Flags
 CFLAGS = -Wall -Wextra -std=c99
+ASFLAGS = -g
 
 # Add include directory to the compiler's include path
 CFLAGS += -Iinclude
