@@ -35,4 +35,7 @@ void noesis_read(char* buffer, unsigned long size);
 // Function to compare two strings
 int noesis_strcmp(const char* str1, const char* str2);
 
+// Function to format a string into a buffer
+void noesis_sbuffer(char* buffer, unsigned long size, const char* format, ...);
+
 #endif // NOESIS_LIB_H

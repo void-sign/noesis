@@ -2,6 +2,13 @@
 
 #include "../../include/utils/noesis_lib.h"
 
+// Custom implementation for variable argument handling
+// Define va_list, va_start, va_arg, and va_end
+typedef char* noesis_va_list;
+#define noesis_va_start(ap, param) (ap = (noesis_va_list)&param + sizeof(param))
+#define noesis_va_arg(ap, type) (*(type*)((ap += sizeof(type)) - sizeof(type)))
+#define noesis_va_end(ap) (ap = 0) // Replaced NULL with 0 to avoid dependency
+
 // Function to print a message to the terminal
 void noesis_print(const char* message) {
     while (*message) {
@@ -99,17 +106,63 @@ void noesis_read(char* buffer, unsigned long size) {
             : "r"(&buffer[i])
             : "rax", "rdi", "rsi", "rdx"
         );
-        if (c == '\n') break;
+        if (c == '\n') {
+            buffer[i] = '\0'; // Replace newline with null terminator
+            break;
+        }
         buffer[i++] = c;
     }
-    buffer[i] = '\0';
+    buffer[i] = '\0'; // Ensure null termination if input exceeds buffer size
+
+    // Trim trailing whitespace or non-printable characters
+    while (i > 0 && (buffer[i - 1] == ' ' || buffer[i - 1] == '\t' || buffer[i - 1] == '\n' || buffer[i - 1] == '\r')) {
+        buffer[--i] = '\0';
+    }
+
+    // Debug log to verify buffer content and length after reading
+    unsigned long len = 0;
+    while (buffer[len] != '\0') len++;
+    noesis_log("Buffer content: '%s', Length: %lu\n", buffer, len);
 }
 
-// Function to compare two strings
+// Enhanced string comparison to handle null terminators and edge cases
 int noesis_strcmp(const char* str1, const char* str2) {
-    while (*str1 && (*str1 == *str2)) {
+    while (*str1 && *str2) {
+        if (*str1 != *str2) {
+            return *(unsigned char*)str1 - *(unsigned char*)str2;
+        }
         str1++;
         str2++;
     }
     return *(unsigned char*)str1 - *(unsigned char*)str2;
+}
+
+// Function to format a string into a buffer
+void noesis_sbuffer(char* buffer, unsigned long size, const char* format, ...) {
+    noesis_va_list args;
+    noesis_va_start(args, format);
+    unsigned long i = 0;
+    while (*format && i < size - 1) {
+        if (*format == '%' && *(format + 1) == 'd') {
+            format += 2;
+            int value = noesis_va_arg(args, int);
+            char temp[12];
+            int len = 0;
+            if (value < 0) {
+                buffer[i++] = '-';
+                value = -value;
+            }
+            do {
+                temp[len++] = '0' + (value % 10);
+                value /= 10;
+            } while (value && len < 11);
+            while (len > 0 && i < size - 1) {
+                buffer[i++] = temp[--len];
+            }
+        } else {
+            buffer[i++] = *format++;
+        }
+    }
+    buffer[i] = '\0';
+    noesis_va_end(args);
 }

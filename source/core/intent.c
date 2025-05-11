@@ -18,7 +18,7 @@ static void log_with_timestamp(const char *message, const char *description) {
     unsigned long seconds = seconds_in_day % 60;
 
     char timestamp[32]; // Format: Day HH:MM:SS
-    noesis_snprintf(timestamp, sizeof(timestamp), "Day %lu %02lu:%02lu:%02lu", days, hours, minutes, seconds);
+    noesis_sbuffer(timestamp, sizeof(timestamp), "Day %lu %02lu:%02lu:%02lu", days, hours, minutes, seconds);
     noesis_log("[%s] %s: %s", timestamp, message, description);
 }
 
