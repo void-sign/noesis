@@ -1,5 +1,5 @@
-#include "intent.h"
-#include "noesis_lib.h"
+#include "core/intent.h"
+#include "utils/noesis_lib.h"
 
 // Initialize the Intent system
 void init_intent_system(void) {
