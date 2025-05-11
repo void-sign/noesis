@@ -18,8 +18,7 @@ SRCS = $(CORE_DIR)/main.c \
        $(UTILS_DIR)/data.c \
        $(UTILS_DIR)/helper.c \
        $(UTILS_DIR)/timer.c \
-       $(UTILS_DIR)/noesis_lib.c \
-       $(UTILS_DIR)/terminal_output.c
+       $(UTILS_DIR)/noesis_lib.c
 
 TESTS = $(TEST_DIR)/core_tests.c \
         $(TEST_DIR)/main_tests.c \
@@ -53,6 +52,9 @@ $(OBJ_DIR)/%.o:
 # Rule to compile .s files
 $(OBJ_DIR)/%.o: $(UTILS_DIR)/%.s
 	$(CC) -c $< -o $@
+
+$(OBJ_DIR)/write.o: $(UTILS_DIR)/asm/write.s
+	as $< -o $@
 
 # Build test executable
 test: $(TARGET)
