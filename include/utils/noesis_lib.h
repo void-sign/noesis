@@ -29,4 +29,10 @@ char* noesis_strdup(const char* str);
 // Memory deallocation function
 void noesis_free(void* ptr);
 
+// Function to read input from the user
+void noesis_read(char* buffer, unsigned long size);
+
+// Function to compare two strings
+int noesis_strcmp(const char* str1, const char* str2);
+
 #endif // NOESIS_LIB_H

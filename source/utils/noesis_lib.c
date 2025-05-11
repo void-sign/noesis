@@ -2,12 +2,19 @@
 
 #include "../../include/utils/noesis_lib.h"
 
-// Function to simulate printing (character by character)
+// Function to print a message to the terminal
 void noesis_print(const char* message) {
     while (*message) {
-        // Simulate printing each character (e.g., to a serial console)
-        volatile char ch = *message; // Use a volatile variable to simulate output
-        (void)ch; // Prevent unused variable warning
+        __asm__ volatile (
+            "movq $0x2000004, %%rax\n"  // syscall: write on macOS
+            "movq $1, %%rdi\n"          // file descriptor: stdout
+            "movq %0, %%rsi\n"         // pointer to message
+            "movq $1, %%rdx\n"         // write 1 byte
+            "syscall\n"
+            :
+            : "r"(message)
+            : "rax", "rdi", "rsi", "rdx"
+        );
         message++;
     }
 }
@@ -75,4 +82,34 @@ void noesis_log(const char* format, ...) {
     const char* prefix = "[LOG]: ";
     noesis_print(prefix);
     noesis_print(format);
+}
+
+// Function to read input from the user
+void noesis_read(char* buffer, unsigned long size) {
+    unsigned long i = 0;
+    char c;
+    while (i < size - 1) {
+        __asm__ volatile (
+            "movq $0x2000003, %%rax\n"  // syscall: read on macOS
+            "movq $0, %%rdi\n"          // file descriptor: stdin
+            "movq %1, %%rsi\n"         // pointer to buffer
+            "movq $1, %%rdx\n"         // read 1 byte
+            "syscall\n"
+            : "=r"(c)
+            : "r"(&buffer[i])
+            : "rax", "rdi", "rsi", "rdx"
+        );
+        if (c == '\n') break;
+        buffer[i++] = c;
+    }
+    buffer[i] = '\0';
+}
+
+// Function to compare two strings
+int noesis_strcmp(const char* str1, const char* str2) {
+    while (*str1 && (*str1 == *str2)) {
+        str1++;
+        str2++;
+    }
+    return *(unsigned char*)str1 - *(unsigned char*)str2;
 }
