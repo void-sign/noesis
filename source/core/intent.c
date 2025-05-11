@@ -19,12 +19,12 @@ static void log_with_timestamp(const char *message, const char *description) {
 
     char timestamp[32]; // Format: Day HH:MM:SS
     noesis_sbuffer(timestamp, sizeof(timestamp), "Day %lu %02lu:%02lu:%02lu", days, hours, minutes, seconds);
-    noesis_log("[%s] %s: %s", timestamp, message, description);
+    // Removed noesis_log call
 }
 
 // Initialize the Intent system
 void init_intent_system(void) {
-    noesis_log("Intent system initialized.");
+    // Removed debug log for initialization
 }
 
 // Create a new intention

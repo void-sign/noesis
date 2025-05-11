@@ -17,9 +17,6 @@ void noesis_print(const char* message);
 // Function to simulate getting the current time (in seconds since epoch)
 unsigned long noesis_get_time();
 
-// Log function with variable argument support
-void noesis_log(const char* format, ...);
-
 // Memory allocation function
 void* noesis_malloc(noesis_size_t size);
 
