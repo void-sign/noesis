@@ -27,8 +27,9 @@ TESTS = $(TEST_DIR)/core_tests.c \
 ALL_C_FILES = $(SRCS)
 
 # Object file names (flattened to obj/)
-OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
-OBJS += $(OBJ_DIR)/write.o
+OBJS = $(patsubst $(CORE_DIR)/%.c, $(OBJ_DIR)/core/%.o, $(filter $(CORE_DIR)/%, $(SRCS))) \
+       $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/utils/%.o, $(filter $(UTILS_DIR)/%, $(SRCS))) \
+       $(OBJ_DIR)/asm/repeat_input.o $(OBJ_DIR)/asm/mcopy.o $(OBJ_DIR)/asm/scomp.o $(OBJ_DIR)/asm/slen.o $(OBJ_DIR)/asm/write.o
 
 # Executable
 TARGET = noesis
@@ -44,17 +45,18 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET)
 
-# General rule: compile any .c to obj/*.o
-$(OBJ_DIR)/%.o:
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $(shell find $(CORE_DIR) $(UTILS_DIR) -name $(notdir $*.c)) -o $@
+# Rule to create object files in the object directory
+$(OBJ_DIR)/core/%.o: $(CORE_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Rule to compile .s files
-$(OBJ_DIR)/%.o: $(UTILS_DIR)/%.s
-	$(CC) -c $< -o $@
+$(OBJ_DIR)/utils/%.o: $(UTILS_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/write.o: $(UTILS_DIR)/asm/write.s
-	$(CC) -c $< -o $@
+$(OBJ_DIR)/asm/%.o: $(UTILS_DIR)/asm/%.s
+	@mkdir -p $(dir $@)
+	as -o $@ $<
 
 # Build test executable
 test: $(TARGET)
