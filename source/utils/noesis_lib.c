@@ -32,7 +32,7 @@
 
 // External assembly functions for I/O operations
 extern void noesis_print(const char* message);
-extern void noesis_read(char* buffer, unsigned long size);
+extern int noesis_read(char* buffer, unsigned long size);
 
 // Function to simulate getting the current time (in seconds since epoch)
 unsigned long noesis_get_time() {

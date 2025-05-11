@@ -1,4 +1,4 @@
-# Noesis V.0.1.1
+# Noesis V.0.1.2
 
 ![logo](./noesis-logo.jpg)
 
@@ -70,7 +70,7 @@ noesis/
 │   └── utils_tests.c
 ```
 
-## Build
+## Build and Run
 
 To build the project:
 
@@ -78,10 +78,23 @@ To build the project:
 make
 ```
 
-To run basic tests:
+To run Noesis (with workaround for display issues):
 
 ```bash
-make test
+./run_noesis.sh
+```
+
+To run tests:
+
+```bash
+./run_tests.sh
+```
+
+Or run a specific test:
+
+```bash
+./run_tests.sh mixed  # Run the mixed C/assembly test
+./run_tests.sh basic  # Run the basic test
 ```
 
 To clean up compiled files:
@@ -89,6 +102,12 @@ To clean up compiled files:
 ```bash
 make clean
 ```
+
+## Test and Debug
+
+We've moved test and debug code to a dedicated directory to keep the main codebase clean. The `test_and_debug` directory contains various test files and alternative implementations used during development and debugging.
+
+See [test_and_debug/README.md](test_and_debug/README.md) for more information on the test files and how they were used to fix issues.
 
 ## License
 

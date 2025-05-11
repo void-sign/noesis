@@ -1,12 +1,8 @@
 #ifndef PERCEPTION_H
 #define PERCEPTION_H
 
-// Define va_list and macros for variable argument handling
-typedef char* va_list;
-
-#define va_start(ap, last) (ap = (va_list)&last + sizeof(last))
-#define va_arg(ap, type) (*(type*)((ap += sizeof(type)) - sizeof(type)))
-#define va_end(ap) (ap = (va_list)0)
+// We'll use the standard va_list from stdarg.h instead of defining our own
+// This avoids conflicts with system headers
 
 // Function to initialize the perception system
 void initialize_perception();

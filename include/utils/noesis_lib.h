@@ -27,7 +27,8 @@ char* noesis_strdup(const char* str);
 void noesis_free(void* ptr);
 
 // Function to read input from the user
-void noesis_read(char* buffer, unsigned long size);
+// Returns the number of bytes read (or 0 on error)
+int noesis_read(char* buffer, unsigned long size);
 
 // Function to compare two strings
 int noesis_strcmp(const char* str1, const char* str2);

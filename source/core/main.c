@@ -1,10 +1,17 @@
 // main.c - Entry point for the Noesis project
 
+// Include system headers first
+#include <stdio.h>    // Standard I/O for printf
+#include <stdlib.h>   // For exit()
+#include <stdarg.h>   // For va_list and related macros
+#include <string.h>   // For string functions like strcmp
+
+// Then include project headers
+#include "../../include/utils/noesis_lib.h" // Include Noesis utility functions
 #include "../../include/core/memory.h"
 #include "../../include/core/perception.h"
 #include "../../include/core/logic.h"
 #include "../../include/core/emotion.h"
-#include "../../include/utils/noesis_lib.h" // Include Noesis utility functions
 #include "../../include/core/intent.h" // Include declaration for handle_io
 
 // Main function: Entry point for the program
@@ -15,42 +22,34 @@ int main() {
     initialize_logic();       // Initialize logic processing
     initialize_emotion();     // Initialize emotion simulation
 
-    char input[256];
-
-    handle_io(); // Call the handle_io function to manage input and output
-
-    // Main loop: continuously run the consciousness process
-    while (1) {
-        // Prompt for user input
-        noesis_print("Enter input (or 'exit' to quit): ");
-        noesis_read(input, sizeof(input)); // Simulated input function
-
-        // Debug log to print ASCII values of input
-        for (int i = 0; input[i] != '\0'; i++) {
-            char debug_msg[32];
-            noesis_sbuffer(debug_msg, sizeof(debug_msg), "input[%d] = %d\n", i, input[i]);
-            noesis_print(debug_msg);
+    // Welcome message
+    printf("NOESIS Synthetic Consciousness System\n");
+    printf("====================================\n");
+    printf("Version 0.1.2 - May 2025\n\n");
+    
+    // Create a buffer for user input
+    char buffer[128] = {0};
+    
+    printf("Enter a command or type 'help' for assistance.\n");
+    printf("noesis> ");
+    
+    // Read user input
+    int bytes_read = noesis_read(buffer, sizeof(buffer));
+    
+    if (bytes_read > 0) {
+        printf("You entered: %s\n", buffer);
+        
+        // Process the command (placeholder for future implementation)
+        if (strcmp(buffer, "help") == 0) {
+            printf("Available commands:\n");
+            printf("  help - Display this help message\n");
+            printf("  exit - Exit the program\n");
         }
-
-        // Exit condition
-        if (noesis_scmp(input, "exit") == 0) {
-            noesis_print("Exiting system.\n");
-            break;
-        }
-
-        // Process perception: Gathering and processing sensory data
-        process_perception();
-
-        // Process logic: Make decisions and process information
-        process_logic();
-
-        // Process emotion: Simulate emotional responses
-        process_emotion();
-
-        // Manage memory: Handle memory allocation and cleanup
-        manage_memory();
+    } else {
+        printf("No input received.\n");
     }
-
-    // Program will never reach here, since it's in an infinite loop
+    
+    printf("\nNOESIS system terminated normally.\n");
+    
     return 0;
 }
