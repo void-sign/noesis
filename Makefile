@@ -15,6 +15,7 @@ SRCS = $(CORE_DIR)/main.c \
        $(CORE_DIR)/logic.c \
        $(CORE_DIR)/memory.c \
        $(CORE_DIR)/perception.c \
+       $(CORE_DIR)/intent.c \
        $(UTILS_DIR)/data.c \
        $(UTILS_DIR)/helper.c \
        $(UTILS_DIR)/timer.c \
@@ -37,6 +38,9 @@ TEST_TARGET = noesis_tests
 
 # Flags
 CFLAGS = -Wall -Wextra -std=c99
+
+# Add include directory to the compiler's include path
+CFLAGS += -Iinclude
 
 # Default target
 all: $(TARGET)

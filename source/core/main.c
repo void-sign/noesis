@@ -5,6 +5,7 @@
 #include "../../include/core/logic.h"
 #include "../../include/core/emotion.h"
 #include "../../include/utils/noesis_lib.h" // Include Noesis utility functions
+#include "../../include/core/intent.h" // Include declaration for handle_io
 
 // Main function: Entry point for the program
 int main() {
@@ -15,6 +16,8 @@ int main() {
     initialize_emotion();     // Initialize emotion simulation
 
     char input[256];
+
+    handle_io(); // Call the handle_io function to manage input and output
 
     // Main loop: continuously run the consciousness process
     while (1) {
@@ -30,7 +33,7 @@ int main() {
         }
 
         // Exit condition
-        if (noesis_strcmp(input, "exit") == 0) {
+        if (noesis_scmp(input, "exit") == 0) {
             noesis_print("Exiting system.\n");
             break;
         }

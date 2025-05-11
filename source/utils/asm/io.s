@@ -38,17 +38,12 @@ _noesis_print:
     syscall
     ret
 
-// Add debugging to log %rsi and %rdx values
+// Removed debugging code
 .global _noesis_read
 _noesis_read:
     // Store %rsi and %rdx in fixed memory locations for debugging
     movq %rsi, debug_rsi(%rip) // Store buffer address in debug_rsi
     movq %rdx, debug_rdx(%rip) // Store buffer size in debug_rdx
-
-    // Log the values of debug_rsi and debug_rdx for runtime debugging
-    leaq debug_rsi(%rip), %rdi // Load address of debug_rsi into %rdi
-    leaq debug_rdx(%rip), %rsi // Load address of debug_rdx into %rsi
-    call _noesis_log_debug     // Call a logging function to print the values
 
     // Validate %rsi (buffer address)
     testq %rsi, %rsi       // Check if %rsi is null

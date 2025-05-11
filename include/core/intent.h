@@ -1,7 +1,7 @@
 #ifndef INTENT_H
 #define INTENT_H
 
-#include "utils/noesis_lib.h"
+#include "../utils/noesis_lib.h" // Corrected relative path to noesis_lib.h
 
 // Structure representing an intention
 typedef struct {
@@ -24,5 +24,8 @@ void deactivate_intention(Intention *intention);
 
 // Free an intention
 void free_intention(Intention *intention);
+
+// Add declaration for handle_io
+void handle_io();
 
 #endif // INTENT_H

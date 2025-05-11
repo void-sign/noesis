@@ -1,7 +1,7 @@
-#include "core/intent.h"
-#include "core/memory.h" // For memory management
-#include "utils/data.h"   // For storing and retrieving data
-#include "utils/noesis_lib.h" // For custom system calls
+#include "../../include/core/intent.h"
+#include "../../include/core/memory.h" // For memory management
+#include "../../include/utils/data.h"   // For storing and retrieving data
+#include "../../include/utils/noesis_lib.h" // For noesis_scmp and noesis_ss
 
 // Memory for storing intentions
 #define MAX_INTENTIONS 100
@@ -10,6 +10,8 @@ static int intention_count = 0;
 
 // Custom function to get UTC timestamp
 static void log_with_timestamp(const char *message, const char *description) {
+    (void)message; // Mark as unused
+    (void)description; // Mark as unused
     unsigned long seconds_since_epoch = noesis_get_time(); // Simulated time function
     unsigned long days = seconds_since_epoch / 86400;
     unsigned long seconds_in_day = seconds_since_epoch % 86400;
@@ -19,7 +21,6 @@ static void log_with_timestamp(const char *message, const char *description) {
 
     char timestamp[32]; // Format: Day HH:MM:SS
     noesis_sbuffer(timestamp, sizeof(timestamp), "Day %lu %02lu:%02lu:%02lu", days, hours, minutes, seconds);
-    // Removed noesis_log call
 }
 
 // Initialize the Intent system
@@ -67,7 +68,7 @@ void free_intention(Intention *intention) {
 void learn_from_input(const char *input) {
     // Analyze input and decide on a new intention or modify an existing one
     for (int i = 0; i < intention_count; i++) {
-        if (strstr(intention_memory[i]->description, input)) {
+        if (noesis_ss(intention_memory[i]->description, input)) {
             // Boost priority if input matches an existing intention
             intention_memory[i]->priority++;
             log_with_timestamp("Updated intention priority", intention_memory[i]->description);
@@ -101,7 +102,7 @@ void handle_io() {
     while (1) {
         noesis_print("Enter input: ");
         noesis_read(input, sizeof(input)); // Assuming noesis_read is implemented in noesis_lib.c
-        if (strcmp(input, "exit") == 0) {
+        if (noesis_scmp(input, "exit") == 0) {
             noesis_print("Exiting program.\n");
             break;
         }

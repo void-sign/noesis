@@ -30,17 +30,6 @@
 
 #include "../../include/utils/noesis_lib.h"
 
-#undef va_list
-#undef va_start
-#undef va_arg
-#undef va_end
-
-// Custom implementation for variable argument handling
-typedef char* noesis_va_list;
-#define noesis_va_start(ap, param) (ap = (noesis_va_list)&param + sizeof(param))
-#define noesis_va_arg(ap, type) (*(type*)((ap += sizeof(type)) - sizeof(type)))
-#define noesis_va_end(ap) (ap = 0) // Replaced NULL with 0 to avoid dependency
-
 // External assembly functions for I/O operations
 extern void noesis_print(const char* message);
 extern void noesis_read(char* buffer, unsigned long size);
@@ -102,18 +91,6 @@ void* allocate_memory(noesis_size_t size) {
     return noesis_malloc(size);
 }
 
-// Enhanced string comparison to handle null terminators and edge cases
-int noesis_strcmp(const char* str1, const char* str2) {
-    while (*str1 && *str2) {
-        if (*str1 != *str2) {
-            return *(unsigned char*)str1 - *(unsigned char*)str2;
-        }
-        str1++;
-        str2++;
-    }
-    return *(unsigned char*)str1 - *(unsigned char*)str2;
-}
-
 // Function to format a string into a buffer
 void noesis_sbuffer(char* buffer, unsigned long size, const char* format, ...) {
     noesis_va_list args;
@@ -144,11 +121,64 @@ void noesis_sbuffer(char* buffer, unsigned long size, const char* format, ...) {
     noesis_va_end(args);
 }
 
-// Simplify the _noesis_log_debug function further to avoid using printf
-#include <stdio.h>
+// Custom implementation of strstr
+char* noesis_ss(const char* haystack, const char* needle) {
+    if (!*needle) {
+        return (char*)haystack;
+    }
+    for (; *haystack; haystack++) {
+        const char* h = haystack;
+        const char* n = needle;
+        while (*h && *n && *h == *n) {
+            h++;
+            n++;
+        }
+        if (!*n) {
+            return (char*)haystack;
+        }
+    }
+    return NOESIS_NULL;
+}
 
-void noesis_log_debug(void* rsi, void* rdx) {
-    // Log only static messages to avoid formatting issues
-    puts("Debugging _noesis_read:");
-    puts("RSI and RDX values captured.");
+// Merged functions from custom_lib.c into noesis_lib.c
+
+// Custom implementation of printf-like function
+void noesis_write(const char* format, ...) {
+    noesis_va_list args;
+    noesis_va_start(args, format);
+    char buffer[1024];
+    unsigned long i = 0;
+    while (*format && i < sizeof(buffer) - 1) {
+        if (*format == '%' && *(format + 1) == 'd') {
+            format += 2;
+            int value = noesis_va_arg(args, int);
+            char temp[12];
+            int len = 0;
+            if (value < 0) {
+                buffer[i++] = '-';
+                value = -value;
+            }
+            do {
+                temp[len++] = '0' + (value % 10);
+                value /= 10;
+            } while (value && len < 11);
+            while (len > 0 && i < sizeof(buffer) - 1) {
+                buffer[i++] = temp[--len];
+            }
+        } else {
+            buffer[i++] = *format++;
+        }
+    }
+    buffer[i] = '\0';
+    noesis_va_end(args);
+    noesis_print(buffer);
+}
+
+// Function to compare two strings
+int noesis_scmp(const char* str1, const char* str2) {
+    while (*str1 && (*str1 == *str2)) {
+        str1++;
+        str2++;
+    }
+    return *(unsigned char*)str1 - *(unsigned char*)str2;
 }
