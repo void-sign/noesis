@@ -87,9 +87,12 @@ Makefile.debug
 /tests/test
 
 # Ignore all files without an extension
-*.
-
+*
+!*.*
 # Unignore specific files
 !LICENSE
 !Dockerfile
 !Makefile
+
+# Ignore the noesis file explicitly
+noesis

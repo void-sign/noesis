@@ -1,0 +1,17 @@
+{
+  "files.associations": {
+    "*.s": "asm-intel-x86-generic",
+    "noesis_lib.h": "c",
+    "custom_lib.h": "c"
+  },
+  "makefile.launchConfigurations": [
+    {
+      "cwd": "/Users/plugio/Documents/GitHub/noesis",
+      "binaryPath": "/Users/plugio/Documents/GitHub/noesis/noesis",
+      "binaryArgs": []
+    }
+  ],
+  "makefile.makefilePath": "",
+  "makefile.buildLog": "",
+  "C_Cpp.errorSquiggles": "disabled"
+}

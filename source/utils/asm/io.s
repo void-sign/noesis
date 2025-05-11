@@ -28,7 +28,7 @@
 
 // io.s - Assembly code for I/O operations
 
-// Function to print a message to the terminal
+// Function to print a message to the terminalc
 .global _noesis_print
 _noesis_print:
     movq $0x2000004, %rax  // syscall: write on macOS
@@ -40,7 +40,7 @@ _noesis_print:
     cmpb $0, (%rsi, %rcx)  // Check if current byte is null
     je .write_string       // If null, jump to write string
     incq %rcx              // Increment counter
-    jmp .length_loop       // Repeat
+    //jmp .length_loop       // Repeat
 
 .write_string:
     movq %rcx, %rdx        // Set RDX to the string length
@@ -49,6 +49,10 @@ _noesis_print:
 
 .global _noesis_read
 _noesis_read:
+    // Save parameters for debugging
+    movq %rsi, debug_rsi(%rip)  // Save buffer address
+    movq %rdx, debug_rdx(%rip)  // Save buffer size
+    
     // Clear the buffer before reading input
     xorq %rcx, %rcx        // Clear RCX (counter)
 .clear_loop:
@@ -56,7 +60,7 @@ _noesis_read:
     jae .read_input        // If yes, jump to read input
     movb $0, (%rsi, %rcx)  // Write null to buffer
     incq %rcx              // Increment counter
-    jmp .clear_loop        // Repeat
+    //jmp .clear_loop        // Repeat
 .read_input:
     movq $0x2000003, %rax  // syscall: read on macOS
     movq $0, %rdi          // file descriptor: stdin
@@ -79,13 +83,19 @@ _noesis_read:
     movb $0, (%rsi)         // Null-terminate at the start of the buffer
     ret
 .error:
-    movq $1, %rdi           // File descriptor: stderr
-    movq $0x2000004, %rax   // syscall: write
+    movq $2, %rdi           // File descriptor: stderr (should be 2, not 1)
+    leaq error_msg(%rip), %rsi  // Load address of error message
+    movq $23, %rdx          // Length of error message
+    movq $0x2000004, %rax   // syscall: write on macOS
     syscall
     ret
 
 // Ensure null-termination within bounds
 .truncate:
+    testq %rsi, %rsi        // Check if %rsi is NULL
+    jz .error               // Jump to error handling if NULL
+    testq %rdx, %rdx        // Check if size is zero
+    jz .error               // Jump to error handling if zero
     leaq -1(%rsi, %rdx), %rcx // Calculate address for buffer size - 1
     movb $0, (%rcx)        // Write null terminator
     ret
@@ -96,3 +106,7 @@ debug_rsi:
     .quad 0                   // Placeholder for buffer address
 debug_rdx:
     .quad 0                   // Placeholder for buffer size
+
+.section __TEXT,__cstring
+error_msg:
+    .asciz "Error in noesis_read\n"
