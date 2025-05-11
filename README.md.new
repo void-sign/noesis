@@ -1,0 +1,89 @@
+# Noesis Project v0.1.2
+
+![Noesis Logo](noesis-logo.jpg)
+
+> Synthetic consciousness simulation engine
+
+## Overview
+
+Noesis is a synthetic consciousness simulation engine designed to explore the principles of artificial consciousness and cognition. The project has been restructured into two separate components with different licenses to facilitate wider adoption and integration.
+
+## Project Structure
+
+### 1. Noesis Core (`noesis-core/`)
+The core functionality with no external dependencies beyond standard C libraries.
+
+**Components:**
+- Emotion processing
+- Logic processing
+- Memory management
+- Perception processing
+- Intent processing
+- Core utilities
+
+**License:** Custom Noesis License, which includes requirements for attribution and profit-sharing for commercial use.
+
+### 2. Noesis Extensions (`noesis-extensions/`)
+Extensions and tools that may use external libraries.
+
+**Components:**
+- Quantum computing modules
+- Field theory implementations
+- Specialized tools (qbuild, qrun)
+
+**License:** MIT License for more permissive use, modification, and redistribution.
+
+## Building the Project
+
+### Prerequisites
+- GCC compiler
+- Make
+- Fish shell (recommended)
+
+### Build Commands
+
+To build both components:
+
+```bash
+./build_all.fish
+```
+
+This script will:
+1. Build the core components
+2. Create a shared library from the core
+3. Link the extensions with the core library
+4. Build the extensions
+
+## Running
+
+To run the core component:
+
+```bash
+cd noesis-core
+./noesis_core
+```
+
+To run the extensions:
+
+```bash
+cd noesis-extensions
+./noesis_extensions
+```
+
+## License Information
+
+- **Noesis Core:** Licensed under the custom [Noesis License](noesis-core/LICENSE)
+- **Noesis Extensions:** Licensed under the [MIT License](noesis-extensions/LICENSE)
+
+## Documentation
+
+- Check out the README files in each component directory for specific information
+- See the `changelogs` directory for version history
+
+## Contributing
+
+Contributions are welcome! Please note which component you are contributing to and adhere to the respective license.
+
+## Security
+
+Please review our [Security Policy](SECURITY.md) for reporting vulnerabilities.
