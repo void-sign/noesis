@@ -1,7 +1,7 @@
 // logic.c - Central logic processing
 
 #include "../../include/core/logic.h"
-#include <unistd.h>  // Include for write system call
+#include "../../include/utils/noesis_lib.h" // For custom system calls
 
 // Internal logic state (tracks the overall state of the system)
 static int logic_state = 0;
@@ -144,9 +144,7 @@ LogicEvent generate_output_event() {
     return event;
 }
 
-// Updated custom_output function to use write system call
+// Updated custom_output function to use noesis_print
 void custom_output(const char* message) {
-    while (*message) {
-        write(STDOUT_FILENO, message++, 1); // Write each character to standard output
-    }
+    noesis_print(message); // Use Noesis-specific print function
 }

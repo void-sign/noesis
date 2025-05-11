@@ -1,20 +1,24 @@
 #include "core/intent.h"
 #include "core/memory.h" // For memory management
 #include "utils/data.h"   // For storing and retrieving data
-#include "utils/noesis_lib.h"
-#include <time.h> // For timestamping logs
+#include "utils/noesis_lib.h" // For custom system calls
 
 // Memory for storing intentions
 #define MAX_INTENTIONS 100
 static Intention *intention_memory[MAX_INTENTIONS];
 static int intention_count = 0;
 
-// Helper function to get current UTC timestamp
+// Custom function to get UTC timestamp
 static void log_with_timestamp(const char *message, const char *description) {
-    time_t now = time(NULL);
-    struct tm *utc_time = gmtime(&now);
-    char timestamp[20]; // Format: YYYY-MM-DD HH:MM:SS
-    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", utc_time);
+    unsigned long seconds_since_epoch = noesis_get_time(); // Simulated time function
+    unsigned long days = seconds_since_epoch / 86400;
+    unsigned long seconds_in_day = seconds_since_epoch % 86400;
+    unsigned long hours = seconds_in_day / 3600;
+    unsigned long minutes = (seconds_in_day % 3600) / 60;
+    unsigned long seconds = seconds_in_day % 60;
+
+    char timestamp[32]; // Format: Day HH:MM:SS
+    noesis_snprintf(timestamp, sizeof(timestamp), "Day %lu %02lu:%02lu:%02lu", days, hours, minutes, seconds);
     noesis_log("[%s] %s: %s", timestamp, message, description);
 }
 

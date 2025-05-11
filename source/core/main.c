@@ -4,6 +4,7 @@
 #include "../../include/core/perception.h"
 #include "../../include/core/logic.h"
 #include "../../include/core/emotion.h"
+#include "../../include/utils/noesis_lib.h" // Include Noesis utility functions
 
 // Main function: Entry point for the program
 int main() {
@@ -13,10 +14,20 @@ int main() {
     initialize_logic();       // Initialize logic processing
     initialize_emotion();     // Initialize emotion simulation
 
-    char do_it = '1';
+    char input[256];
 
     // Main loop: continuously run the consciousness process
-    while ( do_it == '1' ) {
+    while (1) {
+        // Prompt for user input
+        noesis_print("Enter input (or 'exit' to quit): ");
+        noesis_read(input, sizeof(input)); // Simulated input function
+
+        // Exit condition
+        if (noesis_strcmp(input, "exit") == 0) {
+            noesis_print("Exiting system.\n");
+            break;
+        }
+
         // Process perception: Gathering and processing sensory data
         process_perception();
 
@@ -28,8 +39,6 @@ int main() {
 
         // Manage memory: Handle memory allocation and cleanup
         manage_memory();
-
-        do_it = '0';
     }
 
     // Program will never reach here, since it's in an infinite loop

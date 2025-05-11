@@ -1,7 +1,7 @@
 // perception.c - Implementation of perception system in the Noesis project
 
 #include "../../include/core/perception.h"
-#include <unistd.h>
+#include "../../include/utils/noesis_lib.h" // For custom system calls
 
 typedef unsigned long size_t;
 
@@ -17,8 +17,7 @@ void initialize_perception() {
     perception_data = 0;
 
     const char msg[] = "Perception initialized\n";
-    size_t len = sizeof(msg) - 1;
-    write(STDOUT_FILENO, msg, len);
+    noesis_print(msg);
 }
 
 // Function to process sensory input and convert it into usable data
@@ -33,8 +32,7 @@ void process_perception() {
     }
 
     const char msg[] = "Processing perception\n";
-    size_t len = sizeof(msg) - 1;
-    write(STDOUT_FILENO, msg, len);
+    noesis_print(msg);
 }
 
 // Function to handle sensory data and update the internal state
@@ -47,8 +45,7 @@ void update_perception() {
     }
 
     const char msg[] = "Updating perception\n";
-    size_t len = sizeof(msg) - 1;
-    write(STDOUT_FILENO, msg, len);
+    noesis_print(msg);
 }
 
 // Function to reset the perception system to its initial state
@@ -56,6 +53,5 @@ void reset_perception() {
     perception_data = 0; // Reset perception to neutral or initial state
 
     const char msg[] = "Perception reset\n";
-    size_t len = sizeof(msg) - 1;
-    write(STDOUT_FILENO, msg, len);
+    noesis_print(msg);
 }
