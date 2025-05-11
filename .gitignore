@@ -70,3 +70,20 @@ Makefile.debug
 
 # CLion
 .idea/
+
+# Ignore build artifacts and binaries
+/noesis
+/noesis_lib_tests
+/object/
+*.o
+*.out
+*.exe
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+.DS_Store
+
+# Ignore generated files
+/tests/test
