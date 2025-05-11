@@ -48,22 +48,23 @@ _noesis_print:
     ret
 
 // Clean implementation of noesis_read that calls a C helper function
+// This version ensures no unintended output is produced
 .global _noesis_read
 _noesis_read:
-    // Create a properly aligned stack frame
-    pushq %rbp
-    movq %rsp, %rbp
-    subq $16, %rsp  // Allocate some stack space for alignment
+    // Set up a proper stack frame - use a standard prologue
+    pushq %rbp          // Save caller's base pointer
+    movq %rsp, %rbp     // Set our base pointer
     
+    // No need for alignment space as our calls are already aligned
     // Buffer pointer is already in %rsi and size in %rdx
     // These are in the correct registers for a C function call
     call _write_test_to_buffer
     
     // The C function returns the number of bytes read in %rax
-    // We already have this value in %rax, so no need to modify it
     
-    // Clean up and return
-    leave
+    // Clean up and return - use standard epilogue
+    popq %rbp           // Restore caller's base pointer
+    ret                 // Return to caller
     ret
 
 // Declare the external C helper function
