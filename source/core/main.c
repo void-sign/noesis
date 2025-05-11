@@ -22,21 +22,12 @@ int main() {
         noesis_print("Enter input (or 'exit' to quit): ");
         noesis_read(input, sizeof(input)); // Simulated input function
 
-        // Debug log to verify input content
-        noesis_log("Input received: %s\n", input);
-
         // Debug log to print ASCII values of input
         for (int i = 0; input[i] != '\0'; i++) {
             char debug_msg[32];
             noesis_sbuffer(debug_msg, sizeof(debug_msg), "input[%d] = %d\n", i, input[i]);
             noesis_print(debug_msg);
         }
-
-        // Debug log to verify input content after reading
-        noesis_log("Input buffer after reading: '%s'\n", input);
-
-        // Debug log to verify comparison with 'exit'
-        noesis_log("Comparing input with 'exit': %d\n", noesis_strcmp(input, "exit"));
 
         // Exit condition
         if (noesis_strcmp(input, "exit") == 0) {

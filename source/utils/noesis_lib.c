@@ -2,8 +2,12 @@
 
 #include "../../include/utils/noesis_lib.h"
 
+#undef va_list
+#undef va_start
+#undef va_arg
+#undef va_end
+
 // Custom implementation for variable argument handling
-// Define va_list, va_start, va_arg, and va_end
 typedef char* noesis_va_list;
 #define noesis_va_start(ap, param) (ap = (noesis_va_list)&param + sizeof(param))
 #define noesis_va_arg(ap, type) (*(type*)((ap += sizeof(type)) - sizeof(type)))
@@ -83,13 +87,8 @@ void* allocate_memory(noesis_size_t size) {
     return noesis_malloc(size);
 }
 
-// Log function with variable argument support
-void noesis_log(const char* format, ...) {
-    // Simple implementation to print the log message
-    const char* prefix = "[LOG]: ";
-    noesis_print(prefix);
-    noesis_print(format);
-}
+// Static file descriptor for log file
+static int log_fd = -1;
 
 // Function to read input from the user
 void noesis_read(char* buffer, unsigned long size) {
@@ -122,7 +121,6 @@ void noesis_read(char* buffer, unsigned long size) {
     // Debug log to verify buffer content and length after reading
     unsigned long len = 0;
     while (buffer[len] != '\0') len++;
-    noesis_log("Buffer content: '%s', Length: %lu\n", buffer, len);
 }
 
 // Enhanced string comparison to handle null terminators and edge cases
