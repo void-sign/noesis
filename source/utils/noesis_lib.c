@@ -6,7 +6,8 @@
 void noesis_print(const char* message) {
     while (*message) {
         // Simulate printing each character (e.g., to a serial console)
-        // Replace this with actual hardware-specific printing logic if needed
+        volatile char ch = *message; // Use a volatile variable to simulate output
+        (void)ch; // Prevent unused variable warning
         message++;
     }
 }
