@@ -1,7 +1,7 @@
 #ifndef INTENT_H
 #define INTENT_H
 
-#include "noesis_lib.h"
+#include "utils/noesis_lib.h"
 
 // Structure representing an intention
 typedef struct {

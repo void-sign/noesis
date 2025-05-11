@@ -11,7 +11,15 @@
 // Function to simulate printing (since no external libraries are used)
 void print(const char* message) {
     while (*message) {
-        // Simple loop to print each character (you can replace with actual printing logic)
+        __asm__ volatile (
+            "movq $0x2000004, %%rax\n"  // syscall: write on macOS
+            "movq $1, %%rdi\n"          // file descriptor: stdout
+            "movq %0, %%rsi\n"          // pointer to message
+            "movq $1, %%rdx\n"          // message length
+            "syscall\n"
+            :
+            : "r"(message)
+        );
         message++;
     }
 }
@@ -30,9 +38,9 @@ void test_emotion() {
 void test_logic() {
     initialize_logic();
     process_logic();
-    manage_logic();
+    manage_logic(3, 7);  // Example arguments for input_pain and input_pleasure
     reset_logic();
-    
+
     print("Logic system tests passed!\n");
 }
 
