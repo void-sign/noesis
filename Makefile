@@ -37,6 +37,9 @@ TEST_TARGET = noesis_tests
 # Flags
 CFLAGS = -Wall -Wextra -std=c99
 
+# Add cross-compilation flags for Linux
+CFLAGS += -target x86_64-linux-gnu
+
 # Default target
 all: $(TARGET)
 
@@ -54,7 +57,7 @@ $(OBJ_DIR)/%.o: $(UTILS_DIR)/%.s
 	$(CC) -c $< -o $@
 
 $(OBJ_DIR)/write.o: $(UTILS_DIR)/asm/write.s
-	as $< -o $@
+	$(CC) -c $< -o $@
 
 # Build test executable
 test: $(TARGET)

@@ -10,13 +10,13 @@ ___start:
     call _write_message
 
     # Exit the program with status code 0
-    movq $0x2000001, %rax  # syscall: exit on macOS
+    movq $60, %rax         # syscall: exit on Linux
     xorq %rdi, %rdi        # exit code 0
     syscall
 
 _write_message:
     # Use the arguments passed in registers
-    movq $0x2000004, %rax  # syscall: write on macOS
+    movq $1, %rax          # syscall: write on Linux
     movq $1, %rdi          # file descriptor: stdout
     syscall
     ret
