@@ -1,4 +1,4 @@
-# CHANGELOG for Noesis v1.0.0
+# Noesis v1.0.0
 
 ## Overview
 This version represents a major milestone for the Noesis project, with the extensions now moved to a separate repository called "noesis-extend".

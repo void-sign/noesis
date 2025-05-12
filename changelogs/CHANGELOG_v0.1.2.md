@@ -1,4 +1,4 @@
-# CHANGELOG for Noesis v0.1.2
+# Noesis v0.1.2
 
 ## Overview
 This version fixes a critical bug in the `noesis_read` function that was causing infinite loops and error messages.
