@@ -1,45 +1,46 @@
 #!/bin/fish
 
-echo "Noesis Installation Script"
-echo "=========================="
+echo "Noesis Core Installation Script"
+echo "=============================="
 echo 
 
+# Create required directories
+echo "Creating directories..."
+mkdir -p bin lib include
+
 # Step 1: Build the core components
-echo "[Step 1/4] Building Noesis Core..."
-cd noesis-core
+echo "Building Noesis Core..."
 make clean
 make
 echo "✓ Noesis Core built successfully"
-cd ..
 
 # Step 2: Create the shared library
-echo "[Step 2/4] Creating shared library..."
-cd noesis-core
-gcc -shared -o libnoesis_core.so object/core/*.o object/utils/*.o object/asm/*.o
-cp libnoesis_core.so ../noesis-extensions/
+echo "Creating shared library..."
+gcc -shared -o lib/libnoesis_core.so object/core/*.o object/utils/*.o object/asm/*.o
 echo "✓ Shared library created"
-cd ..
 
-# Step 3: Build the extensions
-echo "[Step 3/4] Building Noesis Extensions..."
-cd noesis-extensions
-make clean
-make
-echo "✓ Noesis Extensions built successfully"
-cd ..
+# Step 3: Run tests if available
+if test -d "tests"
+    echo "Running tests..."
+    make test
+end
 
-# Step 4: Create symbolic links in a bin directory
-echo "[Step 4/4] Creating executable links..."
+# Step 4: Set up environment variables and create links
+echo "Setting up environment and creating links..."
 mkdir -p bin
-ln -sf (pwd)/noesis-core/noesis_core bin/noesis_core
-ln -sf (pwd)/noesis-extensions/noesis_extensions bin/noesis_extensions
-echo "✓ Links created in bin directory"
+ln -sf (pwd)/source/core/noesis_core bin/noesis_core
+echo "export NOESIS_PATH=$(pwd)" > .env
+echo "export NOESIS_CORE_PATH=$(pwd)" >> .env
+echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$(pwd)/lib" >> .env
+echo "✓ Environment and links set up"
 
 echo
-echo "Installation complete!"
-echo "======================"
-echo "You can now run the following commands:"
-echo "  ./bin/noesis_core       - Run the core functionality"
-echo "  ./bin/noesis_extensions - Run the extensions"
+echo "Installation Complete!"
+echo "====================="
+echo "To run Noesis Core:"
+echo "  ./run_core.fish"
+echo 
+echo "For the extensions functionality, please use the separate Noesis-Extend repository:"
+echo "  https://github.com/yourusername/noesis-extend"
 echo
 echo "Happy consciousness simulating!"

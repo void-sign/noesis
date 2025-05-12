@@ -2,7 +2,91 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build and Run Noesis",
+      "label": "Build All",
+      "type": "shell",
+      "command": "./build_all.fish",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "Build Core",
+      "type": "shell",
+      "command": "cd noesis-core && make",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "Build Extensions",
+      "type": "shell",
+      "command": "cd noesis-extensions && make",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "Run Core",
+      "type": "shell",
+      "command": "./run_core.fish",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run Extensions",
+      "type": "shell",
+      "command": "./run_extensions.fish",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run All Tests",
+      "type": "shell",
+      "command": "./run_all_tests.fish",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Link Libraries",
+      "type": "shell",
+      "command": "./link_libraries.fish",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Build Legacy",
       "type": "shell",
       "command": "make && ./noesis",
       "args": [],

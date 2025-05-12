@@ -1,11 +1,15 @@
 #!/usr/bin/env fish
 
-# Updated runner script for the restructured Noesis project
-# This script handles both core and extensions components
+# Updated runner script for Noesis Core
+# Note: Noesis-Extend is now in a separate repository
 
-# Check if we're running in the new structure
+# Check if we're running in the legacy structure
 if test -d "./noesis-core" -a -d "./noesis-extensions"
-    # New structure detected
+    # Legacy structure detected
+    echo "Legacy directory structure detected."
+    echo "Note: Noesis-Extend is now in a separate repository."
+    echo
+    
     if test (count $argv) -eq 0
         echo "Noesis Runner"
         echo "============"
@@ -13,8 +17,11 @@ if test -d "./noesis-core" -a -d "./noesis-extensions"
         echo
         echo "Options:"
         echo "  core - Run the Noesis Core component"
-        echo "  ext  - Run the Noesis Extensions component"
-        echo "  all  - Run both components sequentially"
+        echo "  ext  - Run the Noesis Extensions component (DEPRECATED)"
+        echo "  all  - Run both components sequentially (DEPRECATED)"
+        echo
+        echo "Note: The 'ext' and 'all' options are deprecated."
+        echo "For extensions, please use the separate Noesis-Extend repository."
         echo
         exit 0
     end
