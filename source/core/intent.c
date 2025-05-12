@@ -111,3 +111,54 @@ void handle_io() {
         noesis_print("\n");
     }
 }
+
+// API functions used in noesis_api.c
+void* intent_init() {
+    init_intent_system();
+    return (void*)1; // Non-NULL pointer to indicate success
+}
+
+void intent_cleanup(void* module) {
+    // Clean up resources
+    (void)module; // Avoid unused parameter warning
+    free_all_intentions();
+}
+
+void* intent_process(void* module, void* input) {
+    // Process input and generate intentions
+    (void)module; // Avoid unused parameter warning
+    
+    // Create a sample intention based on the input
+    static Intention *result = NULL;
+    
+    if (result) {
+        free_intention(result);
+    }
+    
+    const char* input_str = (const char*)input;
+    if (input_str && *input_str) {
+        result = create_intention(input_str, 1);
+        activate_intention(result);
+    } else {
+        result = create_intention("default intention", 0);
+    }
+    
+    return result;
+}
+
+const char* intent_to_string(void* module, void* intent_result) {
+    (void)module; // Avoid unused parameter warning
+    
+    Intention *intent = (Intention*)intent_result;
+    static char result_buffer[256];
+    
+    if (intent && intent->description) {
+        noesis_sbuffer(result_buffer, sizeof(result_buffer), 
+                     "Intent: %s (Priority: %d, Active: %d)", 
+                     intent->description, intent->priority, intent->is_active);
+    } else {
+        noesis_sbuffer(result_buffer, sizeof(result_buffer), "No intent available");
+    }
+    
+    return result_buffer;
+}

@@ -36,3 +36,24 @@ void reset_memory(void* allocated_memory) {
         allocated_memory = NULL;
     }
 }
+
+// API functions used in noesis_api.c
+void* memory_init() {
+    initialize_memory();
+    return (void*)1; // Non-NULL pointer to indicate success
+}
+
+void memory_cleanup(void* module) {
+    // Clean up resources
+    (void)module; // Avoid unused parameter warning
+    reset_memory(allocated_memory);
+}
+
+void* memory_process(void* module, void* input) {
+    // Process input using the memory system
+    (void)module; // Avoid unused parameter warning
+    (void)input;  // Avoid unused parameter warning
+    
+    // For this simplified implementation, just return success
+    return (void*)1;
+}

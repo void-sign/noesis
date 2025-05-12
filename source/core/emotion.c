@@ -52,6 +52,25 @@ void process_emotion() {
     }
 }
 
+// API functions used in noesis_api.c
+void* emotion_init() {
+    initialize_emotion();
+    return (void*)1; // Non-NULL pointer to indicate success
+}
+
+void emotion_cleanup(void* module) {
+    // Clean up resources if needed
+    (void)module; // Avoid unused parameter warning
+}
+
+void* emotion_process(void* module, void* input) {
+    // Process input and update emotional state
+    (void)module; // Avoid unused parameter warning
+    (void)input;  // Avoid unused parameter warning
+    process_emotion();
+    return (void*)1; // Non-NULL pointer to indicate success
+}
+
 // Function to manage emotional states and transitions
 void manage_emotion() {
     // Example: transition based on some internal or external factors

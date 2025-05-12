@@ -6,6 +6,7 @@
 #include "../../include/core/intent.h"
 #include "../../include/utils/noesis_lib.h"
 #include "../../noesis_libc/include/noesis_libc.h"
+#include <string.h>  /* For strlen and strncpy */
 
 /* Define version numbers */
 #define NOESIS_VERSION_MAJOR 1
@@ -161,6 +162,9 @@ NOESIS_API noesis_status_t noesis_register_callback(
     if (!handle || !callback) {
         return NOESIS_INVALID_ARG;
     }
+    
+    // Suppress unused parameter warning
+    (void)callback_type;
     
     noesis_instance_t* instance = (noesis_instance_t*)handle;
     

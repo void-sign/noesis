@@ -3,7 +3,9 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+#ifndef NULL
 #define NULL (void*)0
+#endif
 
 // Function to initialize the memory system
 void initialize_memory();

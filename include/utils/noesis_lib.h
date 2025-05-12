@@ -3,13 +3,13 @@
 #ifndef NOESIS_LIB_H
 #define NOESIS_LIB_H
 
+// Include noesis_api.h for common type definitions
+#include "../api/noesis_api.h"
+
 // Define NOESIS_NULL as a replacement for NULL
 #ifndef NOESIS_NULL
 #define NOESIS_NULL ((void*)0)
 #endif
-
-// Define noesis_size_t as an unsigned integer type
-typedef unsigned long noesis_size_t;
 
 // Function to write a message to the terminal
 void noesis_print(const char* message);
