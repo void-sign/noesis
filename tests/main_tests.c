@@ -28,12 +28,12 @@
 
 // main_tests.c - Main test file for the Noesis project
 
-#include "core/emotion.h"
-#include "core/logic.h"
-#include "core/memory.h"
-#include "core/perception.h"
-#include "utils/data.h"
-#include "utils/helper.h"
+#include "../include/core/emotion.h"
+#include "../include/core/logic.h"
+#include "../include/core/memory.h"
+#include "../include/core/perception.h"
+#include "../include/utils/data.h"
+#include "../include/utils/helper.h"
 #include "utils/timer.h"
 
 // Function to simulate printing (since no external libraries are used)

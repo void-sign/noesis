@@ -28,12 +28,12 @@
 
 // core_tests.c - Unit tests for core functionality in the Noesis project
 
-#include "core/emotion.h"
-#include "core/logic.h"
-#include "core/memory.h"
-#include "core/perception.h"
-#include "utils/data.h"
-#include "utils/helper.h"
+#include "../include/core/emotion.h"
+#include "../include/core/logic.h"
+#include "../include/core/memory.h"
+#include "../include/core/perception.h"
+#include "../include/utils/data.h"
+#include "../include/utils/helper.h"
 #include "utils/timer.h"
 #include "utils/noesis_lib.h"
 

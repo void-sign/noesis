@@ -28,9 +28,9 @@
 
 // utils_tests.c - Unit tests for utility functions in the Noesis project
 
-#include "utils/data.h"
-#include "utils/helper.h"
-#include "utils/timer.h"
+#include "../include/utils/data.h"
+#include "../include/utils/helper.h"
+#include "../include/utils/timer.h"
 
 // Function to simulate printing (since no external libraries are used)
 void print(const char* message) {

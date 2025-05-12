@@ -65,6 +65,9 @@ dkms.conf
 /object/
 *.o
 *.log
+/noesis_libc/obj/
+/noesis_libc/lib/
+/noesis_lib_tests.o
 
 # Temporary files
 *.tmp
@@ -75,6 +78,10 @@ dkms.conf
 
 # Log files
 /logs/*.log
+
+# Output directories
+/out_basm/
+/out/
 
 # Track these files regardless of any ignore rules
 !Makefile
