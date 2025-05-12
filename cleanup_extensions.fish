@@ -1,4 +1,4 @@
-#!/bin/fish
+#!/usr/bin/env fish
 
 # This script removes extension-related content from the main repository
 # after it has been successfully moved to noesis-extend

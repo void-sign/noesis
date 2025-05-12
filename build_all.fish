@@ -1,4 +1,4 @@
-#!/bin/fish
+#!/usr/bin/env fish
 
 echo "Building Noesis Core..."
 make clean

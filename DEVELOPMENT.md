@@ -4,14 +4,14 @@ This guide explains the development workflow for the restructured Noesis project
 
 ## Project Structure Overview
 
-The Noesis project is now organized into two main repositories:
+The Noesis project is now organized into two separate repositories:
 
-1. **Noesis Core** (`noesis-core/`)
+1. **Noesis Core** (this repository)
    - Contains the essential consciousness simulation functionality
    - Uses the Noesis License with profit-sharing requirements
    - No external dependencies beyond standard C libraries
 
-2. **Noesis Extensions** (`noesis-extensions/`)
+2. **Noesis-Extend** (separate repository: https://github.com/void-sign/noesis-extend)
    - Contains quantum computing and specialized tools
    - Uses the MIT License
    - May have external dependencies
@@ -21,7 +21,7 @@ The Noesis project is now organized into two main repositories:
 
 ### Setting Up Your Development Environment
 
-1. Clone the entire repository:
+1. Clone the Noesis Core repository:
    ```
    git clone https://github.com/void-sign/noesis.git
    cd noesis
@@ -32,23 +32,27 @@ The Noesis project is now organized into two main repositories:
    ./install.fish
    ```
 
+3. If you need the extensions, clone the Noesis-Extend repository as well:
+   ```
+   git clone https://github.com/void-sign/noesis-extend.git
+   cd noesis-extend
+   ./scripts/install_dependency.fish
+   ./install.fish
+   ```
+
 ### Building the Project
 
-For normal development, use:
+For Noesis Core development, use:
 
 ```bash
-./build_all.fish
+# In Noesis Core repository
+make
 ```
 
-For targeted development:
+For Noesis-Extend development (in the separate repository):
 
 ```bash
-# Build only the core
-cd noesis-core
-make
-
-# Build only extensions
-cd noesis-extensions
+# In Noesis-Extend repository
 make
 ```
 
@@ -58,12 +62,14 @@ make
 # Run all tests
 ./run_all_tests.fish
 
-# Run core tests
-cd noesis-core
+# Run core tests (in root directory)
 make test
+```
 
-# Run extension tests
-cd noesis-extensions
+For extension tests, use the separate repository:
+
+```bash
+# In the Noesis-Extend repository
 make test
 ```
 
@@ -73,42 +79,41 @@ make test
 
 When modifying core functionality:
 
-1. Edit files in `noesis-core/source/` or `noesis-core/include/`
-2. Build and test the core: `cd noesis-core && make && make test`
-3. If the changes affect the API, make corresponding updates in extensions
+1. Edit files in `source/core/` or `include/core/`
+2. Build and test the core: `make && make test`
+3. If the changes affect the API, make corresponding updates in extensions repository
 
 ### Extension Changes
 
-When modifying extensions:
+When modifying extensions (in the separate Noesis-Extend repository):
 
-1. Edit files in `noesis-extensions/source/` or `noesis-extensions/include/`
-2. Build and test: `cd noesis-extensions && make && make test`
+1. Edit files in the separate Noesis-Extend repository
+2. Build and test: `cd /path/to/noesis-extend && make && make test`
 
 ### Adding New Files
 
 #### Adding to Core:
 
-1. Create your new `.c` file in `noesis-core/source/core/` or `noesis-core/source/utils/`
-2. Create any necessary headers in `noesis-core/include/core/` or `noesis-core/include/utils/`
-3. Update `noesis-core/Makefile` if necessary to include the new file
+1. Create your new `.c` file in `source/core/` or `source/utils/`
+2. Create any necessary headers in `include/core/` or `include/utils/`
+3. Update `Makefile` if necessary to include the new file
 
 #### Adding to Extensions:
 
-1. Create your new `.c` file in `noesis-extensions/source/quantum/` or `noesis-extensions/source/tools/`
-2. Create any necessary headers in `noesis-extensions/include/quantum/`
-3. Update `noesis-extensions/Makefile` if necessary
+Extensions development now happens in the separate Noesis-Extend repository:
+https://github.com/void-sign/noesis-extend
 
 ## Shared Library Interface
 
 The core functionality is exposed to extensions through a shared library (`libnoesis_core.so`). When making API changes to the core:
 
-1. Update the relevant header files in `noesis-core/include/`
+1. Update the relevant header files in `include/`
 2. Rebuild the shared library: `./link_libraries.fish`
-3. Test that extensions still work correctly
+3. Test that extensions still work correctly by updating the Noesis-Extend repository
 
 ## Release Process
 
-1. Update version numbers in both components
+1. Update version numbers in both repositories
 2. Create a new changelog entry in both repositories
 3. Build and test everything
 4. Tag the release with git
@@ -118,14 +123,17 @@ The core functionality is exposed to extensions through a shared library (`libno
 
 ### Extensions Can't Find Core Library
 
-If extensions report missing symbols or libraries:
+If the Noesis-Extend repository reports missing symbols or libraries:
 
 ```bash
-# Rebuild the shared library
+# Rebuild the shared library in Noesis Core
 ./link_libraries.fish
 
+# Copy the shared library to the Noesis-Extend repository
+cp lib/libnoesis_core.so /path/to/noesis-extend/
+
 # Or manually set the library path
-export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/path/to/noesis/lib:$LD_LIBRARY_PATH
 ```
 
 ### Build Errors
@@ -140,7 +148,7 @@ If you encounter build errors:
 
 If tests are failing:
 
-1. Check that both core and extensions are built with compatible versions
+1. Check that both repositories are built with compatible versions
 2. Ensure the shared library (`libnoesis_core.so`) is up to date
 3. Look at test output for specific failure messages
 

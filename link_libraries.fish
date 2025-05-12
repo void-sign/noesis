@@ -1,8 +1,5 @@
 # This script creates a shared library from the core components
-# and links it for use by the extensions
-
-# Build the core as a shared library
-cd noesis-core
+# Note: Extensions have been moved to a separate repository
 
 # Clean any previous builds
 make clean
@@ -10,13 +7,14 @@ make clean
 # Modify compilation flags for position-independent code
 CFLAGS="-Wall -Wextra -std=c99 -fPIC" make
 
+# Create lib directory if it doesn't exist
+mkdir -p lib
+
 # Create the shared library
-gcc -shared -o libnoesis_core.so object/core/*.o object/utils/*.o object/asm/*.o
+gcc -shared -o lib/libnoesis_core.so object/core/*.o object/utils/*.o object/asm/*.o
 
-# Copy the shared library to the extensions directory
-cp libnoesis_core.so ../noesis-extensions/
-
-# Return to root directory
-cd ..
+echo "Shared library created as lib/libnoesis_core.so"
+echo "Note: For extensions, please use the separate Noesis-Extend repository:"
+echo "https://github.com/void-sign/noesis-extend"
 
 echo "Core library built and linked to extensions"

@@ -65,8 +65,8 @@ $(OBJ_DIR)/asm/%.o: $(UTILS_DIR)/asm/%.s
 	as -o $@ $<
 
 # Build test executable
-test: $(TARGET)
-	$(CC) $(CFLAGS) $(SRCS) $(TESTS) -o $(TEST_TARGET)
+test: $(OBJS)
+	$(CC) $(CFLAGS) $(TESTS) -o $(TEST_TARGET) $(OBJS)
 
 # Clean
 clean:

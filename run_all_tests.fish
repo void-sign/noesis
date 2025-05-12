@@ -1,4 +1,4 @@
-#!/bin/fish
+#!/usr/bin/env fish
 
 echo "Running Noesis Core Tests..."
 make test

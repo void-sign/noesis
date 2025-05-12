@@ -35,7 +35,7 @@
 #include "utils/data.h"
 #include "utils/helper.h"
 #include "utils/timer.h"
-#include "../../include/utils/noesis_lib.h"
+#include "utils/noesis_lib.h"
 
 // Function to simulate printing (since no external libraries are used)
 void print(const char* message) {
@@ -56,7 +56,7 @@ void test_emotion() {
 void test_logic() {
     initialize_logic();
     process_logic();
-    manage_logic();
+    manage_logic(0, 1); // Test with no pain and some pleasure input
     reset_logic();
     
     print("Logic system tests passed!\n");
