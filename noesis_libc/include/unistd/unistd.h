@@ -3,6 +3,12 @@
 
 #include "../noesis_types.h"
 
+/* Timespec structure for nanosleep */
+struct timespec {
+    time_t tv_sec;  /* seconds */
+    long   tv_nsec; /* nanoseconds */
+};
+
 /* Standard file descriptors */
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1

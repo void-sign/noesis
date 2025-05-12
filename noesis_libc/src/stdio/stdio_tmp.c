@@ -154,7 +154,7 @@ int nlibc_setvbuf(FILE* stream, char* buf, int mode, size_t size) {
     /* Free any existing buffer */
     if (stream->buffer && stream->buffer != buf && stream != nlibc_stdin && 
         stream != nlibc_stdout && stream != nlibc_stderr) {
-        nlibc_free(stream->buffer);
+        temp_free(stream->buffer, stream->buf_size);
         stream->buffer = NULL;
     }
     
@@ -173,7 +173,7 @@ int nlibc_setvbuf(FILE* stream, char* buf, int mode, size_t size) {
         
         /* If buf is NULL, allocate a buffer */
         if (!buf) {
-            stream->buffer = (unsigned char*)nlibc_malloc(size);
+            stream->buffer = (char*)temp_malloc(size);
             if (!stream->buffer) {
                 stream->buf_mode = _IONBF;
                 stream->buf_size = 0;
@@ -181,7 +181,7 @@ int nlibc_setvbuf(FILE* stream, char* buf, int mode, size_t size) {
             }
         } else {
             /* Use the provided buffer */
-            stream->buffer = (unsigned char*)buf;
+            stream->buffer = buf;
         }
         
         stream->buf_size = size;

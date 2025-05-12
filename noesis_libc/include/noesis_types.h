@@ -18,6 +18,9 @@ typedef unsigned long       size_t;
 typedef signed long         ssize_t;
 typedef long                ptrdiff_t;
 
+/* Time type */
+typedef long                time_t;
+
 /* Null pointer */
 #ifndef NULL
 #define NULL ((void*)0)
