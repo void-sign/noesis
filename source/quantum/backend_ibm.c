@@ -26,53 +26,22 @@
  *    or other living beings.
  */
 
-// gate_defs.h – definitions of supported quantum gates
+// backend_ibm.c – stub for IBM Quantum backend interaction
 
-#ifndef GATE_DEFS_H
-#define GATE_DEFS_H
+#include "../../include/quantum/backend.h"
+#include "../../include/quantum/quantum.h"
 
-#include "../include/quantum/quantum.h"
+int backend_send_to_ibm(const Circuit* circuit) {
+    // NOTE: Real IBMQ integration would need HTTP/HTTPS API calls.
+    // This stub simulates successful upload.
+    
+    // Iterate over the circuit and simulate sending
+    int sent = 0;
+    for (int i = 0; i < circuit->num_gates; ++i) {
+        // simulate processing each gate
+        ++sent;
+    }
 
-#define MAX_QUBITS 16
-#define MAX_GATES_PER_CIRCUIT 1024
-#define MAX_TARGETS 3
-
-// Gate table entry structure
-typedef struct {
-    const char* name;
-    GateType type;
-} GateTableEntry;
-
-// Gate table definition
-static const GateTableEntry GATE_TABLE[] = {
-    {"H",       GATE_H},
-    {"X",       GATE_X},
-    {"Y",       GATE_Y},
-    {"Z",       GATE_Z},
-    {"S",       GATE_S},
-    {"T",       GATE_T},
-    {"CX",      GATE_CX},
-    {"CCX",     GATE_CCX},
-    {"MEASURE", GATE_MEASURE},
-};
-
-#define GATE_TABLE_LEN (sizeof(GATE_TABLE) / sizeof(GATE_TABLE[0]))
-
-// Supported gate names (for backward compatibility)
-static const char* SUPPORTED_GATES[] = {
-    "H",   // Hadamard
-    "X",   // Pauli-X
-    "Y",   // Pauli-Y
-    "Z",   // Pauli-Z
-    "CX",  // Controlled-X
-    "CY",  // Controlled-Y
-    "CZ",  // Controlled-Z
-    "CCX", // Toffoli
-    "RX",  // Rotation-X
-    "RY",  // Rotation-Y
-    "RZ",  // Rotation-Z
-    "MEASURE",
-    0      // null terminator
-};
-
-#endif
+    // Return 0 on success
+    return 0;
+}

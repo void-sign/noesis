@@ -19,15 +19,20 @@ The core functionality with no external dependencies beyond standard C libraries
 - Memory management
 - Perception processing
 - Intent processing
+- Quantum computation
+  - Quantum simulation
+  - IBM Quantum backend
+  - Quantum circuit compiler
+  - Quantum field simulation
 - Core utilities
 - Standard API for external projects
 
-**License:** Custom Noesis License, which includes requirements for attribution and profit-sharing for commercial use.
+**License:** Noesis License, which includes requirements for attribution and profit-sharing for commercial use.
 
-### 2. Noesis-Extend (separate repository)
+### 2. Noesis Hub (separate repository)
 Extensions and tools that may use external libraries.
 
-**Repository:** https://github.com/void-sign/noesis-extend
+**Repository:** https://github.com/void-sign/noesis-hub
 
 **Components:**
 - Quantum computing modules
