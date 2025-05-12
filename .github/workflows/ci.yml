@@ -1,0 +1,41 @@
+name: Noesis Core CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential fish
+        
+    - name: Build
+      run: |
+        make
+        
+    - name: Run tests
+      run: |
+        make test
+        
+    - name: Create shared library
+      run: |
+        mkdir -p lib
+        gcc -shared -o lib/libnoesis_core.so object/core/*.o object/utils/*.o object/asm/*.o
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: noesis-core-build
+        path: |
+          bin/
+          lib/
+          include/

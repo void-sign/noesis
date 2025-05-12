@@ -1,0 +1,64 @@
+# GitHub Issue Templates
+
+name: 🐛 Bug Report
+description: File a bug report for Noesis Core
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        
+        Please note that this repository is for Noesis Core only.
+        For issues related to extensions, please use the [Noesis-Extend repository](https://github.com/yourusername/noesis-extend).
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what happened...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Run './run_core.fish'
+        2. Enter command '...'
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: system
+    attributes:
+      label: System Information
+      description: Please provide information about your system.
+      placeholder: |
+        - OS: [e.g. macOS 12.0.1]
+        - Compiler: [e.g. GCC 11.2.0]
+        - Noesis Version: [e.g. v1.0.0]
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Log Output
+      description: Please copy and paste any relevant log output. This will be automatically formatted.
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow Noesis's Code of Conduct
+          required: true
