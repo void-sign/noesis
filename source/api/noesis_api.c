@@ -5,9 +5,7 @@
 #include "../../include/core/emotion.h"
 #include "../../include/core/intent.h"
 #include "../../include/utils/noesis_lib.h"
-
-#include <stdlib.h>
-#include <string.h>
+#include "../../noesis_libc/include/noesis_libc.h"
 
 /* Define version numbers */
 #define NOESIS_VERSION_MAJOR 1

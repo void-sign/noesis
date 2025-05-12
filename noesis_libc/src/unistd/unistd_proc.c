@@ -6,6 +6,7 @@
 
 #include "../../include/unistd/unistd.h"
 #include "../../include/sys/syscall.h"
+#include "../../include/stdlib/stdlib.h"
 
 /* Implementation of fork - create a new process */
 pid_t nlibc_fork(void) {

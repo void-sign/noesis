@@ -28,4 +28,10 @@ void free_intention(Intention *intention);
 // Add declaration for handle_io
 void handle_io();
 
+// API functions used in noesis_api.c
+void* intent_init();
+void intent_cleanup(void* module);
+void* intent_process(void* module, void* input);
+const char* intent_to_string(void* module, void* intent_result);
+
 #endif // INTENT_H

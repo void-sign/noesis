@@ -20,4 +20,9 @@ void manage_memory();
 // Function to reset memory to its initial state
 void reset_memory();
 
+// API functions used in noesis_api.c
+void* memory_init();
+void memory_cleanup(void* module);
+void* memory_process(void* module, void* input);
+
 #endif // MEMORY_H

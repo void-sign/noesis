@@ -29,6 +29,12 @@ void initialize_logic();
 void process_logic();
 
 // Manage deeper logic, for future expansion (like advanced reasoning)
+void manage_deeper_logic();
+
+// API functions used in noesis_api.c
+void* logic_init();
+void logic_cleanup(void* module);
+void* logic_process(void* module, void* input);
 int manage_logic(int input_pain, int input_pleasure);
 
 // Reflect on the current state of the logic system (like mindfulness)

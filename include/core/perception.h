@@ -16,4 +16,9 @@ void update_perception();
 // Function to reset the perception system to its initial state
 void reset_perception();
 
+// API functions used in noesis_api.c
+void* perception_init();
+void perception_cleanup(void* module);
+void* perception_process(void* module, const char* input, unsigned long input_length);
+
 #endif // PERCEPTION_H

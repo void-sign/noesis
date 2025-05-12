@@ -13,15 +13,17 @@ OBJ_DIR = obj
 LIB_DIR = lib
 
 # Source files by category
-STDLIB_SRCS = $(wildcard $(SRC_DIR)/stdlib/*.c)
+# Add specific source files to avoid duplicate definitions
+STDLIB_SRCS = $(SRC_DIR)/stdlib/algorithm.c $(SRC_DIR)/stdlib/atox.c $(SRC_DIR)/stdlib/environ.c $(SRC_DIR)/stdlib/integer.c $(SRC_DIR)/stdlib/malloc.c $(SRC_DIR)/stdlib/rand.c
 STRING_SRCS = $(wildcard $(SRC_DIR)/string/*.c)
-STDIO_SRCS = $(wildcard $(SRC_DIR)/stdio/*.c)
-MATH_SRCS = $(wildcard $(SRC_DIR)/math/*.c)
-UNISTD_SRCS = $(wildcard $(SRC_DIR)/unistd/*.c)
+STDIO_SRCS = $(SRC_DIR)/stdio/stdio.c  # Exclude stdio_tmp.c which contains duplicates
+MATH_SRCS = $(SRC_DIR)/math/math.c $(SRC_DIR)/math/math_exp.c  # Exclude math_hyperbolic.c which contains duplicates
+UNISTD_SRCS = $(SRC_DIR)/unistd/unistd.c  # Exclude files with duplicate definitions
 SYS_SRCS = $(wildcard $(SRC_DIR)/sys/*.c)
+BASE_SRCS = $(wildcard $(SRC_DIR)/*.c)
 
 # Combine all source files
-ALL_SRCS = $(STDLIB_SRCS) $(STRING_SRCS) $(STDIO_SRCS) $(MATH_SRCS) $(UNISTD_SRCS) $(SYS_SRCS)
+ALL_SRCS = $(STDLIB_SRCS) $(STRING_SRCS) $(STDIO_SRCS) $(MATH_SRCS) $(UNISTD_SRCS) $(SYS_SRCS) $(BASE_SRCS)
 
 # Object files
 STDLIB_OBJS = $(patsubst $(SRC_DIR)/stdlib/%.c, $(OBJ_DIR)/stdlib/%.o, $(STDLIB_SRCS))
@@ -30,9 +32,10 @@ STDIO_OBJS = $(patsubst $(SRC_DIR)/stdio/%.c, $(OBJ_DIR)/stdio/%.o, $(STDIO_SRCS
 MATH_OBJS = $(patsubst $(SRC_DIR)/math/%.c, $(OBJ_DIR)/math/%.o, $(MATH_SRCS))
 UNISTD_OBJS = $(patsubst $(SRC_DIR)/unistd/%.c, $(OBJ_DIR)/unistd/%.o, $(UNISTD_SRCS))
 SYS_OBJS = $(patsubst $(SRC_DIR)/sys/%.c, $(OBJ_DIR)/sys/%.o, $(SYS_SRCS))
+BASE_OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(BASE_SRCS))
 
 # Combine all object files
-ALL_OBJS = $(STDLIB_OBJS) $(STRING_OBJS) $(STDIO_OBJS) $(MATH_OBJS) $(UNISTD_OBJS) $(SYS_OBJS)
+ALL_OBJS = $(STDLIB_OBJS) $(STRING_OBJS) $(STDIO_OBJS) $(MATH_OBJS) $(UNISTD_OBJS) $(SYS_OBJS) $(BASE_OBJS)
 
 # Libraries
 STATIC_LIB = $(LIB_DIR)/libnlibc.a
@@ -49,6 +52,7 @@ dirs:
 	@mkdir -p $(OBJ_DIR)/math
 	@mkdir -p $(OBJ_DIR)/unistd
 	@mkdir -p $(OBJ_DIR)/sys
+	@mkdir -p $(OBJ_DIR)
 	@mkdir -p $(LIB_DIR)
 
 # Static library
@@ -77,6 +81,10 @@ $(OBJ_DIR)/unistd/%.o: $(SRC_DIR)/unistd/%.c
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 $(OBJ_DIR)/sys/%.o: $(SRC_DIR)/sys/%.c
+	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+
+# Base directory C files (like noesis_libc.c)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 # Install target

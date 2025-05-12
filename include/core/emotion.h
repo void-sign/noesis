@@ -43,4 +43,9 @@ void manage_emotion();
 // Function to reset the emotional state
 void reset_emotion();
 
+// API functions used in noesis_api.c
+void* emotion_init();
+void emotion_cleanup(void* module);
+void* emotion_process(void* module, void* input);
+
 #endif // EMOTION_H

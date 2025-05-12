@@ -19,7 +19,16 @@ typedef signed long         ssize_t;
 typedef long                ptrdiff_t;
 
 /* Time type */
+#ifndef __DEFINED_time_t
+#ifndef __time_t_defined
 typedef long                time_t;
+#define __time_t_defined
+#endif
+typedef long                suseconds_t; /* Time in microseconds */
+typedef int                 clockid_t;  /* Clock ID */
+typedef unsigned int        useconds_t; /* Microseconds */
+#define __DEFINED_time_t
+#endif
 
 /* Null pointer */
 #ifndef NULL
@@ -64,9 +73,5 @@ typedef unsigned long       ino_t;      /* Inode number */
 typedef unsigned int        nlink_t;    /* Link count */
 typedef long                blksize_t;  /* Block size */
 typedef long                blkcnt_t;   /* Block count */
-typedef long                time_t;     /* Time in seconds */
-typedef long                suseconds_t; /* Time in microseconds */
-typedef int                 clockid_t;  /* Clock ID */
-typedef unsigned int        useconds_t; /* Microseconds */
 
 #endif /* NOESIS_TYPES_H */
