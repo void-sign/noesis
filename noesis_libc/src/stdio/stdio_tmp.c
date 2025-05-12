@@ -9,6 +9,51 @@
 #include "../../include/unistd/unistd.h"
 #include "../../include/string/string.h"
 
+/* Temporary system call wrappers for memory allocation */
+static void* temp_malloc(size_t size) {
+    void* ptr;
+
+    /* Use mmap directly to allocate memory */
+    __asm__ volatile (
+        "movq $0x20000c5, %%rax\n"  /* mmap syscall for macOS */
+        "movq $0, %%rdi\n"          /* addr = NULL */
+        "movq %1, %%rsi\n"          /* length = size */
+        "movl $3, %%edx\n"          /* prot = PROT_READ | PROT_WRITE */
+        "movl $0x1002, %%r10d\n"    /* flags = MAP_PRIVATE | MAP_ANON */
+        "movq $-1, %%r8\n"          /* fd = -1 */
+        "movq $0, %%r9\n"           /* offset = 0 */
+        "syscall\n"
+        "movq %%rax, %0\n"
+        : "=r" (ptr)
+        : "r" (size)
+        : "rax", "rdi", "rsi", "rdx", "r10", "r8", "r9"
+    );
+
+    /* Check for errors */
+    if (ptr == (void*)-1) {
+        return NULL;
+    }
+
+    return ptr;
+}
+
+static void temp_free(void* ptr, size_t size) {
+    if (ptr == NULL) {
+        return;
+    }
+
+    /* Use munmap to free the memory */
+    __asm__ volatile (
+        "movq $0x2000049, %%rax\n"  /* munmap syscall for macOS */
+        "movq %0, %%rdi\n"          /* addr = ptr */
+        "movq %1, %%rsi\n"          /* length = size */
+        "syscall\n"
+        :
+        : "r" (ptr), "r" (size)
+        : "rax", "rdi", "rsi"
+    );
+}
+
 /* Implementation of remove function - delete a file */
 int nlibc_remove(const char* pathname) {
     /* Use unlink syscall to remove the file */
@@ -54,7 +99,7 @@ FILE* nlibc_tmpfile(void) {
     }
     
     /* Create a FILE structure for the open file descriptor */
-    FILE* fp = (FILE*)nlibc_malloc(sizeof(FILE));
+    FILE* fp = (FILE*)temp_malloc(sizeof(FILE));
     if (!fp) {
         nlibc_close(fd);
         return NULL;

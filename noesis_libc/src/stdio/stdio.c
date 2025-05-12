@@ -9,7 +9,7 @@
 #include "../../include/unistd/unistd.h"
 #include "../../include/stdlib/stdlib.h"
 #include "../../include/string/string.h"
-/* We can't use stdlib.h directly due to type conflicts */
+#include <stdarg.h> /* For va_list */
 
 /* Temporary system call wrappers for memory allocation */
 static void* temp_malloc(size_t size) {
@@ -61,31 +61,12 @@ static void temp_free(void* ptr, size_t size) {
 #define STDOUT_FD 1
 #define STDERR_FD 2
 
-/* Define buffer sizes */
-#define NLIBC_BUFSIZ 8192
-
 /* Maximum number of open files */
 #define MAX_OPEN_FILES 64
 
-/* File structure */
-struct _FILE {
-    int fd;                 /* File descriptor */
-    int flags;              /* File state flags */
-    int error;              /* Error indicator */
-    int eof;                /* EOF indicator */
-    unsigned char* buffer;  /* I/O buffer */
-    int buf_size;           /* Buffer size */
-    int buf_pos;            /* Current position in buffer */
-    int buf_end;            /* End of data in buffer */
-    int buf_mode;           /* Buffering mode */
-};
-
-/* File flags */
-#define _FILE_FLAG_READ     0x0001
-#define _FILE_FLAG_WRITE    0x0002
+/* Additional file flags */
 #define _FILE_FLAG_APPEND   0x0004
 #define _FILE_FLAG_BINARY   0x0008
-#define _FILE_FLAG_OPEN     0x0010
 
 /* Static file tables */
 static FILE _stdin = { STDIN_FD, _FILE_FLAG_READ | _FILE_FLAG_OPEN, 0, 0, NULL, 0, 0, 0, _IONBF };
@@ -277,7 +258,7 @@ int nlibc_fclose(FILE* stream) {
     
     /* Free the buffer if we allocated one */
     if (stream->buffer && stream != nlibc_stdin && stream != nlibc_stdout && stream != nlibc_stderr) {
-        nlibc_free(stream->buffer);
+        temp_free(stream->buffer, stream->buf_size);
     }
     
     /* Remove from open files array */
@@ -290,12 +271,95 @@ int nlibc_fclose(FILE* stream) {
     
     /* If this is not a standard stream, free the FILE structure */
     if (stream != nlibc_stdin && stream != nlibc_stdout && stream != nlibc_stderr) {
-        nlibc_free(stream);
+        temp_free(stream, sizeof(FILE));
     } else {
         stream->flags &= ~_FILE_FLAG_OPEN;
     }
     
     return (result == 0) ? 0 : EOF;
+}
+
+/* Read data from a file */
+size_t nlibc_fread(void* ptr, size_t size, size_t nmemb, FILE* stream) {
+    if (!ptr || !stream || size == 0 || nmemb == 0 || !(stream->flags & _FILE_FLAG_READ)) {
+        return 0;
+    }
+    
+    size_t total_size = size * nmemb;
+    ssize_t bytes_read = sys_read(stream->fd, ptr, total_size);
+    
+    if (bytes_read <= 0) {
+        if (bytes_read == 0) {
+            stream->eof = 1;
+        } else {
+            stream->error = 1;
+        }
+        return 0;
+    }
+    
+    return bytes_read / size;
+}
+
+/* Write data to a file */
+size_t nlibc_fwrite(const void* ptr, size_t size, size_t nmemb, FILE* stream) {
+    if (!ptr || !stream || size == 0 || nmemb == 0 || !(stream->flags & _FILE_FLAG_WRITE)) {
+        return 0;
+    }
+    
+    size_t total_size = size * nmemb;
+    ssize_t bytes_written = sys_write(stream->fd, ptr, total_size);
+    
+    if (bytes_written <= 0) {
+        stream->error = 1;
+        return 0;
+    }
+    
+    return bytes_written / size;
+}
+
+/* Set file position */
+int nlibc_fseek(FILE* stream, long offset, int whence) {
+    if (!stream) {
+        return -1;
+    }
+    
+    /* Call lseek system call */
+    off_t result = nlibc_lseek(stream->fd, offset, whence);
+    
+    if (result == -1) {
+        stream->error = 1;
+        return -1;
+    }
+    
+    /* Reset EOF flag */
+    stream->eof = 0;
+    
+    return 0;
+}
+
+/* Get current file position */
+long nlibc_ftell(FILE* stream) {
+    if (!stream) {
+        return -1;
+    }
+    
+    /* Call lseek with zero offset in SEEK_CUR mode to get current position */
+    off_t result = nlibc_lseek(stream->fd, 0, SEEK_CUR);
+    
+    if (result == -1) {
+        stream->error = 1;
+        return -1;
+    }
+    
+    return (long)result;
+}
+
+/* Reset file position to the beginning */
+void nlibc_rewind(FILE* stream) {
+    if (stream) {
+        nlibc_fseek(stream, 0, SEEK_SET);
+        nlibc_clearerr(stream);
+    }
 }
 
 /* Flush a file's buffer */
@@ -325,379 +389,537 @@ int nlibc_fflush(FILE* stream) {
     return 0;
 }
 
-/* Write character to file */
-int nlibc_fputc(int c, FILE* stream) {
-    unsigned char ch = (unsigned char)c;
-    
-    if (!stream || !(stream->flags & _FILE_FLAG_OPEN) || !(stream->flags & _FILE_FLAG_WRITE)) {
-        return EOF;
-    }
-    
-    /* If unbuffered or no buffer available, write directly */
-    if (stream->buf_mode == _IONBF || !stream->buffer) {
-        if (sys_write(stream->fd, &ch, 1) != 1) {
-            stream->error = 1;
-            return EOF;
-        }
-        return c;
-    }
-    
-    /* If buffer is full, flush it */
-    if (stream->buf_pos >= stream->buf_size) {
-        if (nlibc_fflush(stream) == EOF) {
-            return EOF;
-        }
-    }
-    
-    /* Add character to buffer */
-    stream->buffer[stream->buf_pos++] = ch;
-    
-    /* If line buffered and we see a newline, flush */
-    if (stream->buf_mode == _IOLBF && ch == '\n') {
-        if (nlibc_fflush(stream) == EOF) {
-            return EOF;
-        }
-    }
-    
-    return c;
-}
+/* Character input/output functions */
 
-/* Write a character to stdout */
-int nlibc_putchar(int c) {
-    return nlibc_fputc(c, nlibc_stdout);
-}
-
-/* Write a string to a file */
-int nlibc_fputs(const char* s, FILE* stream) {
-    if (!s || !stream) {
-        return EOF;
-    }
-    
-    while (*s) {
-        if (nlibc_fputc(*s++, stream) == EOF) {
-            return EOF;
-        }
-    }
-    
-    return 0;
-}
-
-/* Write a string to stdout followed by a newline */
-int nlibc_puts(const char* s) {
-    if (nlibc_fputs(s, nlibc_stdout) == EOF) {
-        return EOF;
-    }
-    
-    return nlibc_fputc('\n', nlibc_stdout) == EOF ? EOF : 0;
-}
-
-/* Read a character from a file */
+/* Get a character from a stream */
 int nlibc_fgetc(FILE* stream) {
+    if (!stream || !(stream->flags & _FILE_FLAG_READ)) {
+        return EOF;
+    }
+    
     unsigned char c;
-    
-    if (!stream || !(stream->flags & _FILE_FLAG_OPEN) || !(stream->flags & _FILE_FLAG_READ)) {
-        return EOF;
-    }
-    
-    /* If EOF was previously reached */
-    if (stream->eof) {
-        return EOF;
-    }
-    
-    /* If we have data in the buffer */
-    if (stream->buf_pos < stream->buf_end) {
-        return stream->buffer[stream->buf_pos++];
-    }
-    
-    /* Need to read more data */
-    ssize_t bytes_read = sys_read(stream->fd, &c, 1);
-    
-    if (bytes_read <= 0) {
-        stream->eof = (bytes_read == 0);
-        stream->error = (bytes_read < 0);
+    if (sys_read(stream->fd, &c, 1) <= 0) {
+        stream->eof = 1;
         return EOF;
     }
     
     return c;
 }
 
-/* Read a character from stdin */
+/* Wrapper for fgetc */
+int nlibc_getc(FILE* stream) {
+    return nlibc_fgetc(stream);
+}
+
+/* Get a character from stdin */
 int nlibc_getchar(void) {
     return nlibc_fgetc(nlibc_stdin);
 }
 
-/* Read a line from a file */
-char* nlibc_fgets(char* s, int size, FILE* stream) {
-    int c;
-    int i = 0;
+/* Put a character to a stream */
+int nlibc_fputc(int c, FILE* stream) {
+    if (!stream || !(stream->flags & _FILE_FLAG_WRITE)) {
+        return EOF;
+    }
     
-    if (!s || size <= 0 || !stream) {
+    unsigned char ch = (unsigned char)c;
+    if (sys_write(stream->fd, &ch, 1) != 1) {
+        stream->error = 1;
+        return EOF;
+    }
+    
+    return c;
+}
+
+/* Wrapper for fputc */
+int nlibc_putc(int c, FILE* stream) {
+    return nlibc_fputc(c, stream);
+}
+
+/* Put a character to stdout */
+int nlibc_putchar(int c) {
+    return nlibc_fputc(c, nlibc_stdout);
+}
+
+/* Get a string from a stream */
+char* nlibc_fgets(char* s, int size, FILE* stream) {
+    if (!stream || !s || size <= 0 || !(stream->flags & _FILE_FLAG_READ)) {
         return NULL;
     }
     
-    /* Read characters until newline, EOF, or buffer full */
+    int i = 0;
+    int c;
+    
     while (i < size - 1) {
         c = nlibc_fgetc(stream);
         
         if (c == EOF) {
-            /* EOF with no characters read */
             if (i == 0) {
                 return NULL;
+            } else {
+                break;
             }
-            break;
         }
         
         s[i++] = (char)c;
         
-        /* Break on newline */
         if (c == '\n') {
             break;
         }
     }
     
-    /* Null terminate the string */
-    s[i] = '\0';
+    if (i < size) {
+        s[i] = '\0';
+    }
+    
     return s;
 }
 
-/* Basic implementation of printf (supports only %s, %c, %d) */
+/* Put a string to a stream */
+int nlibc_fputs(const char* s, FILE* stream) {
+    if (!stream || !s || !(stream->flags & _FILE_FLAG_WRITE)) {
+        return EOF;
+    }
+    
+    size_t len = 0;
+    while (s[len]) {
+        len++;
+    }
+    
+    if (sys_write(stream->fd, s, len) != (ssize_t)len) {
+        stream->error = 1;
+        return EOF;
+    }
+    
+    return 0;
+}
+
+/* Put a string to stdout with newline */
+int nlibc_puts(const char* s) {
+    if (nlibc_fputs(s, nlibc_stdout) == EOF) {
+        return EOF;
+    }
+    
+    return nlibc_putc('\n', nlibc_stdout);
+}
+
+/* Push a character back to input stream */
+int nlibc_ungetc(int c, FILE* stream) {
+    /* Simplified implementation - would need a proper buffer mechanism for real usage */
+    if (!stream || c == EOF) {
+        return EOF;
+    }
+    
+    /* This is a very simplified implementation that doesn't actually work properly */
+    /* In a real implementation, we would need to handle buffering */
+    return EOF;
+}
+
+/* Helper function for simple formatted output */
+static int format_output(char* buffer, size_t size, const char* format, va_list args) {
+    /* This is a very simplified implementation that supports only %d, %s, and %c */
+    size_t i = 0;
+    size_t buffer_pos = 0;
+    
+    while (format[i] && buffer_pos < size - 1) {
+        if (format[i] == '%') {
+            i++;
+            switch (format[i]) {
+                case 'd': {
+                    int val = va_arg(args, int);
+                    
+                    /* Convert integer to string */
+                    char num_buffer[20];
+                    int num_pos = 0;
+                    int temp = val;
+                    
+                    if (val == 0) {
+                        if (buffer_pos < size - 1) {
+                            buffer[buffer_pos++] = '0';
+                        }
+                    } else {
+                        if (val < 0) {
+                            if (buffer_pos < size - 1) {
+                                buffer[buffer_pos++] = '-';
+                            }
+                            temp = -val;
+                        }
+                        
+                        /* Generate digits in reverse order */
+                        while (temp > 0 && num_pos < 19) {
+                            num_buffer[num_pos++] = '0' + (temp % 10);
+                            temp /= 10;
+                        }
+                        
+                        /* Copy digits in correct order */
+                        while (num_pos > 0 && buffer_pos < size - 1) {
+                            buffer[buffer_pos++] = num_buffer[--num_pos];
+                        }
+                    }
+                    break;
+                }
+                case 's': {
+                    char* str = va_arg(args, char*);
+                    if (str) {
+                        while (*str && buffer_pos < size - 1) {
+                            buffer[buffer_pos++] = *str++;
+                        }
+                    }
+                    break;
+                }
+                case 'c': {
+                    char c = (char)va_arg(args, int);
+                    if (buffer_pos < size - 1) {
+                        buffer[buffer_pos++] = c;
+                    }
+                    break;
+                }
+                case '%': {
+                    if (buffer_pos < size - 1) {
+                        buffer[buffer_pos++] = '%';
+                    }
+                    break;
+                }
+                default:
+                    /* Unsupported format specifier */
+                    if (buffer_pos < size - 1) {
+                        buffer[buffer_pos++] = '%';
+                    }
+                    if (buffer_pos < size - 1) {
+                        buffer[buffer_pos++] = format[i];
+                    }
+            }
+            i++;
+        } else {
+            buffer[buffer_pos++] = format[i++];
+        }
+    }
+    
+    buffer[buffer_pos] = '\0';
+    return buffer_pos;
+}
+
+/* Formatted output functions */
+
+/* Print formatted output to stdout */
 int nlibc_printf(const char* format, ...) {
-    va_list ap;
+    va_list args;
     int result;
     
-    va_start(ap, format);
-    result = nlibc_vfprintf(nlibc_stdout, format, ap);
-    va_end(ap);
+    va_start(args, format);
+    result = nlibc_vprintf(format, args);
+    va_end(args);
     
     return result;
 }
 
-/* Write formatted data to a file stream */
+/* Print formatted output to a stream */
 int nlibc_fprintf(FILE* stream, const char* format, ...) {
-    va_list ap;
+    va_list args;
     int result;
     
-    va_start(ap, format);
-    result = nlibc_vfprintf(stream, format, ap);
-    va_end(ap);
+    va_start(args, format);
+    result = nlibc_vfprintf(stream, format, args);
+    va_end(args);
     
     return result;
 }
 
-/* Write formatted data to a string */
+/* Print formatted output to a string */
 int nlibc_sprintf(char* str, const char* format, ...) {
-    va_list ap;
+    va_list args;
     int result;
     
-    va_start(ap, format);
-    result = nlibc_vsnprintf(str, SIZE_MAX, format, ap);
-    va_end(ap);
+    va_start(args, format);
+    result = nlibc_vsprintf(str, format, args);
+    va_end(args);
     
     return result;
 }
 
-/* Simplified version of vfprintf (supports %d, %s, %c) */
-int nlibc_vfprintf(FILE* stream, const char* format, va_list ap) {
-    int written = 0;
-    const char* p = format;
+/* Print formatted output to a string with size limit */
+int nlibc_snprintf(char* str, size_t size, const char* format, ...) {
+    va_list args;
+    int result;
     
-    if (!stream || !format) {
-        return -1;
-    }
+    va_start(args, format);
+    result = nlibc_vsnprintf(str, size, format, args);
+    va_end(args);
     
-    while (*p) {
-        /* Handle format specifiers */
-        if (*p == '%') {
-            p++;  /* Skip '%' */
-            
-            /* Handle format specifier */
-            switch (*p) {
-                case 'd': {  /* Integer */
-                    int val = va_arg(ap, int);
-                    char buf[32];  /* Buffer for number */
-                    int len = 0;
-                    int is_neg = 0;
-                    
-                    if (val < 0) {
-                        is_neg = 1;
-                        val = -val;
-                    }
-                    
-                    /* Convert number to string (backward) */
-                    do {
-                        buf[len++] = '0' + (val % 10);
-                        val /= 10;
-                    } while (val);
-                    
-                    /* Add negative sign if needed */
-                    if (is_neg) {
-                        nlibc_fputc('-', stream);
-                        written++;
-                    }
-                    
-                    /* Print digits in correct order */
-                    while (len > 0) {
-                        nlibc_fputc(buf[--len], stream);
-                        written++;
-                    }
-                    break;
-                }
-                
-                case 's': {  /* String */
-                    char* str = va_arg(ap, char*);
-                    if (!str) str = "(null)";
-                    
-                    while (*str) {
-                        nlibc_fputc(*str++, stream);
-                        written++;
-                    }
-                    break;
-                }
-                
-                case 'c': {  /* Character */
-                    char ch = (char)va_arg(ap, int);
-                    nlibc_fputc(ch, stream);
-                    written++;
-                    break;
-                }
-                
-                case '%': {  /* Literal '%' */
-                    nlibc_fputc('%', stream);
-                    written++;
-                    break;
-                }
-                
-                default: {
-                    /* Unknown format specifier, just print it */
-                    nlibc_fputc('%', stream);
-                    nlibc_fputc(*p, stream);
-                    written += 2;
-                }
-            }
-        } else {
-            /* Regular character */
-            nlibc_fputc(*p, stream);
-            written++;
-        }
-        
-        p++;  /* Move to next character */
-    }
-    
-    return written;
+    return result;
 }
 
-/* Very simplified implementation of vsnprintf (supports %d, %s, %c) */
-int nlibc_vsnprintf(char* str, size_t size, const char* format, va_list ap) {
-    int written = 0;
-    const char* p = format;
-    size_t remaining = size;
+/* Print formatted output to stdout using va_list */
+int nlibc_vprintf(const char* format, va_list args) {
+    /* For simplicity, format to a temporary buffer and then output */
+    char buffer[1024]; /* Fixed size buffer - not ideal but simple */
+    int len = format_output(buffer, sizeof(buffer), format, args);
     
-    if (!str || !format || size == 0) {
+    if (sys_write(STDOUT_FD, buffer, len) != len) {
         return -1;
     }
     
-    /* Reserve space for null terminator */
-    remaining--;
-    
-    while (*p && remaining > 0) {
-        /* Handle format specifiers */
-        if (*p == '%') {
-            p++;  /* Skip '%' */
-            
-            /* Handle format specifier */
-            switch (*p) {
-                case 'd': {  /* Integer */
-                    int val = va_arg(ap, int);
-                    char buf[32];  /* Buffer for number */
-                    int len = 0;
-                    int is_neg = 0;
-                    
-                    if (val < 0) {
-                        is_neg = 1;
-                        val = -val;
-                    }
-                    
-                    /* Convert number to string (backward) */
-                    do {
-                        buf[len++] = '0' + (val % 10);
-                        val /= 10;
-                    } while (val);
-                    
-                    /* Add negative sign if needed */
-                    if (is_neg && remaining > 0) {
-                        *str++ = '-';
-                        written++;
-                        remaining--;
-                    }
-                    
-                    /* Print digits in correct order */
-                    while (len > 0 && remaining > 0) {
-                        *str++ = buf[--len];
-                        written++;
-                        remaining--;
-                    }
-                    break;
-                }
-                
-                case 's': {  /* String */
-                    char* s = va_arg(ap, char*);
-                    if (!s) s = "(null)";
-                    
-                    while (*s && remaining > 0) {
-                        *str++ = *s++;
-                        written++;
-                        remaining--;
-                    }
-                    break;
-                }
-                
-                case 'c': {  /* Character */
-                    char ch = (char)va_arg(ap, int);
-                    if (remaining > 0) {
-                        *str++ = ch;
-                        written++;
-                        remaining--;
-                    }
-                    break;
-                }
-                
-                case '%': {  /* Literal '%' */
-                    if (remaining > 0) {
-                        *str++ = '%';
-                        written++;
-                        remaining--;
-                    }
-                    break;
-                }
-                
-                default: {
-                    /* Unknown format specifier, just print it */
-                    if (remaining > 1) {
-                        *str++ = '%';
-                        *str++ = *p;
-                        written += 2;
-                        remaining -= 2;
-                    } else if (remaining > 0) {
-                        *str++ = '%';
-                        written += 1;
-                        remaining -= 1;
-                    }
-                }
-            }
-        } else {
-            /* Regular character */
-            *str++ = *p;
-            written++;
-            remaining--;
-        }
-        
-        p++;  /* Move to next character */
+    return len;
+}
+
+/* Print formatted output to a stream using va_list */
+int nlibc_vfprintf(FILE* stream, const char* format, va_list args) {
+    if (!stream || !(stream->flags & _FILE_FLAG_WRITE)) {
+        return -1;
     }
     
-    /* Add null terminator */
-    *str = '\0';
+    /* For simplicity, format to a temporary buffer and then output */
+    char buffer[1024]; /* Fixed size buffer - not ideal but simple */
+    int len = format_output(buffer, sizeof(buffer), format, args);
     
-    return written;
+    if (sys_write(stream->fd, buffer, len) != len) {
+        return -1;
+    }
+    
+    return len;
+}
+
+/* Print formatted output to a string using va_list */
+int nlibc_vsprintf(char* str, const char* format, va_list args) {
+    if (!str) {
+        return -1;
+    }
+    
+    return format_output(str, (size_t)-1, format, args); /* Assuming no limit */
+}
+
+/* Print formatted output to a string with size limit using va_list */
+int nlibc_vsnprintf(char* str, size_t size, const char* format, va_list args) {
+    if (!str || size == 0) {
+        return -1;
+    }
+    
+    return format_output(str, size, format, args);
+}
+
+/* Helper function to skip whitespace */
+static void skip_whitespace(const char** input) {
+    while (**input == ' ' || **input == '\t' || **input == '\n' || **input == '\r') {
+        (*input)++;
+    }
+}
+
+/* Basic implementation of sscanf-like functionality */
+static int parse_input(const char* input, const char* format, va_list args) {
+    int items_assigned = 0;
+    
+    while (*format && *input) {
+        if (*format == '%') {
+            format++; /* Skip % */
+            
+            /* Handle format specifiers */
+            switch (*format) {
+                case 'd': {
+                    /* Parse integer */
+                    int* p_int = va_arg(args, int*);
+                    if (!p_int) {
+                        /* NULL pointer, skip this value */
+                        while (*input >= '0' && *input <= '9') {
+                            input++;
+                        }
+                    } else {
+                        int val = 0;
+                        int negative = 0;
+                        
+                        skip_whitespace(&input);
+                        
+                        if (*input == '-') {
+                            negative = 1;
+                            input++;
+                        } else if (*input == '+') {
+                            input++;
+                        }
+                        
+                        if (*input >= '0' && *input <= '9') {
+                            while (*input >= '0' && *input <= '9') {
+                                val = val * 10 + (*input - '0');
+                                input++;
+                            }
+                            
+                            *p_int = negative ? -val : val;
+                            items_assigned++;
+                        } else {
+                            /* Not a number */
+                            return items_assigned;
+                        }
+                    }
+                    break;
+                }
+                case 's': {
+                    /* Parse string */
+                    char* p_str = va_arg(args, char*);
+                    
+                    skip_whitespace(&input);
+                    
+                    if (p_str) {
+                        while (*input && *input != ' ' && *input != '\t' && *input != '\n' && *input != '\r') {
+                            *p_str++ = *input++;
+                        }
+                        *p_str = '\0';
+                        items_assigned++;
+                    } else {
+                        /* NULL pointer, skip this string */
+                        while (*input && *input != ' ' && *input != '\t' && *input != '\n' && *input != '\r') {
+                            input++;
+                        }
+                    }
+                    break;
+                }
+                case 'c': {
+                    /* Parse character */
+                    char* p_char = va_arg(args, char*);
+                    
+                    if (p_char) {
+                        *p_char = *input++;
+                        items_assigned++;
+                    } else {
+                        input++; /* Skip character */
+                    }
+                    break;
+                }
+                default:
+                    /* Unsupported format specifier */
+                    return items_assigned;
+            }
+            
+            format++;
+        } else if (*format == ' ' || *format == '\t' || *format == '\n' || *format == '\r') {
+            /* Skip whitespace in format and input */
+            skip_whitespace(&format);
+            skip_whitespace(&input);
+        } else if (*format == *input) {
+            /* Match literal characters */
+            format++;
+            input++;
+        } else {
+            /* Mismatch */
+            return items_assigned;
+        }
+    }
+    
+    return items_assigned;
+}
+
+/* Formatted input functions */
+
+/* Read formatted input from stdin */
+int nlibc_scanf(const char* format, ...) {
+    /* This is a very simplified implementation */
+    char buffer[1024]; /* Fixed size buffer - not ideal but simple */
+    
+    if (nlibc_fgets(buffer, sizeof(buffer), nlibc_stdin) == NULL) {
+        return EOF;
+    }
+    
+    va_list args;
+    int result;
+    
+    va_start(args, format);
+    result = parse_input(buffer, format, args);
+    va_end(args);
+    
+    return result;
+}
+
+/* Read formatted input from a stream */
+int nlibc_fscanf(FILE* stream, const char* format, ...) {
+    if (!stream || !(stream->flags & _FILE_FLAG_READ)) {
+        return EOF;
+    }
+    
+    /* This is a very simplified implementation */
+    char buffer[1024]; /* Fixed size buffer - not ideal but simple */
+    
+    if (nlibc_fgets(buffer, sizeof(buffer), stream) == NULL) {
+        return EOF;
+    }
+    
+    va_list args;
+    int result;
+    
+    va_start(args, format);
+    result = parse_input(buffer, format, args);
+    va_end(args);
+    
+    return result;
+}
+
+/* Read formatted input from a string */
+int nlibc_sscanf(const char* str, const char* format, ...) {
+    if (!str) {
+        return EOF;
+    }
+    
+    va_list args;
+    int result;
+    
+    va_start(args, format);
+    result = parse_input(str, format, args);
+    va_end(args);
+    
+    return result;
+}
+
+/* Buffer handling functions */
+
+/* Set buffering mode for a stream */
+int nlibc_setvbuf(FILE* stream, char* buf, int mode, size_t size) {
+    if (!stream) {
+        return -1;
+    }
+    
+    /* Free existing buffer if it was allocated by us */
+    if (stream->buffer && stream->buf_size > 0) {
+        temp_free(stream->buffer, stream->buf_size);
+        stream->buffer = NULL;
+    }
+    
+    stream->buf_mode = mode;
+    
+    if (mode == _IONBF) {
+        /* No buffering */
+        stream->buffer = NULL;
+        stream->buf_size = 0;
+        stream->buf_pos = 0;
+        stream->buf_end = 0;
+        return 0;
+    }
+    
+    /* Use provided buffer or allocate one */
+    if (size == 0) {
+        size = BUFSIZ; /* Use default size if 0 is specified */
+    }
+    
+    if (buf) {
+        stream->buffer = buf;
+        stream->buf_size = size;
+    } else {
+        stream->buffer = temp_malloc(size);
+        if (!stream->buffer) {
+            stream->buf_mode = _IONBF;
+            return -1;
+        }
+        stream->buf_size = size;
+    }
+    
+    stream->buf_pos = 0;
+    stream->buf_end = 0;
+    
+    return 0;
+}
+
+/* Set buffering for a stream */
+void nlibc_setbuf(FILE* stream, char* buf) {
+    if (buf) {
+        nlibc_setvbuf(stream, buf, _IOFBF, BUFSIZ);
+    } else {
+        nlibc_setvbuf(stream, NULL, _IONBF, 0);
+    }
 }
 
 /* Error status */
