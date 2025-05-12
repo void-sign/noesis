@@ -11,13 +11,25 @@ mkdir -p bin lib include
 # Step 1: Build the core components
 echo "Building Noesis Core..."
 make clean
+set -x CFLAGS "-Wall -Wextra -std=c99 -fPIC" 
 make
 echo "✓ Noesis Core built successfully"
 
-# Step 2: Create the shared library
-echo "Creating shared library..."
-gcc -shared -o lib/libnoesis_core.so object/core/*.o object/utils/*.o object/asm/*.o
+# Step 2: Create the libraries
+echo "Creating libraries..."
+# Static library
+ar rcs lib/libnoesis.a object/core/*.o object/utils/*.o object/asm/*.o object/api/*.o
+echo "✓ Static library created"
+
+# Shared library
+gcc -shared -o lib/libnoesis.so object/core/*.o object/utils/*.o object/asm/*.o object/api/*.o
 echo "✓ Shared library created"
+
+# Step 3: Install API headers
+echo "Installing API headers..."
+mkdir -p lib/include/noesis
+cp include/api/noesis_api.h lib/include/noesis/
+echo "✓ API headers installed"
 
 # Step 3: Run tests if available
 if test -d "tests"

@@ -6,6 +6,7 @@ CC = gcc
 # Directories
 CORE_DIR = source/core
 UTILS_DIR = source/utils
+API_DIR = source/api
 TEST_DIR = tests
 OBJ_DIR = object
 
@@ -20,7 +21,8 @@ SRCS = $(CORE_DIR)/main.c \
        $(UTILS_DIR)/helper.c \
        $(UTILS_DIR)/timer.c \
        $(UTILS_DIR)/noesis_lib.c \
-       $(UTILS_DIR)/io_helper.c
+       $(UTILS_DIR)/io_helper.c \
+       $(API_DIR)/noesis_api.c
 
 TESTS = $(TEST_DIR)/core_tests.c \
         $(TEST_DIR)/main_tests.c \
@@ -31,6 +33,7 @@ ALL_C_FILES = $(SRCS)
 # Object file names (flattened to obj/)
 OBJS = $(patsubst $(CORE_DIR)/%.c, $(OBJ_DIR)/core/%.o, $(filter $(CORE_DIR)/%, $(SRCS))) \
        $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/utils/%.o, $(filter $(UTILS_DIR)/%, $(SRCS))) \
+       $(patsubst $(API_DIR)/%.c, $(OBJ_DIR)/api/%.o, $(filter $(API_DIR)/%, $(SRCS))) \
        $(OBJ_DIR)/asm/repeat_input.o $(OBJ_DIR)/asm/mcopy.o $(OBJ_DIR)/asm/scomp.o $(OBJ_DIR)/asm/slen.o $(OBJ_DIR)/asm/write.o $(OBJ_DIR)/asm/io.o
 
 # Executable
@@ -59,6 +62,10 @@ $(OBJ_DIR)/core/%.o: $(CORE_DIR)/%.c
 $(OBJ_DIR)/utils/%.o: $(UTILS_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/api/%.o: $(API_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -DNOESIS_BUILDING_LIB -c $< -o $@
 
 $(OBJ_DIR)/asm/%.o: $(UTILS_DIR)/asm/%.s
 	@mkdir -p $(dir $@)
