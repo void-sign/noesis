@@ -1,18 +1,11 @@
 #!/bin/fish
 
 echo "Building Noesis Core..."
-cd noesis-core
 make clean
 make
-cd ..
-
-echo "Creating shared library from Core..."
-./link_libraries.fish
-
-echo "Building Noesis Extensions..."
-cd noesis-extensions
-make clean
-make
-cd ..
 
 echo "Build complete."
+echo
+echo "Note: Noesis Extensions have been moved to a separate repository."
+echo "To build extensions, please use the noesis-extend repository:"
+echo "https://github.com/void-sign/noesis-extend"

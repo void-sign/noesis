@@ -41,6 +41,6 @@ echo "To run Noesis Core:"
 echo "  ./run_core.fish"
 echo 
 echo "For the extensions functionality, please use the separate Noesis-Extend repository:"
-echo "  https://github.com/yourusername/noesis-extend"
+echo "  https://github.com/void-sign/noesis-extend"
 echo
 echo "Happy consciousness simulating!"

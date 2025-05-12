@@ -20,7 +20,7 @@
     {
       "label": "Build Core",
       "type": "shell",
-      "command": "cd noesis-core && make",
+      "command": "make",
       "group": "build",
       "presentation": {
         "reveal": "always",
@@ -31,17 +31,15 @@
       ]
     },
     {
-      "label": "Build Extensions",
+      "label": "Build Extensions (Remote)",
       "type": "shell",
-      "command": "cd noesis-extensions && make",
+      "command": "echo \"Noesis Extensions have been moved to a separate repository at https://github.com/void-sign/noesis-extend\"",
       "group": "build",
       "presentation": {
         "reveal": "always",
         "panel": "new"
       },
-      "problemMatcher": [
-        "$gcc"
-      ]
+      "problemMatcher": []
     },
     {
       "label": "Run Core",
@@ -57,9 +55,9 @@
       }
     },
     {
-      "label": "Run Extensions",
+      "label": "Run Extensions (Remote)",
       "type": "shell",
-      "command": "./run_extensions.fish",
+      "command": "echo \"Noesis Extensions have been moved to a separate repository at https://github.com/void-sign/noesis-extend\"",
       "group": "test",
       "presentation": {
         "reveal": "always",
@@ -77,9 +75,9 @@
       }
     },
     {
-      "label": "Link Libraries",
+      "label": "Create Shared Library",
       "type": "shell",
-      "command": "./link_libraries.fish",
+      "command": "gcc -shared -o lib/libnoesis_core.so object/core/*.o object/utils/*.o object/asm/*.o",
       "presentation": {
         "reveal": "always",
         "panel": "new"

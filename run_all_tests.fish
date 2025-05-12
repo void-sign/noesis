@@ -1,13 +1,10 @@
 #!/bin/fish
 
 echo "Running Noesis Core Tests..."
-cd noesis-core
 make test
-cd ..
 
-echo -e "\nRunning Noesis Extensions Tests..."
-cd noesis-extensions
-make test
-cd ..
-
-echo -e "\nAll tests completed."
+echo -e "\nCore tests completed."
+echo
+echo "Note: Noesis Extensions have been moved to a separate repository."
+echo "To run extension tests, please use the noesis-extend repository:"
+echo "https://github.com/void-sign/noesis-extend"
