@@ -1,0 +1,8 @@
+test_io: main_debug.c io_debug.s
+	gcc -Wall -o test_io main_debug.c io_debug.s
+
+run: test_io
+	./test_io
+
+clean:
+	rm -f test_io
