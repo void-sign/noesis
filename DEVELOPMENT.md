@@ -29,16 +29,17 @@ The Noesis project is now organized into two separate repositories:
 
 2. Run the installation script:
    ```
-   ./install.fish
+   ./install.fish  # or ./install.sh for bash
    ```
 
 3. If you need the extensions, clone the Noesis-Extend repository as well:
    ```
    git clone https://github.com/void-sign/noesis-extend.git
    cd noesis-extend
-   ./scripts/install_dependency.fish
-   ./install.fish
+   ./install.fish  # or ./install.sh for bash
    ```
+
+Note: The repositories are now completely independent. Noesis-Extend uses the standard Noesis API and libraries without direct code dependencies. See INDEPENDENT_ARCHITECTURE.md for details.
 
 ### Building the Project
 

@@ -20,6 +20,7 @@ The core functionality with no external dependencies beyond standard C libraries
 - Perception processing
 - Intent processing
 - Core utilities
+- Standard API for external projects
 
 **License:** Custom Noesis License, which includes requirements for attribution and profit-sharing for commercial use.
 
@@ -34,6 +35,8 @@ Extensions and tools that may use external libraries.
 - Specialized tools (qbuild, qrun)
 
 **License:** MIT License for more permissive use, modification, and redistribution.
+
+The two repositories are now completely independent and communicate via the standard Noesis API. See [INDEPENDENT_ARCHITECTURE.md](INDEPENDENT_ARCHITECTURE.md) for details on how they interact.
 
 ## Project Documentation
 

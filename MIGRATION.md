@@ -23,9 +23,10 @@ If you were using the `noesis-extensions` directory in this repository, you shou
 ```bash
 git clone https://github.com/void-sign/noesis-extend.git
 cd noesis-extend
-./scripts/install_dependency.fish  # Install Noesis Core as a dependency
-./install.fish                     # Build and install Noesis-Extend
+./install.fish  # Install and build Noesis-Extend
 ```
+
+Note: The updated architecture makes Noesis and Noesis-Extend completely independent. Noesis-Extend now uses the standard Noesis API and libraries without direct code dependencies. See INDEPENDENT_ARCHITECTURE.md for details.
 
 ## Directory Mapping
 
