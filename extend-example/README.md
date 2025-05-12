@@ -20,9 +20,9 @@ This example shows how to:
 
 2. Build this example:
    ```
-   ./install.sh  # For bash
+   ./install.sh  # Bash installation script
    # or
-   ./install.fish  # For fish shell
+   ./install.fish  # Fish shell installation script
    ```
 
 3. Run the example:

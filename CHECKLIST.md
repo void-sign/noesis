@@ -71,19 +71,19 @@ This checklist will help you finalize the Noesis repository split to ensure ever
   ```bash
   # Test Noesis Core
   cd /Users/plugio/Documents/GitHub/noesis
-  ./install.fish
-  ./run_core.fish
+  ./install.sh
+  ./run_core.sh
   
   # Test Noesis-Extend
   cd /Users/plugio/Documents/GitHub/noesis-extend
-  ./scripts/install_dependency.fish
-  ./install.fish
-  ./run.fish
+  ./scripts/install_dependency.sh
+  ./install.sh
+  ./run.sh
   ```
 
 - [ ] Test cross-repository integration:
   ```bash
   # Using the launch script
   cd /Users/plugio/Documents/GitHub/noesis
-  ./launch_noesis_env.fish
+  ./launch_noesis_env.sh
   ```
