@@ -1,4 +1,4 @@
-# Noesis Project v1.0.0
+# Noesis Project Version 1.0.0
 
 ![Noesis Logo](noesis-logo.jpg)
 
