@@ -120,11 +120,11 @@ fi
 
 echo
 if [ "$ERROR" = true ]; then
-    echo "⚠️ Validation completed with errors"
+    echo "Validation completed with errors"
     echo "Please fix the issues listed above before proceeding."
     exit 1
 else
-    echo "🎉 Validation successful! All checks passed."
+    echo "Validation successful! All checks passed."
     echo "You can now proceed with the repository setup."
     echo "See CHECKLIST.md for next steps."
 fi
