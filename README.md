@@ -35,6 +35,13 @@ Extensions and tools that may use external libraries.
 
 **License:** MIT License for more permissive use, modification, and redistribution.
 
+## Project Documentation
+
+- [DEVELOPMENT.md](DEVELOPMENT.md) - Detailed information for developers
+- [MIGRATION.md](MIGRATION.md) - Notes on the migration to the split repository structure
+- [BASH_MIGRATION.md](BASH_MIGRATION.md) - Information about the migration from Fish to Bash scripts
+- [GIT_CONFIG.md](GIT_CONFIG.md) - Details about Git configuration and ignored files
+
 ## Building the Project
 
 ### Prerequisites

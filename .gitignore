@@ -54,45 +54,54 @@ dkms.conf
 # macOS
 .DS_Store
 
-# CMake
-CMakeCache.txt
-CMakeFiles/
-CMakeScripts/
-cmake_install.cmake
-Makefile
-
-# Makefile
-Makefile.user
-Makefile.debug
-
-# VSCode
+# Editors and IDEs
 .vscode/
-
-# CLion
 .idea/
+*.swp
+*.swo
+*~
 
-# Ignore build artifacts and binaries
+# Build artifacts
 /object/
 *.o
-*.out
-*.exe
 *.log
 
-# Ignore temporary files
+# Temporary files
 *.tmp
-*.swp
-.DS_Store
+*.bak
 
-# Ignore generated files
-/tests/test
+# Generated binaries
+/noesis
 
-# Ignore all files without an extension
-*
-!*.*
-# Unignore specific files
+# Log files
+/logs/*.log
+
+# Track these files regardless of any ignore rules
+!Makefile
 !LICENSE
 !Dockerfile
-!Makefile
 
-# Ignore the noesis file explicitly
-noesis
+# Debug directory - track source files but not binaries
+!debug/
+debug/*
+!debug/README.md
+!debug/*.c
+!debug/*.s
+!debug/Makefile.*
+
+# Fish scripts directory - track for reference
+!fish_scripts/
+fish_scripts/*
+!fish_scripts/README.md
+!fish_scripts/*.fish
+
+# Track all changelog files
+!changelogs/
+changelogs/*
+!changelogs/*.md
+
+# Ensure source directories are tracked
+!source/
+!include/
+!tests/
+!data/
