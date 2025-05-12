@@ -8,13 +8,13 @@ if [ -z "$1" ]; then
   echo "Running all tests..."
   
   # Run the main tests
-  cd test_and_debug
+  cd debug
   
   # Make sure the test files are in the current directory
   # Copy any necessary files if they're not present
   for file in io_*.s main_*.c mixed_test.c; do
     if [ ! -f "$file" ]; then
-      echo "Copying test file $file to test_and_debug directory..."
+      echo "Copying test file $file to debug directory..."
       cp ../source/utils/asm/$file . 2>/dev/null || cp ../source/core/$file . 2>/dev/null || cp ../source/utils/$file . 2>/dev/null
     fi
   done
@@ -32,7 +32,7 @@ else
   # Run a specific test
   case "$1" in
     "mixed")
-      cd test_and_debug
+      cd debug
       # Make sure required files exist
       if [ ! -f "mixed_test.c" ] || [ ! -f "io_with_c.s" ]; then
         cp ../source/utils/mixed_test.c . 2>/dev/null || echo "Warning: mixed_test.c not found"
@@ -42,7 +42,7 @@ else
       ./mixed_test
       ;;
     "basic")
-      cd test_and_debug
+      cd debug
       # Make sure required files exist
       if [ ! -f "main_debug.c" ] || [ ! -f "io_debug.s" ]; then
         cp ../source/core/main_debug.c . 2>/dev/null || echo "Warning: main_debug.c not found"

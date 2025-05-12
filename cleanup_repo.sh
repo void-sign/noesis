@@ -1,4 +1,4 @@
-#!/usr/bin/env fish
+#!/bin/bash
 
 echo "Cleaning up Noesis repository..."
 echo "==============================="
@@ -14,29 +14,30 @@ rm -rf backup_extensions
 echo "✓ Backup extensions directory removed"
 
 # Check and remove quantum directory if it exists
-if test -d "quantum"
+if [ -d "quantum" ]; then
     echo "Removing quantum directory (should be in noesis-extend)..."
     rm -rf quantum
     echo "✓ Quantum directory removed"
-end
+fi
 
 # Remove any potential duplicate files between root and noesis-core
 echo "Checking for duplicate files between root and noesis-core..."
 
 # List of potential duplicates (README, LICENSE, etc.)
-set potential_duplicates \
-    "README.md" \
-    "LICENSE" \
+potential_duplicates=(
+    "README.md"
+    "LICENSE"
     "Makefile"
+)
 
-for file in $potential_duplicates
-    if test -f $file -a -f "noesis-core/$file"
+for file in "${potential_duplicates[@]}"; do
+    if [ -f "$file" ] && [ -f "noesis-core/$file" ]; then
         echo "Found duplicate file: $file"
         echo "→ Keeping the file in the root directory"
         echo "→ Removing duplicate from noesis-core/$file"
         rm -f "noesis-core/$file"
-    end
-end
+    fi
+done
 
 # Cleanup any temporary or intermediate files
 echo "Removing any other unnecessary files..."
@@ -44,20 +45,20 @@ find . -name "*.tmp" -o -name "*.bak" -delete 2>/dev/null || true
 
 # Handle duplicate changelogs
 echo "Checking for duplicate changelog files..."
-for changelog in noesis-core/changelogs/CHANGELOG_*.md
-    set basename (basename $changelog)
-    if test -f "changelogs/$basename"
+for changelog in noesis-core/changelogs/CHANGELOG_*.md; do
+    basename=$(basename "$changelog")
+    if [ -f "changelogs/$basename" ]; then
         echo "Found duplicate changelog: $basename"
         # Compare content to see if they're identical
-        if cmp -s "changelogs/$basename" $changelog
+        if cmp -s "changelogs/$basename" "$changelog"; then
             echo "→ Files are identical, removing duplicate from noesis-core"
-            rm -f $changelog
+            rm -f "$changelog"
         else
             echo "→ Files differ, keeping both versions"
             echo "  (You may want to manually review these files)"
-        end
-    end
-end
+        fi
+    fi
+done
 
 echo
 echo "Repository cleanup complete!"

@@ -1,4 +1,4 @@
-#!/bin/fish
+#!/bin/bash
 
 # Noesis Core run script
 # This simple script runs the Noesis Core component
@@ -6,10 +6,10 @@
 echo "Running Noesis Core..."
 
 # Ensure we have a build
-if not test -f "./bin/noesis_core"
+if [ ! -f "./bin/noesis_core" ]; then
     echo "Noesis Core not found. Building first..."
     make
-end
+fi
 
 # Run the core component
-./bin/noesis_core $argv
+./bin/noesis_core "$@"

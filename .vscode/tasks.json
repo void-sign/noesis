@@ -4,7 +4,7 @@
     {
       "label": "Build All",
       "type": "shell",
-      "command": "./build_all.fish",
+      "command": "./build_all.sh",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -44,7 +44,7 @@
     {
       "label": "Run Core",
       "type": "shell",
-      "command": "./run_core.fish",
+      "command": "./run_core.sh",
       "group": {
         "kind": "test",
         "isDefault": true
@@ -67,7 +67,7 @@
     {
       "label": "Run All Tests",
       "type": "shell",
-      "command": "./run_all_tests.fish",
+      "command": "./run_all_tests.sh",
       "group": "test",
       "presentation": {
         "reveal": "always",

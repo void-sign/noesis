@@ -1,4 +1,4 @@
-#!/usr/bin/env fish
+#!/bin/bash
 
 # This script removes extension-related content from the main repository
 # after it has been successfully moved to noesis-extend
@@ -7,25 +7,26 @@ echo "Cleaning up extension-related content from the main repository..."
 echo "================================================================"
 
 # Ensure noesis-extend repository exists and has the content
-if not test -d "/Users/plugio/Documents/GitHub/noesis-extend"
+if [ ! -d "/Users/plugio/Documents/GitHub/noesis-extend" ]; then
     echo "Error: noesis-extend repository not found!"
     echo "Please make sure the noesis-extend repository exists before running this script."
     exit 1
-end
+fi
 
 # Check if critical files exist in noesis-extend
-set required_files \
-    "/Users/plugio/Documents/GitHub/noesis-extend/source/quantum/quantum.c" \
-    "/Users/plugio/Documents/GitHub/noesis-extend/source/tools/qrun.c" \
+required_files=(
+    "/Users/plugio/Documents/GitHub/noesis-extend/source/quantum/quantum.c"
+    "/Users/plugio/Documents/GitHub/noesis-extend/source/tools/qrun.c"
     "/Users/plugio/Documents/GitHub/noesis-extend/include/quantum/quantum.h"
+)
 
-for file in $required_files
-    if not test -f $file
+for file in "${required_files[@]}"; do
+    if [ ! -f "$file" ]; then
         echo "Error: Required file $file not found in noesis-extend repository!"
         echo "Please ensure all files have been properly moved before cleaning up."
         exit 1
-    end
-end
+    fi
+done
 
 echo "Backup of critical files before removal..."
 mkdir -p backup_extensions
@@ -47,7 +48,7 @@ rm -rf include/quantum
 rm -rf noesis-extensions
 
 # Remove extension-related scripts
-mv run_extensions.fish backup_extensions/
+mv run_extensions.sh backup_extensions/ 2>/dev/null || true
 
 echo
 echo "Cleanup complete!"

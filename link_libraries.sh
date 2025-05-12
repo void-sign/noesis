@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This script creates a shared library from the core components
 # Note: Extensions have been moved to a separate repository
 

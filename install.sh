@@ -1,4 +1,4 @@
-#!/bin/fish
+#!/bin/bash
 
 echo "Noesis Core Installation Script"
 echo "=============================="
@@ -20,15 +20,15 @@ gcc -shared -o lib/libnoesis_core.so object/core/*.o object/utils/*.o object/asm
 echo "✓ Shared library created"
 
 # Step 3: Run tests if available
-if test -d "tests"
+if [ -d "tests" ]; then
     echo "Running tests..."
     make test
-end
+fi
 
 # Step 4: Set up environment variables and create links
 echo "Setting up environment and creating links..."
 mkdir -p bin
-ln -sf (pwd)/source/core/noesis_core bin/noesis_core
+ln -sf $(pwd)/source/core/noesis_core bin/noesis_core
 echo "export NOESIS_PATH=$(pwd)" > .env
 echo "export NOESIS_CORE_PATH=$(pwd)" >> .env
 echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$(pwd)/lib" >> .env
@@ -38,7 +38,7 @@ echo
 echo "Installation Complete!"
 echo "====================="
 echo "To run Noesis Core:"
-echo "  ./run_core.fish"
+echo "  ./run_core.sh"
 echo 
 echo "For the extensions functionality, please use the separate Noesis-Extend repository:"
 echo "  https://github.com/void-sign/noesis-extend"
