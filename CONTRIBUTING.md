@@ -1,7 +1,4 @@
-# Cont### Repository Split
-Noesis has been split into two separate repositories:
-1. **Noesis Core**: https://github.com/void-sign/noesis (this repository)
-2. **Noesis-Extend**: https://github.com/void-sign/noesis-extendting to Noesis
+# Contributing to Noesis
 
 Thank you for your interest in contributing to Noesis!
 
@@ -9,8 +6,8 @@ Thank you for your interest in contributing to Noesis!
 
 ### Repository Split
 Noesis has been split into two repositories:
-1. **Noesis Core**: https://github.com/yourusername/noesis (this repository)
-2. **Noesis-Extend**: https://github.com/yourusername/noesis-extend
+1. **Noesis Core**: https://github.com/void-sign/noesis (this repository)
+2. **Noesis-Extend**: https://github.com/void-sign/noesis-extend
 
 Please ensure your contributions go to the appropriate repository.
 
