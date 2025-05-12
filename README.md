@@ -36,14 +36,43 @@ Extensions and tools that may use external libraries.
 
 **License:** MIT License for more permissive use, modification, and redistribution.
 
-The two repositories are now completely independent and communicate via the standard Noesis API. See [INDEPENDENT_ARCHITECTURE.md](INDEPENDENT_ARCHITECTURE.md) for details on how they interact.
+The two repositories are now completely independent and communicate via the standard Noesis API.
+
+### Directory Structure
+```
+├── build_all.sh             # Script to build all components
+├── changelogs/              # Version history
+├── cleanup_extensions.sh    # Clean extensions
+├── cleanup_folders.sh       # Clean temporary folders
+├── cleanup_repo.sh          # Clean repository
+├── data/                    # Core data files
+├── debug/                   # Debugging utilities
+├── examples/                # Example implementations
+├── extend-example/          # Example extension
+├── fish_scripts/            # Fish shell scripts
+├── include/                 # Header files
+│   ├── api/                 # API headers
+│   ├── core/                # Core system headers
+│   └── utils/               # Utility headers
+├── logic_input/             # Logic processing inputs
+├── logs/                    # Log files
+├── noesis_libc/             # Custom C library
+├── object/                  # Object files
+├── out_basm/                # Output files
+├── run_all_tests.sh         # Test execution script
+├── run_core.sh              # Core execution script
+├── run_noesis.sh            # Main execution script
+├── source/                  # Source code
+│   ├── api/                 # API implementation
+│   ├── core/                # Core system implementation
+│   └── utils/               # Utility implementation
+└── tests/                   # Test suite
+```
 
 ## Project Documentation
 
-- [DEVELOPMENT.md](DEVELOPMENT.md) - Detailed information for developers
-- [MIGRATION.md](MIGRATION.md) - Notes on the migration to the split repository structure
-- [BASH_MIGRATION.md](BASH_MIGRATION.md) - Information about the migration from Fish to Bash scripts
-- [GIT_CONFIG.md](GIT_CONFIG.md) - Details about Git configuration and ignored files
+- CONTRIBUTING.md - Contribution guidelines
+- SECURITY.md - Security policy and vulnerability reporting
 
 ## Building the Project
 
@@ -92,10 +121,7 @@ For the extensions, quantum computing modules, and tools, please check the separ
 
 **Repository URL:** https://github.com/void-sign/noesis-extend
 
-## Migration Information
 
-If you're migrating from the previous structure with both components in one repository,
-please see the [MIGRATION.md](MIGRATION.md) guide for detailed instructions.
 
 ## License Information
 
@@ -105,7 +131,6 @@ requirements for attribution and profit-sharing for commercial use.
 ## Documentation
 
 - See the `changelogs` directory for version history
-- Check the [DEVELOPMENT.md](DEVELOPMENT.md) file for development guidelines
 
 ## Contributing
 
