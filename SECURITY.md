@@ -12,6 +12,6 @@
 
 ## Reporting a Vulnerability
 
-You can report vulnerabilities at [napol@noesis.run](mailto:napol@noesis.run).  
+You can report vulnerabilities at [napol@noesis.run](mailto:napol@noesis.run)
 
 Thank you for being a part of the beginning in creating Syntactic Conscious for the benefit of humanity.
