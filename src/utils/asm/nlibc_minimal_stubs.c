@@ -32,19 +32,24 @@ int nlibc_fprintf(FILE* stream, const char* format, ...) {
     return 0;
 }
 
-char* nlibc_fgets(char* s, int size, FILE* stream) {
-    (void)size; (void)stream;
-    if (s) s[0] = 0;
-    return s;
+/* String operations */
+char* nlibc_strchr(const char* s, int c) {
+    (void)s; (void)c;
+    return (void*)0;
 }
 
-int nlibc_printf(const char* format, ...) {
-    (void)format;
+size_t nlibc_strlen(const char* s) {
+    (void)s;
+    return 0;
+}
+
+int nlibc_strcmp(const char* s1, const char* s2) {
+    (void)s1; (void)s2;
     return 0;
 }
 
 /* Memory operations */
-void* nlibc_malloc(unsigned long size) {
+void* nlibc_malloc(size_t size) {
     (void)size;
     return (void*)0;
 }
@@ -53,21 +58,70 @@ void nlibc_free(void* ptr) {
     (void)ptr;
 }
 
-/* String operations */
-int nlibc_strcmp(const char* s1, const char* s2) {
-    if (!s1 || !s2) return s1 ? 1 : (s2 ? -1 : 0);
-    
-    while (*s1 && (*s1 == *s2)) {
-        s1++;
-        s2++;
-    }
-    return *(unsigned char*)s1 - *(unsigned char*)s2;
+/* File I/O stubs */
+size_t nlibc_fread(void* ptr, size_t size, size_t nmemb, FILE* stream) {
+    (void)ptr; (void)size; (void)nmemb; (void)stream;
+    return 0;
 }
 
-unsigned long nlibc_strlen(const char* s) {
-    if (!s) return 0;
-    
-    unsigned long len = 0;
-    while (s[len]) len++;
-    return len;
+size_t nlibc_fwrite(const void* ptr, size_t size, size_t nmemb, FILE* stream) {
+    (void)ptr; (void)size; (void)nmemb; (void)stream;
+    return 0;
+}
+
+/* Error handling stubs */
+int nlibc_ferror(FILE* stream) {
+    (void)stream;
+    return 0;
+}
+
+int nlibc_feof(FILE* stream) {
+    (void)stream;
+    return 0;
+}
+
+void nlibc_clearerr(FILE* stream) {
+    (void)stream;
+}
+
+/* Other common stubs that might be needed */
+int nlibc_printf(const char* format, ...) {
+    (void)format;
+    return 0;
+}
+
+int nlibc_sprintf(char* str, const char* format, ...) {
+    (void)str; (void)format;
+    return 0;
+}
+
+int nlibc_snprintf(char* str, size_t size, const char* format, ...) {
+    (void)str; (void)size; (void)format;
+    return 0;
+}
+
+/* Character I/O stubs */
+int nlibc_fgetc(FILE* stream) {
+    (void)stream;
+    return -1; /* Return EOF */
+}
+
+int nlibc_fputc(int c, FILE* stream) {
+    (void)c; (void)stream;
+    return 0;
+}
+
+/* File positioning stubs */
+int nlibc_fseek(FILE* stream, long offset, int whence) {
+    (void)stream; (void)offset; (void)whence;
+    return 0;
+}
+
+long nlibc_ftell(FILE* stream) {
+    (void)stream;
+    return 0;
+}
+
+void nlibc_rewind(FILE* stream) {
+    (void)stream;
 }

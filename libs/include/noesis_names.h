@@ -32,15 +32,7 @@
     #define write   nlibc_puts
     #define unget   nlibc_ungetc
 
-    /* File Operations */
-    #define load    nlibc_fread
-    #define save    nlibc_fwrite
-    #define jump    nlibc_fseek
-    #define pos     nlibc_ftell
-    #define flush   nlibc_fflush
-    #define eof     nlibc_feof
-    #define err     nlibc_ferror
-    #define clear   nlibc_clearerr
+    /* File operations removed */
     
     /* Memory Management */
     #define new     nlibc_malloc
