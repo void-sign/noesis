@@ -36,8 +36,7 @@ This document outlines the short function name convention used in the Noesis pro
 
 | Short Name | Original Function | Description                                           |
 |------------|-------------------|-------------------------------------------------------|
-| open       | nlibc_fopen       | Open a file                                           |
-| close      | nlibc_fclose      | Close a file                                          |
+
 | load       | nlibc_fread       | Read data from a file                                 |
 | save       | nlibc_fwrite      | Write data to a file                                  |
 | jump       | nlibc_fseek       | Reposition the file position indicator                |

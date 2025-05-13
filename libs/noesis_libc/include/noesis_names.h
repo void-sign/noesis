@@ -27,14 +27,16 @@
     #define fget    nlibc_fgetc
     #define put     nlibc_putchar
     #define fput    nlibc_fputc
-    #define gets    nlibc_fgets
-    #define puts    nlibc_fputs
+
+    #ifndef NOESIS_DISABLE_STDIO_REDEFINES
+        #define gets    nlibc_fgets
+        #define puts    nlibc_fputs
+    #endif
+
     #define write   nlibc_puts
     #define unget   nlibc_ungetc
 
     /* File Operations */
-    #define open    nlibc_fopen
-    #define close   nlibc_fclose
     #define load    nlibc_fread
     #define save    nlibc_fwrite
     #define jump    nlibc_fseek

@@ -32,68 +32,6 @@ typedef __builtin_va_list va_list;
 #define O_TRUNC     0x0400
 #define O_APPEND    0x0008
 
-/* System-specific open function - defined using raw syscall */
-static int syscall_open(const char* pathname, int flags, int mode) {
-    int fd;
-#ifdef __APPLE__
-    /* macOS syscall convention */
-    __asm__ volatile(
-        "movq $0x2000005, %%rax\n" /* macOS open syscall number */
-        "movq %1, %%rdi\n"         /* pathname */
-        "movl %2, %%esi\n"         /* flags */
-        "movl %3, %%edx\n"         /* mode */
-        "syscall\n"
-        "movl %%eax, %0\n"
-        : "=r"(fd)
-        : "r"(pathname), "r"(flags), "r"(mode)
-        : "%rax", "%rdi", "%rsi", "%rdx"
-    );
-#else
-    /* Linux syscall convention */
-    __asm__ volatile(
-        "movq $2, %%rax\n"     /* Linux open syscall number */
-        "movq %1, %%rdi\n"     /* pathname */
-        "movl %2, %%esi\n"     /* flags */
-        "movl %3, %%edx\n"     /* mode */
-        "syscall\n"
-        "movl %%eax, %0\n"
-        : "=r"(fd)
-        : "r"(pathname), "r"(flags), "r"(mode)
-        : "%rax", "%rdi", "%rsi", "%rdx"
-    );
-#endif
-    return fd;
-}
-
-/* System-specific close function - defined using raw syscall */
-static int syscall_close(int fd) {
-    int ret;
-#ifdef __APPLE__
-    /* macOS syscall convention */
-    __asm__ volatile(
-        "movq $0x2000006, %%rax\n" /* macOS close syscall number */
-        "movl %1, %%edi\n"         /* fd */
-        "syscall\n"
-        "movl %%eax, %0\n"
-        : "=r"(ret)
-        : "r"(fd)
-        : "%rax", "%rdi"
-    );
-#else
-    /* Linux syscall convention */
-    __asm__ volatile(
-        "movq $3, %%rax\n"     /* Linux close syscall number */
-        "movl %1, %%edi\n"     /* fd */
-        "syscall\n"
-        "movl %%eax, %0\n"
-        : "=r"(ret)
-        : "r"(fd)
-        : "%rax", "%rdi"
-    );
-#endif
-    return ret;
-}
-
 /* System-specific write function - defined using raw syscall to avoid libc dependency */
 static long syscall_write(int fd, const void* buf, size_t count) {
     long ret;
@@ -127,7 +65,10 @@ static long syscall_write(int fd, const void* buf, size_t count) {
     return ret;
 }
 
-/* String length function */
+/* String length function - Forward declaration */
+static size_t strlen_internal(const char* s);
+
+/* String length implementation */
 static size_t strlen_internal(const char* s) {
     const char* p = s;
     while (*p) p++;
@@ -218,14 +159,19 @@ void nlibc_free(void* ptr) {
 }
 
 /* Define global file handles */
-NLIBC_FILE* nlibc_stdin = NULL;
-NLIBC_FILE* nlibc_stdout = NULL;
-NLIBC_FILE* nlibc_stderr = NULL;
+extern NLIBC_FILE* nlibc_stdin;
+extern NLIBC_FILE* nlibc_stdout;
+extern NLIBC_FILE* nlibc_stderr;
 
 /* Initialize basic file handles for stdin/stdout/stderr */
 static NLIBC_FILE _stdin  = {0, 0, 0, 0};  /* fd 0, flags 0, error 0, eof 0 */
 static NLIBC_FILE _stdout = {1, 0, 0, 0};  /* fd 1, flags 0, error 0, eof 0 */
 static NLIBC_FILE _stderr = {2, 0, 0, 0};  /* fd 2, flags 0, error 0, eof 0 */
+
+/* Global file handle definitions */
+NLIBC_FILE* nlibc_stdin = NULL;
+NLIBC_FILE* nlibc_stdout = NULL;
+NLIBC_FILE* nlibc_stderr = NULL;
 
 /* Initialize function to set up the file handles */
 void __attribute__((constructor)) nlibc_init(void) {

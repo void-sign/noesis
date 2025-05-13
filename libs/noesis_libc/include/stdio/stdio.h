@@ -38,8 +38,6 @@ struct _NLIBC_FILE {
 #endif
 
 /* File manipulation functions */
-NLIBC_FILE* nlibc_fopen(const char* pathname, const char* mode);
-int nlibc_fclose(NLIBC_FILE* stream);
 size_t nlibc_fread(void* ptr, size_t size, size_t nmemb, NLIBC_FILE* stream);
 size_t nlibc_fwrite(const void* ptr, size_t size, size_t nmemb, NLIBC_FILE* stream);
 int nlibc_fseek(NLIBC_FILE* stream, long offset, int whence);

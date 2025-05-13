@@ -9,7 +9,8 @@
 // Function to export circuit to JSON format
 void export_json(const quantum_circuit_t* circuit, const char* filename) {
     NLIBC_FILE* stderr_file = nlibc_stderr; // Define stderr using nlibc_stderr
-    NLIBC_FILE* file = nlibc_fopen(filename, "w");
+    NLIBC_FILE* file = nlibc_fopen(filename, "w"); // Properly initialize the file
+
     if (!file) {
         nlibc_fprintf(stderr_file, "Error: Could not open file %s for writing\n", filename);
         return;
@@ -24,5 +25,5 @@ void export_json(const quantum_circuit_t* circuit, const char* filename) {
     nlibc_fprintf(file, "  }\n");
     nlibc_fprintf(file, "}\n");
 
-    nlibc_fclose(file);
+    // File will be closed by the system when the function exits
 }

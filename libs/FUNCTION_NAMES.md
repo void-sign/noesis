@@ -36,8 +36,6 @@ This document outlines the short function name convention used in the Noesis pro
 
 | Short Name | Original Function | Description                                           |
 |------------|-------------------|-------------------------------------------------------|
-| open       | nlibc_fopen       | Open a file                                           |
-| close      | nlibc_fclose      | Close a file                                          |
 | load       | nlibc_fread       | Read data from a file                                 |
 | save       | nlibc_fwrite      | Write data to a file                                  |
 | jump       | nlibc_fseek       | Reposition the file position indicator                |
@@ -149,15 +147,11 @@ This document outlines the short function name convention used in the Noesis pro
 
 Instead of:
 ```c
-FILE* file = fopen("example.txt", "r");
-if (!file) {
-    fprintf(stderr, "Error opening file\n");
-    return;
-}
+// Note: Use your preferred file handling method instead of fopen/fclose
+// Example with standard file operations:
 char buffer[100];
-fread(buffer, 1, sizeof(buffer), file);
-printf("Content: %s\n", buffer);
-fclose(file);
+load(buffer, 1, sizeof(buffer), file_handle);
+out("Content: %s\n", buffer);
 ```
 
 Use this:

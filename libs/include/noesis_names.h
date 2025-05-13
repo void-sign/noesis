@@ -33,8 +33,6 @@
     #define unget   nlibc_ungetc
 
     /* File Operations */
-    #define open    nlibc_fopen
-    #define close   nlibc_fclose
     #define load    nlibc_fread
     #define save    nlibc_fwrite
     #define jump    nlibc_fseek
