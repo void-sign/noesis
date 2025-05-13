@@ -46,61 +46,106 @@ The two repositories are now completely independent and communicate via the stan
 ### Directory Structure
 ```
 noesis/
-├── bash_scripts/           # Bash shell scripts for building and running
-│   ├── build_all.sh        # Build script for all components
-│   ├── cleanup_extensions.sh # Script to clean extension artifacts
-│   ├── cleanup_folders.sh  # Script to clean temporary folders
-│   ├── cleanup_repo.sh     # Script to clean repository state
-│   ├── fix_headers.sh      # Script to fix header files
-│   ├── install.sh          # Installation script
-│   ├── launch_noesis_env.sh # Launch Noesis environment
-│   ├── link_libraries.sh   # Script to link libraries
-│   ├── migrate.sh          # Migration script
-│   ├── run_all_tests.sh    # Script to execute all test suites
-│   ├── run_core.sh         # Script to run core functionality
-│   ├── run_noesis.sh       # Main execution script
-│   ├── run_tests.sh        # Script to run tests
-│   ├── update_headers.sh   # Script to update headers
-│   └── validate_split.sh   # Validation script for repository split
-├── changelogs/              # Version history and release notes
-├── data/                    # Core data files for simulations
-├── debug/                   # Debug and testing utilities
-├── examples/                # Example usage and implementation
-├── hub_example/             # Template for extension creation
-├── fish_scripts/            # Alternative Fish shell scripts
-├── include/                 # Header files
-│   ├── api/                 # API interface headers
-│   ├── core/                # Core system headers
-│   ├── quantum/             # Quantum computation headers
-│   │   └── field/           # Quantum field headers
-│   └── utils/               # Utility function headers
-├── logic_input/             # Logic processing input files
-├── logs/                    # Log output files
-├── noesis_libc/             # Custom C library implementation
-│   ├── include/             # Library header files
-│   ├── lib/                 # Compiled library files
-│   ├── obj/                 # Object files
-│   └── src/                 # Source files
-├── object/                  # Compiled object files
-│   ├── api/                 # API object files
-│   ├── asm/                 # Assembly object files
-│   ├── core/                # Core system object files
-│   └── utils/               # Utility object files
-├── out_basm/                # Output binary assembly files
-├── source/                  # Source code files
-│   ├── api/                 # API interface implementation
-│   ├── core/                # Core system implementation
-│   ├── quantum/             # Quantum computation implementation
-│   ├── tools/               # Tools implementation
-│   └── utils/               # Utility function implementation
-└── tests/                   # Test suites and unit tests
+├── build/                  # Build artifacts
+│   ├── bin/                # Compiled binaries
+│   ├── lib/                # Compiled libraries
+│   └── obj/                # Object files
+│       ├── api/            # API object files
+│       ├── asm/            # Assembly object files
+│       ├── core/           # Core system object files
+│       ├── quantum/        # Quantum computation object files
+│       └── utils/          # Utility object files
+├── data/                   # Core data files for simulations
+├── docs/                   # Documentation files
+│   ├── CHECKLIST.md        # Repository split checklist
+│   ├── CONTRIBUTING.md     # Contribution guidelines
+│   ├── SECURITY.md         # Security policy
+│   ├── STRUCTURE.md        # Project structure documentation
+│   ├── VS_CODE_TASKS.md    # VS Code tasks documentation
+│   └── changelogs/         # Version history and release notes
+│       ├── CHANGELOG_v0.1.1.md
+│       ├── CHANGELOG_v0.1.2.md
+│       ├── CHANGELOG_v0.2.0.md
+│       ├── CHANGELOG_v1.0.0.md
+│       └── CHANGELOG_v1.1.0.md
+├── examples/               # Example usage and implementations
+│   ├── hub_example/        # Template for extension creation
+│   ├── Makefile            # Example Makefile
+│   └── noesis_client.c     # Example client application
+├── include/                # Header files
+│   ├── api/                # API interface headers
+│   ├── core/               # Core system headers
+│   │   ├── emotion.h       # Emotion processing headers
+│   │   ├── intent.h        # Intent processing headers
+│   │   ├── logic.h         # Logic processing headers
+│   │   ├── memory.h        # Memory management headers
+│   │   └── perception.h    # Perception processing headers
+│   ├── quantum/            # Quantum computation headers
+│   │   ├── backend.h       # Quantum backend headers
+│   │   ├── compiler.h      # Quantum circuit compiler headers
+│   │   ├── export.h        # Quantum export headers
+│   │   ├── field/          # Quantum field headers
+│   │   ├── quantum.h       # Main quantum headers
+│   │   └── quantum_stdlib.h # Quantum standard library headers
+│   └── utils/              # Utility function headers
+│       ├── data.h          # Data utility headers
+│       ├── helper.h        # Helper function headers
+│       ├── noesis_lib.h    # Noesis library headers
+│       └── timer.h         # Timer utility headers
+├── libs/                   # Libraries
+│   ├── include/            # Library header files
+│   ├── lib/                # Compiled library files
+│   ├── noesis_libc/        # Custom C library implementation
+│   ├── obj/                # Object files
+│   └── src/                # Source files
+├── logs/                   # Log output files
+├── scripts/                # Shell scripts
+│   ├── bash/               # Bash shell scripts
+│   │   ├── build_all.sh    # Build script for all components
+│   │   ├── cleanup_extensions.sh # Script to clean extension artifacts
+│   │   ├── cleanup_folders.sh # Script to clean temporary folders
+│   │   ├── cleanup_repo.sh  # Script to clean repository state
+│   │   ├── fix_headers.sh  # Script to fix header files
+│   │   ├── install.sh      # Installation script
+│   │   ├── launch_noesis_env.sh # Launch Noesis environment
+│   │   ├── link_libraries.sh # Script to link libraries
+│   │   ├── migrate.sh      # Migration script
+│   │   ├── run_all_tests.sh # Script to execute all test suites
+│   │   ├── run_core.sh     # Script to run core functionality
+│   │   ├── run_noesis.sh   # Main execution script
+│   │   ├── run_tests.sh    # Script to run tests
+│   │   ├── update_headers.sh # Script to update headers
+│   │   └── validate_split.sh # Validation script for repository split
+│   └── fish/               # Fish shell scripts
+│       ├── build_all.fish  # Build script for all components (fish)
+│       ├── cleanup_extensions.fish # Script to clean extension artifacts (fish)
+│       ├── cleanup_folders.fish # Script to clean temporary folders (fish)
+│       ├── cleanup_repo.fish # Script to clean repository state (fish)
+│       ├── fix_headers.fish # Script to fix header files (fish)
+│       ├── install.fish    # Installation script (fish)
+│       ├── launch_noesis_env.fish # Launch Noesis environment (fish)
+│       ├── link_libraries.fish # Script to link libraries (fish)
+│       ├── migrate.fish    # Migration script (fish)
+│       ├── run_all_tests.fish # Script to execute all test suites (fish)
+│       ├── run_core.fish   # Script to run core functionality (fish)
+│       ├── run_noesis.fish # Main execution script (fish)
+│       └── validate_split.fish # Validation script for repository split (fish)
+├── src/                    # Source code files
+│   ├── api/                # API interface implementation
+│   ├── core/               # Core system implementation
+│   ├── quantum/            # Quantum computation implementation
+│   ├── tools/              # Tools implementation
+│   └── utils/              # Utility function implementation
+└── tests/                  # Test suites and unit tests
+    ├── debug/              # Debug tests
+    └── unit/               # Unit tests
 ```
 
 ## Project Documentation
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
-- [SECURITY.md](SECURITY.md) - Security policy and vulnerability reporting
-- [CHECKLIST.md](CHECKLIST.md) - Repository split checklist
+- [CONTRIBUTING.md](docs/CONTRIBUTING.md) - Contribution guidelines
+- [SECURITY.md](docs/SECURITY.md) - Security policy and vulnerability reporting
+- [CHECKLIST.md](docs/CHECKLIST.md) - Repository split checklist
 
 ## Building the Project
 
@@ -116,9 +161,9 @@ noesis/
   - Core Makefile supports parallel builds with `-j` option
   - Custom rules for assembly and object file generation
 
-- **Bash shell** (default) or **Fish shell** (optional)
+- **Bash shell** or **Fish shell**
   - Required for running installation and build scripts
-  - Fish shell alternatives provided in the `fish_scripts/` directory
+  - Both Bash and Fish shell scripts are provided in the `scripts/` directory
 
 ### Build Commands
 
@@ -131,9 +176,17 @@ make
 For a complete setup that includes creating libraries and setting up the environment:
 
 ```bash
-./bash_scripts/build_all.sh   # Basic build with clean
+# Using Bash
+./scripts/bash/build_all.sh   # Basic build with clean
 # or
-./bash_scripts/install.sh     # Full installation
+./scripts/bash/install.sh     # Full installation
+```
+
+```fish
+# Using Fish
+./scripts/fish/build_all.fish   # Basic build with clean
+# or
+./scripts/fish/install.fish     # Full installation
 ```
 
 The installation script will:
@@ -145,17 +198,9 @@ The installation script will:
 6. Run tests (if available)
 7. Set up environment variables and create symbolic links
 
-You can also use Fish shell scripts if you prefer:
-
-```fish
-./fish_scripts/build_all.fish   # Basic build with clean
-# or
-./fish_scripts/install.fish     # Full installation
-```
-
 ## Running
 
-Noesis now provides a central control interface for both Bash and Fish shells. You can use these scripts to perform common operations with a simplified syntax:
+Noesis provides a central control interface for both Bash and Fish shells. You can use these scripts to perform common operations with a simplified syntax:
 
 ### Bash Shell
 
@@ -172,7 +217,7 @@ Noesis now provides a central control interface for both Bash and Fish shells. Y
 
 # Run any script directly
 ./noesis.sh run_core  # Run just the core
-./noesis.sh <script>  # Run any script from bash_scripts/
+./noesis.sh <script>  # Run any script from scripts/bash/
 ```
 
 ### Fish Shell
@@ -190,14 +235,21 @@ Noesis now provides a central control interface for both Bash and Fish shells. Y
 
 # Run any script directly
 ./noesis.fish run_core  # Run just the core
-./noesis.fish <script>  # Run any script from fish_scripts/
+./noesis.fish <script>  # Run any script from scripts/fish/
 ```
 
 You can still use the individual scripts directly if you prefer:
 
 ```bash
-./bash_scripts/run_noesis.sh
-./bash_scripts/run_core.sh
+# Bash
+./scripts/bash/run_noesis.sh
+./scripts/bash/run_core.sh
+```
+
+```fish
+# Fish
+./scripts/fish/run_noesis.fish
+./scripts/fish/run_core.fish
 ```
 
 ## Noesis Hub Repository
@@ -213,12 +265,12 @@ requirements for attribution and profit-sharing for commercial use.
 
 ## Documentation
 
-- See the [changelogs](changelogs/) directory for version history:
-  - [CHANGELOG_v1.1.0.md](changelogs/CHANGELOG_v1.1.0.md)
-  - [CHANGELOG_v1.0.0.md](changelogs/CHANGELOG_v1.0.0.md)
-  - [CHANGELOG_v0.2.0.md](changelogs/CHANGELOG_v0.2.0.md)
-  - [CHANGELOG_v0.1.2.md](changelogs/CHANGELOG_v0.1.2.md)
-  - [CHANGELOG_v0.1.1.md](changelogs/CHANGELOG_v0.1.1.md)
+- See the [changelogs](docs/changelogs/) directory for version history:
+  - [CHANGELOG_v1.1.0.md](docs/changelogs/CHANGELOG_v1.1.0.md)
+  - [CHANGELOG_v1.0.0.md](docs/changelogs/CHANGELOG_v1.0.0.md)
+  - [CHANGELOG_v0.2.0.md](docs/changelogs/CHANGELOG_v0.2.0.md)
+  - [CHANGELOG_v0.1.2.md](docs/changelogs/CHANGELOG_v0.1.2.md)
+  - [CHANGELOG_v0.1.1.md](docs/changelogs/CHANGELOG_v0.1.1.md)
 
 ## Contributing
 
@@ -226,4 +278,4 @@ Contributions are welcome! Please note which component you are contributing to a
 
 ## Security
 
-Please review our [Security Policy](SECURITY.md) for reporting vulnerabilities.
+Please review our [Security Policy](docs/SECURITY.md) for reporting vulnerabilities.
