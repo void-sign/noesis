@@ -22,11 +22,11 @@
 #undef lldiv_t
 
 /* Ensure our types are available */
-#include "noesis_libc/include/noesis_types.h"
+#include "libs/noesis_libc/include/noesis_types.h"
 
 #else
 /* Normal case: just use our stdlib */
-#include "noesis_libc/include/stdlib/stdlib.h"
+#include "libs/noesis_libc/include/stdlib/stdlib.h"
 #endif
 
 #endif /* QUANTUM_STDLIB_H */

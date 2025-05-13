@@ -12,10 +12,10 @@
 echo "Running Noesis Core..."
 
 # Ensure we have a build
-if not test -f "./build/bin/noesis_core"
+if not test -f "./noesis"
     echo "Noesis Core not found. Building first..."
     make
 end
 
 # Run the core component
-./build/bin/noesis_core $argv
+./noesis $argv

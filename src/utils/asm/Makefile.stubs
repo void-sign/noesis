@@ -12,8 +12,8 @@ libnlibc_stubs.a: nlibc_minimal_stubs.o
 	ar rcs $@ $^
 
 install: libnlibc_stubs.a
-	mkdir -p ../../../lib
-	cp libnlibc_stubs.a ../../../lib/
+	mkdir -p ../../../build/lib
+	cp libnlibc_stubs.a ../../../build/lib/
 
 clean:
 	rm -f *.o *.a

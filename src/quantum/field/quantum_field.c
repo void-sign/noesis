@@ -8,7 +8,7 @@
 // Include stdlib.h which provides malloc and free declarations needed for new and del macros
 #include <stdlib/stdlib.h>
 #include <noesis_libc.h>  // Include all noesis_libc functionality with short names
-#include "../../../noesis_libc/include/noesis_names.h" // Ensure proper inclusion of nlibc_malloc and nlibc_free
+#include "libs/noesis_libc/include/noesis_names.h" // Ensure proper inclusion of nlibc_malloc and nlibc_free
 #include <stdint.h> // For uintptr_t
 
 // Helper function - allocate memory for a field
