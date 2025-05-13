@@ -3,10 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-// 
-/*
-// 
 // qbuild.c - Quantum circuit builder for the Noesis project
 
 // Function to build a quantum circuit

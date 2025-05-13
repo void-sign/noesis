@@ -3,10 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-// 
-/*
-// 
 // qrun.c - Quantum circuit runner for the Noesis project
 
 // Function to run a quantum circuit

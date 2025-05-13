@@ -4,8 +4,8 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 INCLUDES = -Iinclude -I. -I/Users/plugio/Documents/GitHub/noesis -I/Users/plugio/Documents/GitHub/noesis/noesis_libc/include
-LIBPATH = -L/Users/plugio/Documents/GitHub/noesis/noesis_libc
-LIBS = -lnoesis_libc
+LIBPATH = -L/Users/plugio/Documents/GitHub/noesis/lib
+LIBS = -lnlibc_stubs
 
 # Directories
 SRC_DIR = source
@@ -15,10 +15,10 @@ ASM_DIR = source/utils/asm
 
 # Source files
 CORE_SRC = $(wildcard $(SRC_DIR)/core/*.c)
-UTILS_SRC = $(wildcard $(SRC_DIR)/utils/*.c)
+UTILS_SRC = $(filter-out $(SRC_DIR)/utils/write.c, $(wildcard $(SRC_DIR)/utils/*.c))
 API_SRC = $(SRC_DIR)/api/noesis_api.c
 QUANTUM_SRC = $(wildcard $(SRC_DIR)/quantum/*.c) $(wildcard $(SRC_DIR)/quantum/field/*.c)
-ASM_SRC = $(wildcard $(ASM_DIR)/*.s)
+ASM_SRC = $(filter-out $(ASM_DIR)/write.s, $(wildcard $(ASM_DIR)/*.s))
 
 # Object files
 CORE_OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(CORE_SRC))

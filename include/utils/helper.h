@@ -20,7 +20,4 @@ int string_length(const char* str);
 // Function to reset the system (generic helper)
 void reset_system();
 
-// Function to output custom messages
-void custom_output(const char* message);
-
 #endif // HELPER_H

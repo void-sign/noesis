@@ -63,11 +63,6 @@ void noesis_free(void* ptr) {
     );
 }
 
-// Allocate memory using noesis_malloc
-void* allocate_memory(noesis_size_t size) {
-    return noesis_malloc(size);
-}
-
 // Function to format a string into a buffer
 void noesis_sbuffer(char* buffer, unsigned long size, const char* format, ...) {
     noesis_va_list args;

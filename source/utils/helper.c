@@ -8,6 +8,9 @@
 #include "../../include/utils/helper.h"
 #include "../../include/utils/noesis_lib.h" // Add this include for noesis_print
 
+// Forward declaration of internal function
+static void custom_output(const char* message);
+
 // Function to compare two strings (simple comparison)
 int compare_strings(const char* str1, const char* str2) {
     // Compare strings character by character
@@ -45,7 +48,7 @@ void reset_system() {
 }
 
 // Function to output a message using platform-specific methods
-void custom_output(const char* message) {
+static void custom_output(const char* message) {
     // Implementation using noesis_print
     noesis_print(message);
 }
