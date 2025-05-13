@@ -2,20 +2,24 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -c -fPIC
 LDFLAGS = -shared
+BUILD_DIR = ../../../build
+OBJ_DIR = $(BUILD_DIR)/obj/asm
+LIB_DIR = $(BUILD_DIR)/lib
 
-all: libnlibc_stubs.a
+all: $(LIB_DIR)/libnlibc_stubs.a
 
-nlibc_minimal_stubs.o: nlibc_minimal_stubs.c
+$(OBJ_DIR)/nlibc_minimal_stubs.o: nlibc_minimal_stubs.c
+	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -o $@ $<
 
-libnlibc_stubs.a: nlibc_minimal_stubs.o
+$(LIB_DIR)/libnlibc_stubs.a: $(OBJ_DIR)/nlibc_minimal_stubs.o
+	mkdir -p $(LIB_DIR)
 	ar rcs $@ $^
 
-install: libnlibc_stubs.a
-	mkdir -p ../../../build/lib
-	cp libnlibc_stubs.a ../../../build/lib/
+install: $(LIB_DIR)/libnlibc_stubs.a
+	# Already installed in the correct location
 
 clean:
-	rm -f *.o *.a
+	rm -f $(OBJ_DIR)/*.o $(LIB_DIR)/libnlibc_stubs.a
 
 .PHONY: all clean install
