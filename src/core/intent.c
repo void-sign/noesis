@@ -121,72 +121,48 @@ void handle_io() {
     char input[256];
     int max_attempts = 10; // Add maximum attempts to prevent infinite loops
     int attempts = 0;
-    int read_bytes = 0;
-    
-    // Clear input buffer before first use
-    for (int i = 0; i < 256; i++) {
-        input[i] = 0;
-    }
     
     out("Debug: Starting handle_io function\n");
     
     while (attempts < max_attempts) {
+        // Initialize buffer - we'll use a simple approach for testing
+        for (int i = 0; i < sizeof(input); i++) {
+            input[i] = 0;
+        }
+        
         out("Enter input: ");
         
-        // Call noesis_read to read a full line of input
-        read_bytes = noesis_read(input, sizeof(input));
-        
-        if (read_bytes < 0 || read_bytes >= 255) {
-            // Error or buffer overflow, break the loop
-            out("Input error detected, exiting.\n");
-            break;
-        }
-        
-        if (read_bytes == 0) {
-            // No input received, prompt again
-            out("No input received, please try again.\n");
-            continue;
-        }
+        // Call our function to read input from stdin
+        int read_bytes = noesis_read(input, sizeof(input));
         
         // Remove newline if present
         for (int i = 0; i < read_bytes; i++) {
             if (input[i] == '\n' || input[i] == '\r') {
                 input[i] = '\0';
-                read_bytes = i;
                 break;
             }
         }
         
-        // Ensure null termination
-        input[read_bytes] = '\0';
-        
-        attempts++;
-        
-        // Check for exit command with safe string comparison
-        int is_exit = 1;
-        if (read_bytes == 4) { // "exit" has 4 characters
-            const char* exit_str = "exit";
-            for (int i = 0; i < 4; i++) {
-                if (input[i] != exit_str[i]) {
-                    is_exit = 0;
-                    break;
-                }
-            }
-        } else {
-            is_exit = 0;
-        }
-        
-        if (is_exit) {
-            out("Exiting program.\n");
-            break;
-        }
-        
-        // Process valid input
+        // Log what we got
         out("You entered: ");
         out(input);
         out("\n");
         
-        // Learn from valid input
+        // Check for empty input
+        if (input[0] == '\0') {
+            out("Empty input, please try again.\n");
+            continue;
+        }
+        
+        attempts++;
+        
+        // Check for exit command
+        if (noesis_scmp(input, "exit") == 0) {
+            out("Exiting program.\n");
+            break;
+        }
+        
+        // Process valid input by learning from it
         learn_from_input(input);
     }
     
