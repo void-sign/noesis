@@ -153,6 +153,9 @@ int q_process_with_noesis(const char* input, char* output, int max_len) {
 // Implementation of the load_noesis_api function
 // This function dynamically loads the Noesis Core API from a shared library
 NoesisAPI* load_noesis_api(const char* lib_path) {
+    // Mark parameter as unused to avoid compiler warning
+    (void)lib_path;
+    
     // In a real implementation, we would use dlopen/LoadLibrary to load the library
     // and dlsym/GetProcAddress to get function pointers
 
