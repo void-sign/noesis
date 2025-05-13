@@ -6,13 +6,7 @@
 
 
 
-# validate_split.sh - Validate theset EXTEND_CRITICAL_FILES=(
-    "$NOESIS_EXTEND_PATH/LICENSE"
-    "$NOESIS_EXTEND_PATH/Makefile"
-    "$NOESIS_EXTEND_PATH/include/quantum/quantum.h"
-    "$NOESIS_EXTEND_PATH/source/quantum/quantum.c"
-    "$NOESIS_EXTEND_PATH/scripts/install_dependency.sh"
-)tory split
+# validate_split.sh - Validate the repository split
 # This script checks that both repositories are properly set up
 
 echo "Noesis Repository Split Validation"
@@ -103,25 +97,25 @@ else
     echo "✓ No core files found in Extend"
 fi
 
-# Check for "yourusername" in files
-echo "Checking for 'yourusername' in Core..."
+# Check for incorrect GitHub username references
+echo "Checking for incorrect username references in Core..."
 USERNAME_REFS=$(grep -r "yourusername" --include="*.md" --include="*.sh" --include="*.yml" "$NOESIS_PATH" 2>/dev/null)
 if [ -n "$USERNAME_REFS" ]; then
-    echo "✗ Found 'yourusername' references in Core:"
+    echo "✗ Found incorrect username references in Core (should be 'void-sign'):"
     echo "$USERNAME_REFS"
     ERROR=true
 else
-    echo "✓ No 'yourusername' references found in Core"
+    echo "✓ No incorrect username references found in Core"
 fi
 
-echo "Checking for 'yourusername' in Extend..."
+echo "Checking for incorrect username references in Hub..."
 USERNAME_REFS=$(grep -r "yourusername" --include="*.md" --include="*.sh" --include="*.yml" "$NOESIS_EXTEND_PATH" 2>/dev/null)
 if [ -n "$USERNAME_REFS" ]; then
-    echo "✗ Found 'yourusername' references in Extend:"
+    echo "✗ Found incorrect username references in Hub (should be 'void-sign'):"
     echo "$USERNAME_REFS"
     ERROR=true
 else
-    echo "✓ No 'yourusername' references found in Extend"
+    echo "✓ No incorrect username references found in Hub"
 fi
 
 echo

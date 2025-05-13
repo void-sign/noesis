@@ -9,11 +9,13 @@ This version introduces significant improvements to the core functionality, enha
 - Updated the C library implementation for better compatibility
 - Improved APIs for external integration
 - Added central control scripts for simplified command execution
+- Renamed "extend-example" to "hub_example" to align with Noesis Hub repository
 
 ## Directory Structure
 - Restructured project directories for better organization
 - Moved bash scripts from root directory to dedicated bash_scripts/ folder
 - Improved organization of include/quantum/ directory with field/ subdirectory
+- Renamed extension template folder from "extend-example" to "hub_example"
 
 ## Command Interface
 - Enhanced noesis.sh and noesis.fish as central command interfaces

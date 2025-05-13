@@ -13,8 +13,8 @@ echo "Noesis Repository Split Validation"
 echo "================================="
 echo
 
-set NOESIS_PATH "/Users/plugio/Documents/GitHub/noesis"
-set NOESIS_EXTEND_PATH "/Users/plugio/Documents/GitHub/noesis-extend"
+set NOESIS_PATH (dirname (dirname (status filename)))
+set NOESIS_EXTEND_PATH (dirname $NOESIS_PATH)"/noesis-hub"
 
 # Check if directories exist
 if not test -d $NOESIS_PATH
@@ -23,7 +23,7 @@ if not test -d $NOESIS_PATH
 end
 
 if not test -d $NOESIS_EXTEND_PATH
-    echo "Error: Noesis-Extend directory not found at $NOESIS_EXTEND_PATH"
+    echo "Error: Noesis-Hub directory not found at $NOESIS_EXTEND_PATH"
     exit 1
 end
 
@@ -94,25 +94,25 @@ else
     echo "✓ No core files found in Extend"
 end
 
-# Check for "yourusername" in files
-echo "Checking for 'yourusername' in Core..."
+# Check for incorrect GitHub username references
+echo "Checking for incorrect username references in Core..."
 set USERNAME_REFS (grep -r "yourusername" --include="*.md" --include="*.fish" --include="*.yml" $NOESIS_PATH 2>/dev/null)
 if test (count $USERNAME_REFS) -gt 0
-    echo "✗ Found 'yourusername' references in Core:"
+    echo "✗ Found incorrect username references in Core (should be 'void-sign'):"
     echo "$USERNAME_REFS"
     set ERROR true
 else
-    echo "✓ No 'yourusername' references found in Core"
+    echo "✓ No incorrect username references found in Core"
 end
 
-echo "Checking for 'yourusername' in Extend..."
+echo "Checking for incorrect username references in Hub..."
 set USERNAME_REFS (grep -r "yourusername" --include="*.md" --include="*.fish" --include="*.yml" $NOESIS_EXTEND_PATH 2>/dev/null)
 if test (count $USERNAME_REFS) -gt 0
-    echo "✗ Found 'yourusername' references in Extend:"
+    echo "✗ Found incorrect username references in Hub (should be 'void-sign'):"
     echo "$USERNAME_REFS"
     set ERROR true
 else
-    echo "✓ No 'yourusername' references found in Extend"
+    echo "✓ No incorrect username references found in Hub"
 end
 
 echo

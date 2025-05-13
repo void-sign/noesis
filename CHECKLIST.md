@@ -11,28 +11,28 @@ This checklist will help you finalize the Noesis repository split to ensure ever
 - [ ] Configure git for each repository:
   ```bash
   # For Noesis Core
-  cd /Users/plugio/Documents/GitHub/noesis
+  cd /path/to/noesis
   git init
   git add .
   git commit -m "Initial commit for Noesis Core v1.0.0 after repository split"
   git remote add origin https://github.com/void-sign/noesis.git
   
   # For Noesis-Extend
-  cd /Users/plugio/Documents/GitHub/noesis-extend
+  cd /path/to/noesis-hub
   git init
   git add .
-  git commit -m "Initial commit for Noesis-Extend v1.0.0"
-  git remote add origin https://github.com/void-sign/noesis-extend.git
+  git commit -m "Initial commit for Noesis-Hub v1.0.0"
+  git remote add origin https://github.com/void-sign/noesis-hub.git
   ```
 
 - [ ] Run one final check of all files:
   ```bash
-  # Check for any remaining references to 'yourusername'
-  cd /Users/plugio/Documents/GitHub/noesis
-  grep -r "yourusername" --include="*.md" --include="*.fish" --include="*.yml" .
+  # Check for any remaining references to 'void-sign'
+  cd /path/to/noesis
+  grep -r "void-sign" --include="*.md" --include="*.fish" --include="*.yml" .
   
-  cd /Users/plugio/Documents/GitHub/noesis-extend
-  grep -r "yourusername" --include="*.md" --include="*.fish" --include="*.yml" .
+  cd /path/to/noesis-hub
+  grep -r "void-sign" --include="*.md" --include="*.fish" --include="*.yml" .
   ```
 
 ## First Push
@@ -40,11 +40,11 @@ This checklist will help you finalize the Noesis repository split to ensure ever
 - [ ] Push to GitHub:
   ```bash
   # For Noesis Core
-  cd /Users/plugio/Documents/GitHub/noesis
+  cd /path/to/noesis
   git push -u origin main
   
-  # For Noesis-Extend
-  cd /Users/plugio/Documents/GitHub/noesis-extend
+  # For Noesis-Hub
+  cd /path/to/noesis-hub
   git push -u origin main
   ```
 
@@ -57,7 +57,7 @@ This checklist will help you finalize the Noesis repository split to ensure ever
   
 - [ ] Create releases:
   - [ ] Create v1.0.0 release for Noesis Core with notes from CHANGELOG_v1.0.0.md
-  - [ ] Create v1.0.0 release for Noesis-Extend with notes from CHANGELOG_v1.0.0.md
+  - [ ] Create v1.0.0 release for Noesis-Hub with notes from CHANGELOG_v1.0.0.md
   - [ ] Add appropriate tags
 
 - [ ] Update documentation:
@@ -70,12 +70,12 @@ This checklist will help you finalize the Noesis repository split to ensure ever
 - [ ] Test building both repositories:
   ```bash
   # Test Noesis Core
-  cd /Users/plugio/Documents/GitHub/noesis
+  cd /path/to/noesis
   ./install.sh
   ./run_core.sh
   
-  # Test Noesis-Extend
-  cd /Users/plugio/Documents/GitHub/noesis-extend
+  # Test Noesis-Hub
+  cd /path/to/noesis-hub
   ./scripts/install_dependency.sh
   ./install.sh
   ./run.sh
@@ -84,6 +84,6 @@ This checklist will help you finalize the Noesis repository split to ensure ever
 - [ ] Test cross-repository integration:
   ```bash
   # Using the launch script
-  cd /Users/plugio/Documents/GitHub/noesis
+  cd /path/to/noesis
   ./launch_noesis_env.sh
   ```

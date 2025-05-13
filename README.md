@@ -66,7 +66,7 @@ noesis/
 ├── data/                    # Core data files for simulations
 ├── debug/                   # Debug and testing utilities
 ├── examples/                # Example usage and implementation
-├── extend-example/          # Template for extension creation
+├── hub_example/             # Template for extension creation
 ├── fish_scripts/            # Alternative Fish shell scripts
 ├── include/                 # Header files
 │   ├── api/                 # API interface headers
@@ -200,11 +200,11 @@ You can still use the individual scripts directly if you prefer:
 ./bash_scripts/run_core.sh
 ```
 
-## Noesis-Extend Repository
+## Noesis Hub Repository
 
 For the extensions, quantum computing modules, and tools, please check the separate repository:
 
-**Repository URL:** https://github.com/void-sign/noesis-extend
+**Repository URL:** https://github.com/void-sign/noesis-hub
 
 ## License Information
 

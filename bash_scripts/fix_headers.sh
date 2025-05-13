@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+# Licensed under Noesis License - See LICENSE file for details
+#
 # Script to clean up headers and empty lines in source files
 
 # Find all source files
