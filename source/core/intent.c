@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 #include "../../include/core/intent.h"
 #include "../../include/core/memory.h" // For memory management
 #include "../../include/utils/data.h"   // For storing and retrieving data
@@ -133,14 +134,14 @@ void intent_cleanup(void* module) {
 void* intent_process(void* module, void* input) {
     // Process input and generate intentions
     (void)module; // Avoid unused parameter warning
-    
+
     // Create a sample intention based on the input
     static Intention *result = NULL;
-    
+
     if (result) {
         free_intention(result);
     }
-    
+
     const char* input_str = (const char*)input;
     if (input_str && *input_str) {
         result = create_intention(input_str, 1);
@@ -148,16 +149,16 @@ void* intent_process(void* module, void* input) {
     } else {
         result = create_intention("default intention", 0);
     }
-    
+
     return result;
 }
 
 const char* intent_to_string(void* module, void* intent_result) {
     (void)module; // Avoid unused parameter warning
-    
+
     Intention *intent = (Intention*)intent_result;
     static char result_buffer[256];
-    
+
     if (intent && intent->description) {
         noesis_sbuffer(result_buffer, sizeof(result_buffer), 
                      "Intent: %s (Priority: %d, Active: %d)", 
@@ -165,6 +166,6 @@ const char* intent_to_string(void* module, void* intent_result) {
     } else {
         noesis_sbuffer(result_buffer, sizeof(result_buffer), "No intent available");
     }
-    
+
     return result_buffer;
 }

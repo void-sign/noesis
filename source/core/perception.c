@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // perception.c - Implementation of perception system in the Noesis project
 
 #include "../../include/core/perception.h"

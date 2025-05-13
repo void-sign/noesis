@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // memory.h - Header file for memory management in the Noesis project
 
 #ifndef MEMORY_H

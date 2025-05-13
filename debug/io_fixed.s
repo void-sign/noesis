@@ -3,14 +3,15 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // Fixed version of io.s with proper parameter handling
 .global _noesis_read
 _noesis_read:
     // Setup stack frame
     pushq %rbp
     movq %rsp, %rbp
-    
+
     // Print debug message
     pushq %rsi                  // Save buffer pointer
     pushq %rdx                  // Save buffer size
@@ -21,7 +22,7 @@ _noesis_read:
     syscall
     popq %rdx                   // Restore buffer size
     popq %rsi                   // Restore buffer pointer
-    
+
     // Print out the address of the buffer for debugging
     pushq %rsi                  // Save buffer pointer again
     pushq %rdx                  // Save buffer size again
@@ -32,17 +33,17 @@ _noesis_read:
     addq $8, %rsp               // Pop arg
     popq %rdx                   // Restore buffer size
     popq %rsi                   // Restore buffer pointer
-    
+
     // Now write the test string directly into buffer
     movb $'t', (%rsi)
     movb $'e', 1(%rsi)
     movb $'s', 2(%rsi)
     movb $'t', 3(%rsi)
     movb $0, 4(%rsi)
-    
+
     // Return 4 bytes read
     movq $4, %rax
-    
+
     // Cleanup and return
     leave
     ret

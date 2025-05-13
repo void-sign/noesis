@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // helper.h - Header file for utility functions in the Noesis project
 
 #ifndef HELPER_H

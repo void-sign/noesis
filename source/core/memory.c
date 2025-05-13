@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // memory.c - Implementation of memory management in the Noesis project
 
 #include "../../include/core/memory.h"
@@ -59,7 +60,7 @@ void* memory_process(void* module, void* input) {
     // Process input using the memory system
     (void)module; // Avoid unused parameter warning
     (void)input;  // Avoid unused parameter warning
-    
+
     // For this simplified implementation, just return success
     return (void*)1;
 }

@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // compiler.h – logic → quantum compiler interface
 
 #ifndef COMPILER_H

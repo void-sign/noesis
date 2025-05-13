@@ -3,7 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
 // main.c - Entry point for the Noesis project
 
 // Include system headers first
@@ -32,19 +31,19 @@ int main() {
     printf("NOESIS Synthetic Consciousness System\n");
     printf("====================================\n");
     printf("Version 0.1.2 - May 2025\n\n");
-    
+
     // Create a buffer for user input
     char buffer[128] = {0};
-    
+
     printf("Enter a command or type 'help' for assistance.\n");
     printf("noesis> ");
-    
+
     // Read user input
     int bytes_read = noesis_read(buffer, sizeof(buffer));
-    
+
     if (bytes_read > 0) {
         printf("You entered: %s\n", buffer);
-        
+
         // Process the command (placeholder for future implementation)
         if (strcmp(buffer, "help") == 0) {
             printf("Available commands:\n");
@@ -54,8 +53,8 @@ int main() {
     } else {
         printf("No input received.\n");
     }
-    
+
     printf("\nNOESIS system terminated normally.\n");
-    
+
     return 0;
 }

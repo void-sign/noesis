@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // C helper for noesis_read
 // This provides support functions for the assembly implementation
 
@@ -17,7 +18,7 @@ int write_test_to_buffer(char* buffer, int size) {
     if (buffer == NULL || size <= 1) {
         return 0; // Error - can't read into a buffer of size 0 or 1
     }
-    
+
     // Actually read from stdin
     if (fgets(buffer, size, stdin) != NULL) {
         // Remove trailing newline if present
@@ -28,7 +29,7 @@ int write_test_to_buffer(char* buffer, int size) {
         }
         return len; // Return the actual number of bytes read
     }
-    
+
     // If fgets fails, return 0
     buffer[0] = '\0';
     return 0;

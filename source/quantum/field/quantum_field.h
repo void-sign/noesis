@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // quantum_field.h - Header for quantum field calculations
 // Part of the Noesis Quantum Module
 

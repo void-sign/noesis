@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // logic.c - Central logic processing
 
 #include "../../include/core/logic.h"
@@ -169,22 +170,22 @@ void logic_cleanup(void* module) {
 void* logic_process(void* module, void* input) {
     // Process input and apply logical reasoning
     (void)module; // Avoid unused parameter warning
-    
+
     // Simple processing - if input is non-NULL, learn from it
     if (input) {
         const char* input_str = (const char*)input;
         int input_length = 0;
         while (input_str[input_length]) input_length++;
-        
+
         // Basic learning: positive if input is longer than 10 chars
         learn_from_result(input_length > 10 ? 1 : -1);
     }
-    
+
     // Create a result indicating the current state
     static char result_buffer[64];
     noesis_sbuffer(result_buffer, sizeof(result_buffer), 
                  "Logic state: %d, Intent: %d", 
                  logic_state, current_intent);
-    
+
     return result_buffer;
 }

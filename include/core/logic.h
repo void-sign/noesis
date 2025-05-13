@@ -3,13 +3,16 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // logic.h - Header file for central logic processing
 
 #ifndef LOGIC_H
 #define LOGIC_H
 
+#ifndef NULL
 #define NULL (void*)0
+#endif
 
 // Structure for event handling (for external platform communication)
 typedef struct {

@@ -3,7 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // noesis_lib.h - Header file for Noesis-specific utility functions
 
 #ifndef NOESIS_LIB_H
@@ -11,6 +12,9 @@
 
 // Include noesis_api.h for common type definitions
 #include "../api/noesis_api.h"
+
+// Define size_t equivalent for Noesis
+typedef unsigned long noesis_size_t;
 
 // Define NOESIS_NULL as a replacement for NULL
 #ifndef NOESIS_NULL

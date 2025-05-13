@@ -3,13 +3,16 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-
+/*
+/* 
 // data.h - Header file for data management in the Noesis project
 
 #ifndef DATA_H
 #define DATA_H
 
+#ifndef NULL
 #define NULL (void*)0
+#endif
 
 // Function to initialize the data system
 void initialize_data();
