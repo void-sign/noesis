@@ -4,7 +4,8 @@
 #ifndef QUANTUM_FIELD_H
 #define QUANTUM_FIELD_H
 
-#include "../quantum.h"
+// Use relative path to the include directory's quantum.h
+#include "../../../include/quantum/quantum.h"
 
 // Field operation types
 typedef enum {

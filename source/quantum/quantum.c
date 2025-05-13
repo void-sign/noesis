@@ -35,6 +35,16 @@
 #define MAX_QUBITS 16
 #define MAX_GATES  256
 
+// Define the Noesis API structure
+typedef struct {
+    int (*init)(void);
+    int (*process)(const char*, char*, int);
+    void (*cleanup)(void);
+} NoesisAPI;
+
+// Dynamic loading function declaration
+NoesisAPI* load_noesis_api(const char* lib_path);
+
 static Qubit qubits[MAX_QUBITS];
 static Gate  gates[MAX_GATES];
 static Circuit circuit;
@@ -155,4 +165,15 @@ int q_process_with_noesis(const char* input, char* output, int max_len) {
         return len;
     }
     #endif
+}
+
+// Implementation of the load_noesis_api function
+// This function dynamically loads the Noesis Core API from a shared library
+NoesisAPI* load_noesis_api(const char* lib_path) {
+    // In a real implementation, we would use dlopen/LoadLibrary to load the library
+    // and dlsym/GetProcAddress to get function pointers
+    
+    // Simplified implementation for now - just return NULL
+    // to indicate the API is not available
+    return NULL;
 }

@@ -42,7 +42,7 @@ STATIC_LIB = $(LIB_DIR)/libnlibc.a
 SHARED_LIB = $(LIB_DIR)/libnlibc.so
 
 # Default target
-all: dirs $(STATIC_LIB) $(SHARED_LIB)
+all: dirs $(STATIC_LIB)
 
 # Create necessary directories
 dirs:
