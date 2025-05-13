@@ -1,0 +1,117 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+*.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# macOS
+.DS_Store
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+/build/
+build/
+/object/
+*.o
+*.log
+/libs/noesis_libc/obj/
+/libs/noesis_libc/lib/
+/noesis_lib_tests.o
+
+# Temporary files
+*.tmp
+*.bak
+
+# Generated binaries
+/noesis
+/noesis_tests
+
+# Log files
+/logs/*.log
+
+# Output directories
+/out_basm/
+/out/
+
+# Track these files regardless of any ignore rules
+!Makefile
+!LICENSE
+!Dockerfile
+
+# Debug directory - track source files but not binaries
+!debug/
+debug/*
+!debug/README.md
+!debug/*.c
+!debug/*.s
+!debug/Makefile.*
+
+# Fish scripts directory - track for reference
+!fish_scripts/
+fish_scripts/*
+!fish_scripts/README.md
+!fish_scripts/*.fish
+
+# Track all changelog files
+!changelogs/
+changelogs/*
+!changelogs/*.md
+
+# Ensure source directories are tracked
+!source/
+!include/
+!tests/
+!data/

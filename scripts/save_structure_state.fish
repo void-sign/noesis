@@ -1,4 +1,4 @@
-#!/usr/bin/fish
+#!/usr/bin/env fish
 
 # Script to save the current structure state of the Noesis project
 # Created: May 13, 2025

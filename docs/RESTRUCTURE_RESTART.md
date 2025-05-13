@@ -2,9 +2,23 @@
 
 This document outlines how to restart the restructuring process from the last saved state.
 
-## Method 1: Using Git Tag (Recommended)
+## Method 1: Using Simple Commands (Recommended)
 
-If you're working with the Git repository, you can use the saved Git tag to return to this exact state:
+Use the following simple commands to save or restore the project structure:
+
+```bash
+# To save the current project structure
+./noesis.fish save  # For fish shell
+./noesis.sh save    # For bash shell
+
+# To restore the latest saved structure state
+./noesis.fish continue  # For fish shell
+./noesis.sh continue    # For bash shell
+```
+
+## Method 2: Using Git Tag
+
+If you're working with the Git repository, you can use the saved Git tag to return to a specific state:
 
 ```bash
 # Check available restructure state tags
@@ -14,9 +28,9 @@ git tag | grep restructure-state
 git checkout restructure-state-20250513212544
 ```
 
-## Method 2: Using Saved Structure Files
+## Method 3: Using Saved Structure Files Directly
 
-If you don't have access to Git or prefer to recreate manually:
+If you need to restore a specific saved state manually:
 
 ```bash
 # For bash users
@@ -26,16 +40,18 @@ If you don't have access to Git or prefer to recreate manually:
 fish ./scripts/restore_structure_state.fish 20250513212544
 ```
 
+For more detailed information about structure management, see [STRUCTURE_MANAGEMENT.md](STRUCTURE_MANAGEMENT.md).
+
 ## Current Status of Restructuring
 
 As of the saved state (May 13, 2025), the following tasks have been completed:
 
-1. ✅ Created directory structure according to the plan in `docs/RESTRUCTURE_PLAN.md`
-2. ✅ Moved source code from `source/` to `src/`
-3. ✅ Moved documentation files to `docs/`
-4. ✅ Moved `noesis_libc` to `libs/noesis_libc`
-5. ✅ Updated Makefile to use new directory paths
-6. ✅ Created script directories in `scripts/bash/` and `scripts/fish/`
+1. Created directory structure according to the plan in `docs/RESTRUCTURE_PLAN.md`
+2. Moved source code from `source/` to `src/`
+3. Moved documentation files to `docs/`
+4. Moved `noesis_libc` to `libs/noesis_libc`
+5. Updated Makefile to use new directory paths
+6. Created script directories in `scripts/bash/` and `scripts/fish/`
 
 Pending tasks:
 

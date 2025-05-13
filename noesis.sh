@@ -48,6 +48,8 @@ print_usage() {
     echo -e "  ${GREEN}clean${NC}        - Clean up build artifacts"
     echo -e "  ${GREEN}clean_all${NC}    - Perform a complete repository cleanup"
     echo -e "  ${GREEN}install${NC}      - Install Noesis"
+    echo -e "  ${GREEN}save${NC}         - Save current project structure state"
+    echo -e "  ${GREEN}continue${NC}     - Restore latest saved structure state"
     echo -e "  ${GREEN}help${NC}         - Display this help message"
     echo
     echo -e "${YELLOW}All available commands:${NC}"
@@ -136,6 +138,49 @@ case "$1" in
         print_header
         echo -e "${YELLOW}Installing Noesis...${NC}"
         bash "bash_scripts/install.sh" "${@:2}"
+        ;;
+    "save")
+        print_header
+        echo -e "${YELLOW}Saving current project structure state...${NC}"
+        
+        # Check if the script exists in the new location first
+        if [ -f "scripts/save_structure_state.sh" ]; then
+            bash "scripts/save_structure_state.sh"
+        else
+            echo -e "${RED}Error: save_structure_state.sh script not found${NC}"
+            echo "Make sure the script exists at scripts/save_structure_state.sh"
+            exit 1
+        fi
+        
+        echo -e "${GREEN}✓ Project structure state saved successfully${NC}"
+        ;;
+    "continue")
+        print_header
+        echo -e "${YELLOW}Restoring latest saved project structure state...${NC}"
+        
+        # Find the latest timestamp in the docs directory
+        LATEST_TIMESTAMP=""
+        if [ -d "docs" ]; then
+            # Get only the timestamp part from the filename (after the last underscore)
+            LATEST_TIMESTAMP=$(ls -1 docs/directory_structure_*.txt 2>/dev/null | sort -r | head -1 | sed -n 's/.*structure_\([0-9]*\)\.txt$/\1/p')
+        fi
+        
+        if [ -z "$LATEST_TIMESTAMP" ]; then
+            echo -e "${RED}Error: No saved structure states found in docs directory${NC}"
+            exit 1
+        fi
+        
+        echo -e "${YELLOW}Found latest structure state: ${GREEN}${LATEST_TIMESTAMP}${NC}"
+        
+        # Check if the restore script exists
+        if [ -f "scripts/restore_structure_state.sh" ]; then
+            bash "scripts/restore_structure_state.sh" "$LATEST_TIMESTAMP"
+            echo -e "${GREEN}✓ Project structure state restored successfully${NC}"
+        else
+            echo -e "${RED}Error: restore_structure_state.sh script not found${NC}"
+            echo "Make sure the script exists at scripts/restore_structure_state.sh"
+            exit 1
+        fi
         ;;
     "help")
         print_header
