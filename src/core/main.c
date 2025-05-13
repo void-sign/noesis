@@ -5,6 +5,9 @@
 
 // main.c - Entry point for the Noesis project
 
+// Define NOESIS_USE_SHORT_NAMES to enable short function names like 'out'
+#define NOESIS_USE_SHORT_NAMES
+
 // Include noesis_libc header
 #include <noesis_libc.h>  // Include all noesis_libc functionality
 
@@ -29,27 +32,13 @@ int main() {
     out("====================================\n");
     out("Version 0.1.2 - May 2025\n\n");
 
-    // Create a buffer for user input
-    char buffer[128] = {0};
+    // Initialize intent system (this initializes the intent handling)
+    init_intent_system();
 
-    out("Enter a command or type 'help' for assistance.\n");
-    out("noesis> ");
-
-    // Read user input
-    int bytes_read = noesis_read(buffer, sizeof(buffer));
-
-    if (bytes_read > 0) {
-        out("You entered: %s\n", buffer);
-
-        // Process the command (placeholder for future implementation)
-        if (cmp(buffer, "help") == 0) {
-            out("Available commands:\n");
-            out("  help - Display this help message\n");
-            out("  exit - Exit the program\n");
-        }
-    } else {
-        out("No input received.\n");
-    }
+    // Call the central control function from intent.c
+    // This will handle input/output as the "consciousness" center
+    out("Starting cognitive IO interface...\n\n");
+    handle_io();  // This will show "Enter input: " and process user interactions
 
     out("\nNOESIS system terminated normally.\n");
 

@@ -110,17 +110,35 @@ jobs:
         # Create logs directory if it doesn't exist
         mkdir -p logs
         
-        # Run tests and capture output to logs
-        fish ./scripts/fish/run_all_tests.fish > logs/test_output.log 2>&1
+        # Run tests and capture output
+        echo "Running Noesis Core Tests..." > logs/test_output.log
+        echo "> Running ./noesis_tests" >> logs/test_output.log
         
-        # Store the exit code
+        # Execute test and save output
+        make test > /tmp/noesis_test_raw.tmp 2>&1
         TEST_EXIT_CODE=$?
         
-        # Add timestamp and system information to the log file
-        echo "----------------------------------------------------------------" >> logs/test_output.log
-        echo "Tests completed at $(date)" >> logs/test_output.log
-        echo "System: $(uname -a)" >> logs/test_output.log
-        echo "Commit: $(git rev-parse HEAD)" >> logs/test_output.log
+        echo "> Test binary executed" >> logs/test_output.log
+        echo "  Result: Test ran with exit code $TEST_EXIT_CODE" >> logs/test_output.log
+        
+        # Add status information
+        if [ $TEST_EXIT_CODE -eq 0 ]; then
+          echo -e "\n✓ Tests completed successfully" >> logs/test_output.log
+        else
+          echo -e "\n✗ Tests failed with exit code $TEST_EXIT_CODE" >> logs/test_output.log
+        fi
+        
+        echo -e "\nCore tests completed." >> logs/test_output.log
+        
+        # Add detailed test metadata to separate file
+        echo "----------------------------------------------------------------" > logs/test_metadata.log
+        echo "Tests completed at $(date)" >> logs/test_metadata.log
+        echo "System: $(uname -a)" >> logs/test_metadata.log
+        echo "Commit: $(git rev-parse HEAD)" >> logs/test_metadata.log
+        echo "Exit code: $TEST_EXIT_CODE" >> logs/test_metadata.log
+        
+        # Save the raw binary output for debugging if needed
+        cp /tmp/noesis_test_raw.tmp logs/test_raw_output.bin
         
         # Output summary to the CI console
         echo "Test logs saved to logs/test_output.log"
