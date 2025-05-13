@@ -183,13 +183,22 @@ static int execute_shell_script_direct(const char* script_path, const char* oper
     
     cmd[cmd_len] = '\0'; // Null-terminate again
     
-    // Use the system function from our assembly implementation
-    int result = syscall(SYS_execve, "/bin/sh", (char*[]) {"/bin/sh", "-c", cmd, 0}, 0);
-    
-    if (result != 0) {
-        // Execve failed
+    // Fork a child process
+    int pid = syscall(SYS_fork);
+    if (pid == 0) {
+        // Child process - execute the command
+        syscall(SYS_execve, "/bin/sh", (char*[]) {"/bin/sh", "-c", cmd, 0}, 0);
+        
+        // If we get here, execve failed
+        syscall(SYS_exit, 1); // Exit with error
+    } else if (pid < 0) {
+        // Fork failed
         return -1;
     }
+    
+    // Parent process - wait for child to complete
+    int status;
+    syscall(SYS_wait4, pid, &status, 0, 0);
     
     // Read back the output from the temporary file
     int bytes_read = 0;
@@ -230,14 +239,8 @@ void noesis_print(const char* message) {
         length++;
     }
     
-    // Try direct syscall first - this is safer and simpler
-    long result = syscall(SYS_write, STDOUT_FILENO, message, length);
-    
-    // If syscall failed, fall back to shell script
-    if (result < 0) {
-        const char* script_path = get_io_script_path();
-        execute_shell_script_direct(script_path, "print", message, 0, 0);
-    }
+    // Use direct syscall - simplest and most reliable
+    syscall(SYS_write, STDOUT_FILENO, message, length);
 }
 
 // Function to read input into a buffer
@@ -246,10 +249,73 @@ int noesis_read(char* buffer, unsigned long size) {
     if (!buffer || size <= 1) {
         return 0; // Error - can't read into a buffer of size 0 or 1
     }
+
+    // For testing/debugging - insert a test input
+    #ifdef NOESIS_DEBUG_TEST_MODE
+        const char* test_input = "test input\n";
+        int len = 0;
+        while (test_input[len] && len < size - 1) {
+            buffer[len] = test_input[len];
+            len++;
+        }
+        buffer[len] = '\0';
+        return len;
+    #else
+        // Use direct read syscall on stdin
+        int bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
+        
+        if (bytes_read > 0) {
+            buffer[bytes_read] = '\0'; // Null-terminate
+            return bytes_read;
+        } else {
+            buffer[0] = '\0';
+            return 0;
+        }
+    #endif
+}
+
+// Function to read a line of input from stdin
+// Returns the number of characters read (excluding null terminator)
+int noesis_getline(char* buffer, unsigned long size) {
+    if (!buffer || size <= 1) {
+        return 0; // Error - can't read into a buffer of size 0 or 1
+    }
     
-    // Get the appropriate shell script path
-    const char* script_path = get_io_script_path();
+    int index = 0;
+    int ch;
     
-    // Execute the read operation using the shell script
-    return execute_shell_script_direct(script_path, "read", "", buffer, size);
+    // Read characters one by one
+    while (index < size - 1) {
+        // Use direct read syscall to read one character
+        ch = 0;
+        int result = syscall(SYS_read, STDIN_FILENO, &ch, 1);
+        
+        if (result <= 0) {
+            // Error or EOF
+            break;
+        }
+        
+        // Store the character
+        buffer[index++] = ch;
+        
+        // Break on newline
+        if (ch == '\n') {
+            break;
+        }
+    }
+    
+    // Null-terminate the string
+    buffer[index] = '\0';
+    
+    return index;
+}
+
+// Function to get a single character from stdin
+int noesis_getchar(void) {
+    char ch = 0;
+    int result = syscall(SYS_read, STDIN_FILENO, &ch, 1);
+    if (result <= 0) {
+        return -1; // Error or EOF
+    }
+    return ch;
 }

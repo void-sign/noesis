@@ -7,10 +7,17 @@
  * intent.c - Implementation of intent handling in the Noesis project
  */
 
+ // Define NOESIS_USE_SHORT_NAMES to enable short function names like 'out'
+#define NOESIS_USE_SHORT_NAMES
+
+// Include noesis_libc header
+#include <noesis_libc.h>  // Include all noesis_libc functionality
+
 #include "../../include/core/intent.h"
 #include "../../include/core/memory.h" // For memory management
 #include "../../include/utils/data.h"   // For storing and retrieving data
 #include "../../include/utils/noesis_lib.h" // For noesis_scmp and noesis_ss
+#include "../../include/utils/io_functions.h" // For custom I/O functions
 
 #ifndef NULL
 #define NULL ((void*)0)
@@ -121,16 +128,33 @@ void handle_io() {
         input[i] = 0;
     }
     
+    out("Debug: Starting handle_io function\n");
+    
     while (attempts < max_attempts) {
-        noesis_print("Enter input: ");
+        out("Enter input: ");
         
-        // Call noesis_read with explicit buffer size and check return value
-        read_bytes = noesis_read(input, 255); // Leave room for null terminator
+        // Call noesis_read to read a full line of input
+        read_bytes = noesis_read(input, sizeof(input));
         
-        if (read_bytes <= 0) {
-            // Error or no input, break the loop
-            noesis_print("Input error detected, exiting.\n");
+        if (read_bytes < 0 || read_bytes >= 255) {
+            // Error or buffer overflow, break the loop
+            out("Input error detected, exiting.\n");
             break;
+        }
+        
+        if (read_bytes == 0) {
+            // No input received, prompt again
+            out("No input received, please try again.\n");
+            continue;
+        }
+        
+        // Remove newline if present
+        for (int i = 0; i < read_bytes; i++) {
+            if (input[i] == '\n' || input[i] == '\r') {
+                input[i] = '\0';
+                read_bytes = i;
+                break;
+            }
         }
         
         // Ensure null termination
@@ -153,21 +177,21 @@ void handle_io() {
         }
         
         if (is_exit) {
-            noesis_print("Exiting program.\n");
+            out("Exiting program.\n");
             break;
         }
         
         // Process valid input
-        noesis_print("You entered: ");
-        noesis_print(input);
-        noesis_print("\n");
+        out("You entered: ");
+        out(input);
+        out("\n");
         
         // Learn from valid input
         learn_from_input(input);
     }
     
     if (attempts >= max_attempts) {
-        noesis_print("Maximum input attempts reached, exiting.\n");
+        out("Maximum input attempts reached, exiting.\n");
     }
 }
 
