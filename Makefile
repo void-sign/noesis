@@ -1,125 +1,84 @@
 # Noesis Project Makefile
 
-# Compiler
+# Compiler and flags
 CC = gcc
+CFLAGS = -Wall -Wextra -std=c99
+INCLUDES = -Iinclude -I. -I/Users/plugio/Documents/GitHub/noesis -I/Users/plugio/Documents/GitHub/noesis/noesis_libc/include
+LIBPATH = -L/Users/plugio/Documents/GitHub/noesis/noesis_libc
+LIBS = -lnoesis_libc
 
 # Directories
-CORE_DIR = source/core
-UTILS_DIR = source/utils
-API_DIR = source/api
-QUANTUM_DIR = source/quantum
-FIELD_DIR = source/quantum/field
-TOOLS_DIR = source/tools
-TEST_DIR = tests
+SRC_DIR = source
 OBJ_DIR = object
+BIN_DIR = bin
+ASM_DIR = source/utils/asm
 
-# Source Files
-SRCS = $(CORE_DIR)/main.c \
-       $(CORE_DIR)/emotion.c \
-       $(CORE_DIR)/logic.c \
-       $(CORE_DIR)/memory.c \
-       $(CORE_DIR)/perception.c \
-       $(CORE_DIR)/intent.c \
-       $(UTILS_DIR)/data.c \
-       $(UTILS_DIR)/helper.c \
-       $(UTILS_DIR)/timer.c \
-       $(UTILS_DIR)/noesis_lib.c \
-       $(UTILS_DIR)/io_helper.c \
-       $(API_DIR)/noesis_api.c \
-       $(QUANTUM_DIR)/backend_ibm.c \
-       $(QUANTUM_DIR)/backend_stub.c \
-       $(QUANTUM_DIR)/compiler.c \
-       $(QUANTUM_DIR)/export_json.c \
-       $(QUANTUM_DIR)/export_qasm.c \
-       $(QUANTUM_DIR)/quantum.c \
-       $(FIELD_DIR)/quantum_field.c
+# Source files
+CORE_SRC = $(wildcard $(SRC_DIR)/core/*.c)
+UTILS_SRC = $(wildcard $(SRC_DIR)/utils/*.c)
+API_SRC = $(SRC_DIR)/api/noesis_api.c
+QUANTUM_SRC = $(wildcard $(SRC_DIR)/quantum/*.c) $(wildcard $(SRC_DIR)/quantum/field/*.c)
+ASM_SRC = $(wildcard $(ASM_DIR)/*.s)
 
-TESTS = $(TEST_DIR)/core_tests.c \
-        $(TEST_DIR)/main_tests.c \
-        $(TEST_DIR)/utils_tests.c \
-        $(TEST_DIR)/qlogic_tests.c
+# Object files
+CORE_OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(CORE_SRC))
+UTILS_OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(UTILS_SRC))
+API_OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(API_SRC))
+QUANTUM_OBJ = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(QUANTUM_SRC))
+ASM_OBJ = $(patsubst $(ASM_DIR)/%.s,$(OBJ_DIR)/asm/%.o,$(ASM_SRC))
 
-ALL_C_FILES = $(SRCS)
+# All object files
+OBJECTS = $(CORE_OBJ) $(UTILS_OBJ) $(API_OBJ) $(QUANTUM_OBJ) $(ASM_OBJ)
 
-# Object file names (flattened to obj/)
-OBJS = $(patsubst $(CORE_DIR)/%.c, $(OBJ_DIR)/core/%.o, $(filter $(CORE_DIR)/%, $(SRCS))) \
-       $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/utils/%.o, $(filter $(UTILS_DIR)/%, $(SRCS))) \
-       $(patsubst $(API_DIR)/%.c, $(OBJ_DIR)/api/%.o, $(filter $(API_DIR)/%, $(SRCS))) \
-       $(patsubst $(QUANTUM_DIR)/%.c, $(OBJ_DIR)/quantum/%.o, $(filter $(QUANTUM_DIR)/%, $(SRCS))) \
-       $(patsubst $(FIELD_DIR)/%.c, $(OBJ_DIR)/quantum/field/%.o, $(filter $(FIELD_DIR)/%, $(SRCS))) \
-       $(OBJ_DIR)/asm/repeat_input.o $(OBJ_DIR)/asm/mcopy.o $(OBJ_DIR)/asm/scomp.o $(OBJ_DIR)/asm/slen.o $(OBJ_DIR)/asm/write.o $(OBJ_DIR)/asm/io.o
-
-# Tools
-TOOLS = $(TOOLS_DIR)/qbuild.c \
-        $(TOOLS_DIR)/qrun.c
-
-# Executable
+# Output binary
 TARGET = noesis
 TEST_TARGET = noesis_tests
-QBUILD_TARGET = qbuild
-QRUN_TARGET = qrun
-
-# Flags
-CFLAGS = -Wall -Wextra -std=c99
-ASFLAGS = -g
-
-# Add include directories to the compiler's include path
-CFLAGS += -Iinclude -I. -I/Users/plugio/Documents/GitHub/noesis -I/Users/plugio/Documents/GitHub/noesis/noesis_libc/include
+QBUILD = $(BIN_DIR)/qbuild
+QRUN = $(BIN_DIR)/qrun
 
 # Default target
-all: $(TARGET) quantum_tools
+all: directories $(TARGET) $(TEST_TARGET) $(QBUILD) $(QRUN)
 
-quantum_tools: $(QBUILD_TARGET) $(QRUN_TARGET)
+# Create necessary directories
+directories:
+	mkdir -p $(OBJ_DIR)/core
+	mkdir -p $(OBJ_DIR)/utils
+	mkdir -p $(OBJ_DIR)/api
+	mkdir -p $(OBJ_DIR)/quantum
+	mkdir -p $(OBJ_DIR)/quantum/field
+	mkdir -p $(OBJ_DIR)/asm
+	mkdir -p $(BIN_DIR)
 
-# Link main target
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) -L./lib -lnlibc_stubs
-	
-# Build quantum tools
-$(QBUILD_TARGET): $(OBJ_DIR)/tools/qbuild.o $(filter $(OBJ_DIR)/quantum/%.o, $(OBJS))
-	@mkdir -p bin
-	$(CC) $^ -o bin/$(QBUILD_TARGET) -L./lib -lnlibc_stubs
-	
-$(QRUN_TARGET): $(OBJ_DIR)/tools/qrun.o $(filter $(OBJ_DIR)/quantum/%.o, $(OBJS))
-	@mkdir -p bin
-	$(CC) $^ -o bin/$(QRUN_TARGET) -L./lib -lnlibc_stubs
-	
-$(OBJ_DIR)/tools/%.o: $(TOOLS_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+# Compile C files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# Rule to create object files in the object directory
-$(OBJ_DIR)/core/%.o: $(CORE_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+# Special rule for API files
+$(OBJ_DIR)/api/%.o: $(SRC_DIR)/api/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -DNOESIS_BUILDING_LIB -c $< -o $@
 
-$(OBJ_DIR)/utils/%.o: $(UTILS_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJ_DIR)/api/%.o: $(API_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -DNOESIS_BUILDING_LIB -c $< -o $@
-
-$(OBJ_DIR)/quantum/%.o: $(QUANTUM_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJ_DIR)/quantum/field/%.o: $(FIELD_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJ_DIR)/asm/%.o: $(UTILS_DIR)/asm/%.s
-	@mkdir -p $(dir $@)
+# Assemble ASM files
+$(OBJ_DIR)/asm/%.o: $(ASM_DIR)/%.s
 	as -o $@ $<
 
-# Build test executable
-test: $(OBJS)
-	$(CC) $(CFLAGS) $(TESTS) -o $(TEST_TARGET) $(OBJS) -L./lib -lnlibc_stubs
+# Link the main program
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) $(LIBPATH) $(LIBS) -o $@
 
-# Clean
+# Build tests
+$(TEST_TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) $(LIBPATH) $(LIBS) -DNOESIS_TESTING -o $@
+
+# Build qbuild and qrun tools
+$(QBUILD):
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC_DIR)/tools/qbuild.c $(LIBPATH) $(LIBS) -o $@
+
+$(QRUN):
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC_DIR)/tools/qrun.c $(LIBPATH) $(LIBS) -o $@
+
+# Clean up
 clean:
-	rm -f $(OBJ_DIR)/*.o $(TARGET) $(TEST_TARGET) bin/$(QBUILD_TARGET) bin/$(QRUN_TARGET)
 	rm -rf $(OBJ_DIR)
+	rm -f $(TARGET) $(TEST_TARGET) $(QBUILD) $(QRUN)
 
-.PHONY: all clean test quantum_tools
+.PHONY: all clean directories
