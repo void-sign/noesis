@@ -38,12 +38,10 @@ function print_usage
     echo "  "$GREEN"clean"$NC"        - Clean up build artifacts"
     echo "  "$GREEN"clean_all"$NC"    - Perform a complete repository cleanup"
     echo "  "$GREEN"install"$NC"      - Install Noesis"
-    echo "  "$GREEN"save"$NC"         - Save current project structure state"
-    echo "  "$GREEN"continue"$NC"     - Restore latest saved structure state"
     echo "  "$GREEN"help"$NC"         - Display this help message"
     echo
     echo $YELLOW"All available commands:"$NC
-    for script in (ls -1 fish_scripts/ | grep '\.fish$' | sed 's/\.fish$//')
+    for script in (ls -1 scripts/fish/ | grep '\.fish$' | sed 's/\.fish$//')
         echo "  "$GREEN"$script"$NC
     end
 end
@@ -53,22 +51,22 @@ switch "$argv[1]"
     case "build"
         print_header
         echo $YELLOW"Building Noesis..."$NC
-        fish "fish_scripts/build_all.fish" $argv[2..-1]
+        fish "scripts/fish/build_all.fish" $argv[2..-1]
         
     case "run"
         print_header
         echo $YELLOW"Running Noesis Core..."$NC
-        fish "fish_scripts/run_noesis.fish" $argv[2..-1]
+        fish "scripts/fish/run_core.fish" $argv[2..-1]
         
     case "test"
         print_header
         echo $YELLOW"Running Noesis tests..."$NC
-        fish "fish_scripts/run_all_tests.fish" $argv[2..-1]
+        fish "scripts/fish/run_all_tests.fish" $argv[2..-1]
         
     case "clean"
         print_header
         echo $YELLOW"Cleaning Noesis build artifacts..."$NC
-        fish "fish_scripts/cleanup_folders.fish" $argv[2..-1]
+        fish "scripts/fish/cleanup_folders.fish" $argv[2..-1]
         
     case "clean_all"
         print_header
@@ -80,11 +78,11 @@ switch "$argv[1]"
         
         # Clean up folder structure
         echo $PINK"Step 2: Cleaning up folder structure..."$NC
-        fish "fish_scripts/cleanup_folders.fish" $argv[2..-1]
+        fish "scripts/fish/cleanup_folders.fish" $argv[2..-1]
         
         # Clean up repo
         echo $PINK"Step 3: Cleaning up repository..."$NC
-        fish "fish_scripts/cleanup_repo.fish" $argv[2..-1]
+        fish "scripts/fish/cleanup_repo.fish" $argv[2..-1]
         
         # Skip extension cleanup if the extension repo doesn't exist
         echo $PINK"Step 4: Checking for extensions..."$NC
@@ -128,50 +126,9 @@ switch "$argv[1]"
     case "install"
         print_header
         echo $YELLOW"Installing Noesis..."$NC
-        fish "fish_scripts/install.fish" $argv[2..-1]
+        fish "scripts/fish/install.fish" $argv[2..-1]
         
-    case "save"
-        print_header
-        echo $YELLOW"Saving current project structure state..."$NC
-        
-        # Check if the script exists in the new location first
-        if test -f "scripts/save_structure_state.fish"
-            fish "scripts/save_structure_state.fish"
-        else
-            echo $RED"Error: save_structure_state.fish script not found"$NC
-            echo "Make sure the script exists at scripts/save_structure_state.fish"
-            exit 1
-        end
-        
-        echo $GREEN"✓ Project structure state saved successfully"$NC
-        
-    case "continue"
-        print_header
-        echo $YELLOW"Restoring latest saved project structure state..."$NC
-        
-        # Find the latest timestamp in the docs directory
-        set -l latest_timestamp ""
-        if test -d "docs"
-            # Get only the timestamp part from the filename (after the last underscore)
-            set latest_timestamp (ls -1 docs/directory_structure_*.txt 2>/dev/null | sort -r | head -1 | sed -n 's/.*structure_\([0-9]*\)\.txt$/\1/p')
-        end
-        
-        if test -z "$latest_timestamp"
-            echo $RED"Error: No saved structure states found in docs directory"$NC
-            exit 1
-        end
-        
-        echo $YELLOW"Found latest structure state: "$GREEN"$latest_timestamp"$NC
-        
-        # Check if the restore script exists
-        if test -f "scripts/restore_structure_state.fish"
-            fish "scripts/restore_structure_state.fish" $latest_timestamp
-            echo $GREEN"✓ Project structure state restored successfully"$NC
-        else
-            echo $RED"Error: restore_structure_state.fish script not found"$NC
-            echo "Make sure the script exists at scripts/restore_structure_state.fish"
-            exit 1
-        end
+
         
     case "help"
         print_header
@@ -189,11 +146,11 @@ switch "$argv[1]"
         set NEW_ARGS $argv[2..-1]
         
         # Check if the script exists
-        if test -f "fish_scripts/$SCRIPT_NAME.fish"
+        if test -f "scripts/fish/$SCRIPT_NAME.fish"
             print_header
             echo $YELLOW"Running script: "$GREEN"$SCRIPT_NAME"$NC
             # Execute the script with all remaining arguments
-            fish "fish_scripts/$SCRIPT_NAME.fish" $NEW_ARGS
+            fish "scripts/fish/$SCRIPT_NAME.fish" $NEW_ARGS
         else
             echo $RED"Error: Command '$SCRIPT_NAME' not found"$NC
             print_usage
