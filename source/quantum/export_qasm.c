@@ -43,29 +43,48 @@ static int gate_to_text(GateType type, char *out) {
 
 int export_qasm(char *buffer, int max_len, const Circuit *circuit) {
     int pos = 0;
-
+    
+    // Check for valid buffer and size
+    if (!buffer || max_len <= 0) return -1;
+    
+    // Ensure space for header
+    if (pos + 20 >= max_len) return -1;  // Conservative estimate for header
     pos += write_str(buffer + pos, "# qubits: ");
     pos += write_int(buffer + pos, circuit->num_qubits);
+    if (pos + 1 >= max_len) return -1;
     buffer[pos++] = '\n';
 
     for (int i = 0; i < circuit->num_gates; ++i) {
-        Gate *g = &circuit->gates[i];
+        const Gate *g = &circuit->gates[i];
         char instr[8];
         int n = gate_to_text(g->type, instr);
+        
+        // Ensure space for gate instruction and following space
+        if (pos + n + 1 >= max_len) return -1;
         for (int j = 0; j < n; ++j) buffer[pos++] = instr[j];
         buffer[pos++] = ' ';
 
         for (int j = 0; j < g->ntargets; ++j) {
+            // Ensure space for target qubit representation (q[XX],)
+            // Worst case: q[100] = 5 chars + potential comma = 6 chars
+            if (pos + 6 >= max_len) return -1;
             buffer[pos++] = 'q';
             buffer[pos++] = '[';
             pos += write_int(buffer + pos, g->targets[j]);
             buffer[pos++] = ']';
-            if (j != g->ntargets - 1)
+            if (j != g->ntargets - 1) {
+                if (pos + 1 >= max_len) return -1;
                 buffer[pos++] = ',';
+            }
         }
+        
+        // Ensure space for newline
+        if (pos + 1 >= max_len) return -1;
         buffer[pos++] = '\n';
     }
 
+    // Ensure space for null terminator
+    if (pos + 1 > max_len) return -1;
     buffer[pos] = 0;
     return pos;
 }
