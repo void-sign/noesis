@@ -1,4 +1,4 @@
-# Noesis v1.0.0
+# Noesis v1.1.0
 
 ![Noesis Logo](noesis-logo.jpg)
 
@@ -46,11 +46,23 @@ The two repositories are now completely independent and communicate via the stan
 ### Directory Structure
 ```
 noesis/
-├── build_all.sh             # Build script for all components
+├── bash_scripts/           # Bash shell scripts for building and running
+│   ├── build_all.sh        # Build script for all components
+│   ├── cleanup_extensions.sh # Script to clean extension artifacts
+│   ├── cleanup_folders.sh  # Script to clean temporary folders
+│   ├── cleanup_repo.sh     # Script to clean repository state
+│   ├── fix_headers.sh      # Script to fix header files
+│   ├── install.sh          # Installation script
+│   ├── launch_noesis_env.sh # Launch Noesis environment
+│   ├── link_libraries.sh   # Script to link libraries
+│   ├── migrate.sh          # Migration script
+│   ├── run_all_tests.sh    # Script to execute all test suites
+│   ├── run_core.sh         # Script to run core functionality
+│   ├── run_noesis.sh       # Main execution script
+│   ├── run_tests.sh        # Script to run tests
+│   ├── update_headers.sh   # Script to update headers
+│   └── validate_split.sh   # Validation script for repository split
 ├── changelogs/              # Version history and release notes
-├── cleanup_extensions.sh    # Script to clean extension artifacts
-├── cleanup_folders.sh       # Script to clean temporary folders
-├── cleanup_repo.sh          # Script to clean repository state
 ├── data/                    # Core data files for simulations
 ├── debug/                   # Debug and testing utilities
 ├── examples/                # Example usage and implementation
@@ -59,22 +71,27 @@ noesis/
 ├── include/                 # Header files
 │   ├── api/                 # API interface headers
 │   ├── core/                # Core system headers
+│   ├── quantum/             # Quantum computation headers
+│   │   └── field/           # Quantum field headers
 │   └── utils/               # Utility function headers
 ├── logic_input/             # Logic processing input files
 ├── logs/                    # Log output files
 ├── noesis_libc/             # Custom C library implementation
+│   ├── include/             # Library header files
+│   ├── lib/                 # Compiled library files
+│   ├── obj/                 # Object files
+│   └── src/                 # Source files
 ├── object/                  # Compiled object files
 │   ├── api/                 # API object files
 │   ├── asm/                 # Assembly object files
 │   ├── core/                # Core system object files
 │   └── utils/               # Utility object files
 ├── out_basm/                # Output binary assembly files
-├── run_all_tests.sh         # Script to execute all test suites
-├── run_core.sh              # Script to run core functionality
-├── run_noesis.sh            # Main execution script
 ├── source/                  # Source code files
 │   ├── api/                 # API interface implementation
 │   ├── core/                # Core system implementation
+│   ├── quantum/             # Quantum computation implementation
+│   ├── tools/               # Tools implementation
 │   └── utils/               # Utility function implementation
 └── tests/                   # Test suites and unit tests
 ```
@@ -114,9 +131,9 @@ make
 For a complete setup that includes creating libraries and setting up the environment:
 
 ```bash
-./build_all.sh   # Basic build with clean
+./bash_scripts/build_all.sh   # Basic build with clean
 # or
-./install.sh     # Full installation
+./bash_scripts/install.sh     # Full installation
 ```
 
 The installation script will:
@@ -128,18 +145,59 @@ The installation script will:
 6. Run tests (if available)
 7. Set up environment variables and create symbolic links
 
-## Running
+You can also use Fish shell scripts if you prefer:
 
-To run the Noesis core:
-
-```bash
-./run_noesis.sh
+```fish
+./fish_scripts/build_all.fish   # Basic build with clean
+# or
+./fish_scripts/install.fish     # Full installation
 ```
 
-Or you can use the simpler script that targets just the core:
+## Running
+
+Noesis now provides a central control interface for both Bash and Fish shells. You can use these scripts to perform common operations with a simplified syntax:
+
+### Bash Shell
 
 ```bash
-./run_core.sh
+# Main interface with helpful commands
+./noesis.sh help
+
+# Common operations
+./noesis.sh build     # Build the Noesis core
+./noesis.sh run       # Run the Noesis core
+./noesis.sh test      # Run all tests
+./noesis.sh clean     # Clean up build artifacts
+./noesis.sh install   # Install Noesis
+
+# Run any script directly
+./noesis.sh run_core  # Run just the core
+./noesis.sh <script>  # Run any script from bash_scripts/
+```
+
+### Fish Shell
+
+```fish
+# Main interface with helpful commands
+./noesis.fish help
+
+# Common operations
+./noesis.fish build     # Build the Noesis core
+./noesis.fish run       # Run the Noesis core
+./noesis.fish test      # Run all tests
+./noesis.fish clean     # Clean up build artifacts
+./noesis.fish install   # Install Noesis
+
+# Run any script directly
+./noesis.fish run_core  # Run just the core
+./noesis.fish <script>  # Run any script from fish_scripts/
+```
+
+You can still use the individual scripts directly if you prefer:
+
+```bash
+./bash_scripts/run_noesis.sh
+./bash_scripts/run_core.sh
 ```
 
 ## Noesis-Extend Repository
@@ -156,6 +214,7 @@ requirements for attribution and profit-sharing for commercial use.
 ## Documentation
 
 - See the [changelogs](changelogs/) directory for version history:
+  - [CHANGELOG_v1.1.0.md](changelogs/CHANGELOG_v1.1.0.md)
   - [CHANGELOG_v1.0.0.md](changelogs/CHANGELOG_v1.0.0.md)
   - [CHANGELOG_v0.2.0.md](changelogs/CHANGELOG_v0.2.0.md)
   - [CHANGELOG_v0.1.2.md](changelogs/CHANGELOG_v0.1.2.md)
