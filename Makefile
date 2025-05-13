@@ -2,7 +2,6 @@
 
 # Compiler and flags
 CC = gcc
-AS = as
 CFLAGS = -Wall -Wextra -std=c99 -Iinclude -I. -Ilibs/noesis_libc/include
 LDFLAGS = -Lbuild/lib
 LIBS = -lnlibc_stubs
@@ -13,7 +12,6 @@ SRC_UTILS = src/utils
 SRC_API = src/api
 SRC_QUANTUM = src/quantum
 SRC_FIELD = $(SRC_QUANTUM)/field
-SRC_ASM = $(SRC_UTILS)/asm
 
 # Object directories
 OBJ_DIR = build/obj
@@ -22,7 +20,6 @@ OBJ_UTILS = $(OBJ_DIR)/utils
 OBJ_API = $(OBJ_DIR)/api
 OBJ_QUANTUM = $(OBJ_DIR)/quantum
 OBJ_FIELD = $(OBJ_DIR)/quantum/field
-OBJ_ASM = $(OBJ_DIR)/asm
 BIN_DIR = build/bin
 
 # Core objects
@@ -31,7 +28,8 @@ CORE_OBJS = $(OBJ_CORE)/emotion.o $(OBJ_CORE)/intent.o $(OBJ_CORE)/logic.o \
 
 # Utils objects
 UTILS_OBJS = $(OBJ_UTILS)/data.o $(OBJ_UTILS)/helper.o $(OBJ_UTILS)/io_helper.o \
-             $(OBJ_UTILS)/noesis_lib.o $(OBJ_UTILS)/noesis_libc_stubs.o $(OBJ_UTILS)/timer.o
+             $(OBJ_UTILS)/io_functions.o $(OBJ_UTILS)/noesis_lib.o $(OBJ_UTILS)/noesis_libc_stubs.o \
+             $(OBJ_UTILS)/timer.o $(OBJ_UTILS)/string_functions.o
 
 # API objects
 API_OBJS = $(OBJ_API)/noesis_api.o
@@ -43,12 +41,8 @@ QUANTUM_OBJS = $(OBJ_QUANTUM)/backend_ibm.o $(OBJ_QUANTUM)/backend_stub.o \
 # Field objects
 FIELD_OBJS = $(OBJ_FIELD)/quantum_field.o
 
-# Assembly objects
-ASM_OBJS = $(OBJ_ASM)/io.o $(OBJ_ASM)/mcopy.o $(OBJ_ASM)/repeat_input.o \
-           $(OBJ_ASM)/scomp.o $(OBJ_ASM)/slen.o
-
 # All objects
-ALL_OBJS = $(CORE_OBJS) $(UTILS_OBJS) $(API_OBJS) $(QUANTUM_OBJS) $(FIELD_OBJS) $(ASM_OBJS)
+ALL_OBJS = $(CORE_OBJS) $(UTILS_OBJS) $(API_OBJS) $(QUANTUM_OBJS) $(FIELD_OBJS)
 
 # Output binary
 TARGET = noesis
@@ -61,7 +55,7 @@ all: directories noesis
 
 # Create necessary directories
 directories:
-	mkdir -p $(OBJ_CORE) $(OBJ_UTILS) $(OBJ_API) $(OBJ_QUANTUM) $(OBJ_FIELD) $(OBJ_ASM) $(BIN_DIR)
+	mkdir -p $(OBJ_CORE) $(OBJ_UTILS) $(OBJ_API) $(OBJ_QUANTUM) $(OBJ_FIELD) $(BIN_DIR)
 
 # Core files
 $(OBJ_CORE)/%.o: $(SRC_CORE)/%.c
@@ -82,10 +76,6 @@ $(OBJ_QUANTUM)/%.o: $(SRC_QUANTUM)/%.c
 # Field files
 $(OBJ_FIELD)/%.o: $(SRC_FIELD)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
-
-# Assembly files
-$(OBJ_ASM)/%.o: $(SRC_ASM)/%.s
-	$(AS) $< -o $@
 
 # Link the main program
 noesis: $(ALL_OBJS)

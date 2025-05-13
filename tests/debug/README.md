@@ -9,30 +9,26 @@ This directory contains test and debug code that was used during the development
 - `main_test.c`: Test version of the main program
 - `helper_test.c`: Test program for the helper function
 - `minimal_test.c`: Minimal test program
-- `mixed_test.c`: Test program that mixes C and assembly code
+- `mixed_test.c`: Test program that mixes C and assembly code (deprecated)
 
-### Assembly Test Files
-- `io_basic.s`: Basic version of the io.s file
-- `io_debug.s`: Debug version of the io.s file
-- `io_fixed.s`: Fixed version of the io.s file
-- `io_incremental.s`: Incremental improvements to the io.s file
-- `io_minimal.s`: Minimal version of the io.s file
-- `io_with_c.s`: Version of io.s that calls a C helper function
-- `minimal_test.s`: Minimal test assembly file
+### Assembly Test Files (Deprecated)
+Note: Assembly files have been removed from the repository. The functionality is now implemented in C.
+The files below are kept in the documentation for historical reference only:
+
+- `io_basic.s`: Basic version of the io.s file (replaced by C implementation)
+- `io_debug.s`: Debug version of the io.s file (replaced by C implementation)
+- `io_fixed.s`: Fixed version of the io.s file (replaced by C implementation)
+- `io_incremental.s`: Incremental improvements to the io.s file (replaced by C implementation)
+- `io_minimal.s`: Minimal version of the io.s file (replaced by C implementation)
+- `io_with_c.s`: Version of io.s that calls a C helper function (replaced by C implementation)
+- `minimal_test.s`: Minimal test assembly file (replaced by C implementation)
 
 ### Makefiles
 - `Makefile.test`: Makefile for running tests
-- `Makefile.mixed`: Makefile for running mixed C/assembly tests
+- `Makefile.mixed`: Makefile for running mixed C/assembly tests (needs update for C-only)
 
 ## Debugging the `noesis_read` Function
-
-The `noesis_read` function had an issue that caused an infinite loop and error messages. The problem was in the assembly implementation in `io.s`. We fixed it by:
-
-1. Replacing the complex assembly code with a simpler version that calls a C helper function
-2. Implementing the C helper function to write "test" to the buffer
-3. Updating the function signature to return an `int` value instead of `void`
-
-These changes eliminated the infinite loop and allowed the program to run correctly.
+All the functionality previously implemented in assembly is now available through C implementations in the `string_functions.c` file. This provides better maintainability and compatibility across different platforms.
 
 ## Running Tests
 

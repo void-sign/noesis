@@ -21,7 +21,7 @@ typedef unsigned long noesis_size_t;
 #define NOESIS_NULL ((void*)0)
 #endif
 
-// Function to write a message to the terminal
+// Function to write a message to the terminal (C implementation)
 void noesis_print(const char* message);
 
 // Function to simulate getting the current time (in seconds since epoch)
@@ -36,12 +36,18 @@ char* noesis_strdup(const char* str);
 // Memory deallocation function
 void noesis_free(void* ptr);
 
-// Function to read input from the user
+// Function to read input from the user (C implementation)
 // Returns the number of bytes read (or 0 on error)
 int noesis_read(char* buffer, unsigned long size);
 
-// Function to compare two strings
+// Function to compare two strings (C implementation)
 int noesis_strcmp(const char* str1, const char* str2);
+
+// Function for calculating string length (C implementation)
+noesis_size_t noesis_strlen(const char* str);
+
+// Function to copy memory (C implementation)
+void* noesis_memcpy(void* dest, const void* src, noesis_size_t n);
 
 // Function to format a string into a buffer
 void noesis_sbuffer(char* buffer, unsigned long size, const char* format, ...);
@@ -52,18 +58,15 @@ typedef char* noesis_va_list;
 #define noesis_va_arg(ap, type) (*(type*)((ap += sizeof(type)) - sizeof(type)))
 #define noesis_va_end(ap) (ap = 0) // Replaced NULL with 0 to avoid dependency
 
-// Declare noesis_strcmp and noesis_strstr for global use
-int noesis_strcmp(const char *str1, const char *str2);
+// String search function (C implementation)
 char *noesis_ss(const char *haystack, const char *needle);
 
-// Declare noesis_malloc, noesis_free, noesis_sdup, noesis_scmp, and noesis_printf for global use
-void* noesis_malloc(noesis_size_t size);
-void noesis_free(void* ptr);
+// Alias functions
 char* noesis_sdup(const char* s);
 int noesis_scmp(const char* s1, const char* s2);
 void noesis_printf(const char* format, ...);
 
-// Function declarations for noesis utility functions
-char* noesis_read_line(void);  // Changed from noesis_read to noesis_read_line
+// Function to read a line of text
+char* noesis_read_line(void);
 
 #endif // NOESIS_LIB_H

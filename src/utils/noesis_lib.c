@@ -7,9 +7,8 @@
 
 #include "../../include/utils/noesis_lib.h"
 
-// External assembly functions for I/O operations
-extern void noesis_print(const char* message);
-extern int noesis_read(char* buffer, unsigned long size);
+// I/O functions are now implemented in io_functions.c
+// No need for external assembly references
 
 // Function to simulate getting the current time (in seconds since epoch)
 unsigned long noesis_get_time() {
