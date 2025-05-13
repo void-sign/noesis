@@ -75,6 +75,7 @@ dkms.conf
 
 # Generated binaries
 /noesis
+/noesis_tests
 
 # Log files
 /logs/*.log

@@ -3,9 +3,6 @@
 # Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
 # Licensed under Noesis License - See LICENSE file for details
 #
-
-
-
 # Updated runner script for Noesis Core
 # Note: Noesis-Extend is now in a separate repository
 
