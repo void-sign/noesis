@@ -19,6 +19,17 @@ echo "Directory structure saved to docs/directory_structure_$TIMESTAMP.txt"
 cp Makefile "docs/Makefile_$TIMESTAMP"
 echo "Makefile saved to docs/Makefile_$TIMESTAMP"
 
+# Save the ncom command files
+if [ -f ncom ]; then
+    cp ncom "docs/ncom_$TIMESTAMP"
+    echo "ncom saved to docs/ncom_$TIMESTAMP"
+fi
+
+if [ -f ncom.sh ]; then
+    cp ncom.sh "docs/ncom.sh_$TIMESTAMP"
+    echo "ncom.sh saved to docs/ncom.sh_$TIMESTAMP"
+fi
+
 # Save the current .vscode/tasks.json state
 if [ -f .vscode/tasks.json ]; then
     cp .vscode/tasks.json "docs/tasks.json_$TIMESTAMP"
