@@ -4,19 +4,16 @@ This directory contains the header files for the Noesis LibC implementation.
 
 ## Naming Convention
 
-Noesis LibC supports three different naming conventions:
+Noesis LibC supports two different naming conventions:
 
 1. **Noesis Native Names** - All functions are prefixed with `nlibc_` (e.g., `nlibc_printf`, `nlibc_malloc`). These are always available.
 
-2. **Short Names** - Brief, concise function names like `out` (for printf), `new` (for malloc). These are recommended for new code.
+2. **Short Names** - Brief, concise function names like `out` (for printf), `new` (for malloc). These are the recommended approach for all new code.
    - Enable with: `#define NOESIS_USE_SHORT_NAMES` before including the headers.
-
-3. **Standard C Names** - Traditional C function names like `printf`, `malloc`. Provided for compatibility.
-   - Enable with: `#define NOESIS_LIBC_USE_STD_NAMES` before including the headers.
 
 ## Header Files
 
-- **noesis_names.h** - Combined header file for both short names and standard C names mappings.
+- **noesis_names.h** - Header file for short name mappings to native function names.
 - **noesis_libc.h** - Main header file that includes all the necessary headers for the library.
 - **noesis_types.h** - Common type definitions used throughout the library.
 - **noesis_config.h** - Configuration options for the library.

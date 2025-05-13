@@ -8,9 +8,7 @@
 
 /* 
  * This file defines short aliases for Noesis libc functions
- * It consolidates both short names and standard names into one place
  * Use #define NOESIS_USE_SHORT_NAMES to enable short names
- * Use #define NOESIS_LIBC_USE_STD_NAMES to enable standard names (backward compatibility)
  */
 
 /* Short names are now the recommended approach */
@@ -109,96 +107,5 @@
     #define outstr  nlibc_stdout
     #define errstr  nlibc_stderr
 #endif /* NOESIS_USE_SHORT_NAMES */
-
-/* For backward compatibility, also include standard C library names mapping */
-#ifdef NOESIS_LIBC_USE_STD_NAMES
-    /* stdio.h functions */
-    #define printf      nlibc_printf
-    #define fprintf     nlibc_fprintf
-    #define sprintf     nlibc_sprintf
-    #define snprintf    nlibc_snprintf
-    #define vprintf     nlibc_vprintf
-    #define vfprintf    nlibc_vfprintf
-    #define vsprintf    nlibc_vsprintf
-    #define vsnprintf   nlibc_vsnprintf
-    #define scanf       nlibc_scanf
-    #define fscanf      nlibc_fscanf
-    #define sscanf      nlibc_sscanf
-    #define fgetc       nlibc_fgetc
-    #define getc        nlibc_getc
-    #define getchar     nlibc_getchar
-    #define fputc       nlibc_fputc
-    #define putc        nlibc_putc
-    #define putchar     nlibc_putchar
-    #define fgets       nlibc_fgets
-    #define fputs       nlibc_fputs
-    #define puts        nlibc_puts
-    #define ungetc      nlibc_ungetc
-    #define fread       nlibc_fread
-    #define fwrite      nlibc_fwrite
-    #define fseek       nlibc_fseek
-    #define ftell       nlibc_ftell
-    #define fflush      nlibc_fflush
-    #define feof        nlibc_feof
-    #define ferror      nlibc_ferror
-    #define clearerr    nlibc_clearerr
-    #define fopen       nlibc_fopen
-    #define fclose      nlibc_fclose
-
-    /* stdlib.h functions */
-    #define malloc      nlibc_malloc
-    #define calloc      nlibc_calloc
-    #define realloc     nlibc_realloc
-    #define free        nlibc_free
-    #define exit        nlibc_exit
-    #define abort       nlibc_abort
-    #define atexit      nlibc_atexit
-    #define at_quick_exit nlibc_at_quick_exit
-    #define quick_exit  nlibc_quick_exit
-    #define atoi        nlibc_atoi
-    #define atol        nlibc_atol
-    #define atoll       nlibc_atoll
-    #define atof        nlibc_atof
-    #define div         nlibc_div
-    #define ldiv        nlibc_ldiv
-    #define lldiv       nlibc_lldiv
-    #define abs         nlibc_abs
-    #define labs        nlibc_labs
-    #define llabs       nlibc_llabs
-    #define rand        nlibc_rand
-    #define srand       nlibc_srand
-    #define qsort       nlibc_qsort
-    #define bsearch     nlibc_bsearch
-    #define getenv      nlibc_getenv
-    #define setenv      nlibc_setenv
-    #define unsetenv    nlibc_unsetenv
-    #define putenv      nlibc_putenv
-    #define system      nlibc_system
-    /* Non-standard but common */
-    #define itoa        nlibc_itoa
-    #define ltoa        nlibc_ltoa
-    #define lltoa       nlibc_lltoa
-
-    /* string.h functions */
-    #define memcpy      nlibc_memcpy
-    #define memmove     nlibc_memmove
-    #define memset      nlibc_memset
-    #define memcmp      nlibc_memcmp
-    #define strlen      nlibc_strlen
-    #define strcpy      nlibc_strcpy
-    #define strncpy     nlibc_strncpy
-    #define strcat      nlibc_strcat
-    #define strncat     nlibc_strncat
-    #define strcmp      nlibc_strcmp
-    #define strncmp     nlibc_strncmp
-    #define strchr      nlibc_strchr
-    #define strrchr     nlibc_strrchr
-    #define strstr      nlibc_strstr
-
-    /* FILE type and standard streams */
-    #define stdin       nlibc_stdin
-    #define stdout      nlibc_stdout
-    #define stderr      nlibc_stderr
-#endif /* NOESIS_LIBC_USE_STD_NAMES */
 
 #endif /* NOESIS_NAMES_H */
