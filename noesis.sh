@@ -11,16 +11,31 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+PINK='\033[38;5;206m' # Bright pink
 NC='\033[0m' # No Color
+TITLE='Noesis Control Center v.'
 
 # Print version information
 VERSION="1.1.0"
-NOESIS_ROOT=$(dirname "$(realpath "$0")")
+
+# Fallback for realpath if it doesn't exist
+realpath_fallback() {
+    local path="$1"
+    if command -v realpath >/dev/null 2>&1; then
+        realpath "$path"
+    else
+        # Fallback implementation
+        [[ $path = /* ]] || path="$PWD/$path"
+        echo "$path"
+    fi
+}
+
+NOESIS_ROOT=$(dirname "$(realpath_fallback "$0")")
 
 print_header() {
-    echo -e "${BLUE}╔════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BLUE}║${GREEN}              Noesis Control Center v${VERSION}           ${BLUE}║${NC}"
-    echo -e "${BLUE}╚════════════════════════════════════════════════════╝${NC}"
+    echo -e "${PINK}╔══════════════════════════════════════════════════════╗${NC}"
+    echo -e "${PINK}║ ${TITLE}${VERSION}                        ║${NC}"
+    echo -e "${PINK}╚══════════════════════════════════════════════════════╝${NC}"
 }
 
 print_usage() {
@@ -31,6 +46,7 @@ print_usage() {
     echo -e "  ${GREEN}run${NC}          - Run the Noesis core"
     echo -e "  ${GREEN}test${NC}         - Run all tests"
     echo -e "  ${GREEN}clean${NC}        - Clean up build artifacts"
+    echo -e "  ${GREEN}clean_all${NC}    - Perform a complete repository cleanup"
     echo -e "  ${GREEN}install${NC}      - Install Noesis"
     echo -e "  ${GREEN}help${NC}         - Display this help message"
     echo
@@ -61,6 +77,60 @@ case "$1" in
         print_header
         echo -e "${YELLOW}Cleaning Noesis build artifacts...${NC}"
         bash "bash_scripts/cleanup_folders.sh" "${@:2}"
+        ;;
+    "clean_all")
+        print_header
+        echo -e "${YELLOW}Performing complete repository cleanup...${NC}"
+        
+        # First clean build artifacts with make
+        echo -e "${PINK}Step 1: Cleaning build artifacts with make...${NC}"
+        make clean
+        
+        # Clean up folder structure
+        echo -e "${PINK}Step 2: Cleaning up folder structure...${NC}"
+        bash "bash_scripts/cleanup_folders.sh" "${@:2}"
+        
+        # Clean up repo
+        echo -e "${PINK}Step 3: Cleaning up repository...${NC}"
+        bash "bash_scripts/cleanup_repo.sh" "${@:2}"
+        
+        # Skip extension cleanup if the extension repo doesn't exist
+        echo -e "${PINK}Step 4: Checking for extensions...${NC}"
+        if [ -d "/Users/plugio/Documents/GitHub/noesis-extend" ]; then
+            echo -e "${PINK}  Extensions repository found. Cleaning up extensions...${NC}"
+            bash "bash_scripts/cleanup_extensions.sh" "${@:2}"
+        else
+            echo -e "${YELLOW}  Extensions repository not found. Skipping extension cleanup.${NC}"
+        fi
+        
+        # Remove object files and binaries
+        echo -e "${PINK}Step 5: Removing object files and binaries...${NC}"
+        # Remove binaries first
+        rm -f noesis noesis_tests
+        
+        # Remove directories if they exist
+        for dir in "object" "out" "out_basm" "lib" "obj"; do
+            if [ -d "$dir" ]; then
+                echo "  Removing directory: $dir/"
+                rm -rf "$dir/"
+            fi
+        done
+        
+        # Find and remove object files
+        echo "  Removing object files..."
+        find . -name "*.o" -delete 2>/dev/null || true
+        echo "  Removing shared libraries..."
+        find . -name "*.so" -delete 2>/dev/null || true
+        echo "  Removing static libraries..."
+        find . -name "*.a" -delete 2>/dev/null || true
+        
+        # Remove executable files from debug directory
+        if [ -d "debug" ]; then
+            echo "  Removing executable files from debug directory..."
+            find debug/ -type f -executable -delete 2>/dev/null || true
+        fi
+        
+        echo -e "${GREEN}✓ Complete repository cleanup finished successfully${NC}"
         ;;
     "install")
         print_header

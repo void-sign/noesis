@@ -11,6 +11,7 @@ set GREEN (set_color green)
 set BLUE (set_color blue)
 set YELLOW (set_color yellow)
 set RED (set_color red)
+set PINK (set_color ff5fd7) # Bright pink
 set NC (set_color normal)
 
 # Print version information
@@ -18,9 +19,13 @@ set VERSION "1.1.0"
 set NOESIS_ROOT (dirname (realpath (status filename)))
 
 function print_header
-    echo $BLUE"╔════════════════════════════════════════════════════╗"$NC
-    echo $BLUE"║"$GREEN"              Noesis Control Center v$VERSION           "$BLUE"║"$NC
-    echo $BLUE"╚════════════════════════════════════════════════════╝"$NC
+    set header_border "╔══════════════════════════════════════════════════════╗"
+    set footer_border "╚══════════════════════════════════════════════════════╝"
+    set title_text "           Noesis Control Center v$VERSION               "
+    
+    echo $PINK"$header_border"$NC
+    echo $PINK"║$title_text║"$NC
+    echo $PINK"$footer_border"$NC
 end
 
 function print_usage
@@ -31,6 +36,7 @@ function print_usage
     echo "  "$GREEN"run"$NC"          - Run the Noesis core"
     echo "  "$GREEN"test"$NC"         - Run all tests"
     echo "  "$GREEN"clean"$NC"        - Clean up build artifacts"
+    echo "  "$GREEN"clean_all"$NC"    - Perform a complete repository cleanup"
     echo "  "$GREEN"install"$NC"      - Install Noesis"
     echo "  "$GREEN"help"$NC"         - Display this help message"
     echo
@@ -62,6 +68,60 @@ switch "$argv[1]"
         echo $YELLOW"Cleaning Noesis build artifacts..."$NC
         fish "fish_scripts/cleanup_folders.fish" $argv[2..-1]
         
+    case "clean_all"
+        print_header
+        echo $YELLOW"Performing complete repository cleanup..."$NC
+        
+        # First clean build artifacts with make
+        echo $PINK"Step 1: Cleaning build artifacts with make..."$NC
+        make clean
+        
+        # Clean up folder structure
+        echo $PINK"Step 2: Cleaning up folder structure..."$NC
+        fish "fish_scripts/cleanup_folders.fish" $argv[2..-1]
+        
+        # Clean up repo
+        echo $PINK"Step 3: Cleaning up repository..."$NC
+        fish "fish_scripts/cleanup_repo.fish" $argv[2..-1]
+        
+        # Skip extension cleanup if the extension repo doesn't exist
+        echo $PINK"Step 4: Checking for extensions..."$NC
+        if test -d "/Users/plugio/Documents/GitHub/noesis-extend"
+            echo $PINK"  Extensions repository found. Cleaning up extensions..."$NC
+            fish "fish_scripts/cleanup_extensions.fish" $argv[2..-1]
+        else
+            echo $YELLOW"  Extensions repository not found. Skipping extension cleanup."$NC
+        end
+        
+        # Remove object files and binaries
+        echo $PINK"Step 5: Removing object files and binaries..."$NC
+        # Remove binaries first
+        rm -f noesis noesis_tests
+        
+        # Remove directories if they exist
+        for dir in "object" "out" "out_basm" "lib" "obj"
+            if test -d $dir
+                echo "  Removing directory: $dir/"
+                rm -rf $dir/
+            end
+        end
+        
+        # Find and remove object files
+        echo "  Removing object files..."
+        find . -name "*.o" -delete 2>/dev/null || true
+        echo "  Removing shared libraries..."
+        find . -name "*.so" -delete 2>/dev/null || true
+        echo "  Removing static libraries..."
+        find . -name "*.a" -delete 2>/dev/null || true
+        
+        # Remove executable files from debug directory
+        if test -d "debug"
+            echo "  Removing executable files from debug directory..."
+            find debug/ -type f -executable -delete 2>/dev/null || true
+        end
+        
+        echo $GREEN"✓ Complete repository cleanup finished successfully"$NC
+    
     case "install"
         print_header
         echo $YELLOW"Installing Noesis..."$NC
