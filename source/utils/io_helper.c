@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+ * Licensed under Noesis License - See LICENSE file for details
+ */
+
+
 // C helper for noesis_read
 // This provides support functions for the assembly implementation
 

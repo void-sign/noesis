@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+ * Licensed under Noesis License - See LICENSE file for details
+ */
+
+
 #include "../../include/core/intent.h"
 #include "../../include/core/memory.h" // For memory management
 #include "../../include/utils/data.h"   // For storing and retrieving data

@@ -1,4 +1,10 @@
 #!/usr/bin/env fish
+#
+# Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+# Licensed under Noesis License - See LICENSE file for details
+#
+
+
 
 # This script removes extension-related content from the main repository
 # after it has been successfully moved to noesis-extend

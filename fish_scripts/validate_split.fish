@@ -1,4 +1,10 @@
 #!/bin/fish
+#
+# Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+# Licensed under Noesis License - See LICENSE file for details
+#
+
+
 
 # validate_split.fish - Validate the repository split
 # This script checks that both repositories are properly set up

@@ -1,4 +1,10 @@
 #!/bin/fish
+#
+# Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+# Licensed under Noesis License - See LICENSE file for details
+#
+
+
 
 # launch_noesis_env.fish - Setup environment for working with both repositories
 # This script helps developers work with both Noesis Core and Noesis-Extend

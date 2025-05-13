@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+ * Licensed under Noesis License - See LICENSE file for details
+ */
+
+
 // Fixed version of io.s with proper parameter handling
 .global _noesis_read
 _noesis_read:

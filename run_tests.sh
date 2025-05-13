@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+# Licensed under Noesis License - See LICENSE file for details
+#
+
+
 
 # This script builds and runs the Noesis test files
 # Usage: ./run_tests.sh [test_name]

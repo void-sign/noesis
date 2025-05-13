@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+ * Licensed under Noesis License - See LICENSE file for details
+ */
+
+
 // quantum_field.h - Header for quantum field calculations
 // Part of the Noesis Quantum Module
 

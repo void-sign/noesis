@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+ * Licensed under Noesis License - See LICENSE file for details
+ */
+
+
 // Step by step working up from the minimal version
 .global _noesis_read
 _noesis_read:

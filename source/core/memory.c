@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
+ * Licensed under Noesis License - See LICENSE file for details
+ */
+
+
 // memory.c - Implementation of memory management in the Noesis project
 
 #include "../../include/core/memory.h"
