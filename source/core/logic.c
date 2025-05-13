@@ -4,8 +4,8 @@
  */
 
 /*
-/* 
-// logic.c - Central logic processing
+ * logic.c - Central logic processing
+ */
 
 #include "../../include/core/logic.h"
 #include "../../include/utils/noesis_lib.h" // For custom system calls

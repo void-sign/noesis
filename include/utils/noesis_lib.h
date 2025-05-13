@@ -4,8 +4,8 @@
  */
 
 /*
-/* 
-// noesis_lib.h - Header file for Noesis-specific utility functions
+ * noesis_lib.h - Header file for noesis utility functions
+ */
 
 #ifndef NOESIS_LIB_H
 #define NOESIS_LIB_H
@@ -62,5 +62,8 @@ void noesis_free(void* ptr);
 char* noesis_sdup(const char* s);
 int noesis_scmp(const char* s1, const char* s2);
 void noesis_printf(const char* format, ...);
+
+// Function declarations for noesis utility functions
+char* noesis_read(void);
 
 #endif // NOESIS_LIB_H

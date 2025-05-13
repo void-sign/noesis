@@ -4,10 +4,8 @@
  */
 
 /*
-/* 
-/*
-/* 
-// emotion.h - Header file for emotion simulation in the Noesis project
+ * emotion.h - Header file for emotion processing
+ */
 
 #ifndef EMOTION_H
 #define EMOTION_H

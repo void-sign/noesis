@@ -4,17 +4,13 @@
  */
 
 /*
-/* 
-// memory.h - Header file for memory management in the Noesis project
+ * memory.h - Header file for memory processing
+ */
 
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#ifndef NULL
-#define NULL (void*)0
-#endif
-
-// Function to initialize the memory system
+// Function declarations for memory processing
 void initialize_memory();
 
 // memory.h - Header file for memory management in the Noesis project

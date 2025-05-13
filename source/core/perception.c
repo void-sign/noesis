@@ -4,8 +4,8 @@
  */
 
 /*
-/* 
-// perception.c - Implementation of perception system in the Noesis project
+ * perception.c - Implementation of perception system in the Noesis project
+ */
 
 #include "../../include/core/perception.h"
 #include "../../include/utils/noesis_lib.h" // For custom system calls

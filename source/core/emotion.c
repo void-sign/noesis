@@ -4,10 +4,8 @@
  */
 
 /*
-/* 
-/*
-/* 
-// emotion.c - Implementation of emotion simulation in the Noesis project
+ * emotion.c - Implementation of emotion simulation in the Noesis project
+ */
 
 #include "../../include/core/emotion.h"
 

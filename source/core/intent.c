@@ -4,7 +4,8 @@
  */
 
 /*
-/* 
+ * intent.c - Implementation of intent handling in the Noesis project
+ */
 #include "../../include/core/intent.h"
 #include "../../include/core/memory.h" // For memory management
 #include "../../include/utils/data.h"   // For storing and retrieving data

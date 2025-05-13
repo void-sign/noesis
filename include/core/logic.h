@@ -4,8 +4,8 @@
  */
 
 /*
-/* 
-// logic.h - Header file for central logic processing
+ * logic.h - Header file for central logic processing
+ */
 
 #ifndef LOGIC_H
 #define LOGIC_H
@@ -62,6 +62,7 @@ void reset_logic();
 void handle_external_event(LogicEvent* event);
 
 // Generate an output event to communicate with other systems (e.g., movement, UI)
-LogicEvent generate_output_event(void); // Explicitly specify the return type
+// Note: Returns a pointer to a LogicEvent structure
+LogicEvent* generate_output_event(void);
 
 #endif // LOGIC_H

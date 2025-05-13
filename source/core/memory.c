@@ -4,8 +4,8 @@
  */
 
 /*
-/* 
-// memory.c - Implementation of memory management in the Noesis project
+ * memory.c - Implementation of memory management in the Noesis project
+ */
 
 #include "../../include/core/memory.h"
 

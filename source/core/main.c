@@ -12,11 +12,11 @@
 #include <string.h>   // For string functions like strcmp
 
 // Then include project headers
-#include "../../include/utils/noesis_lib.h" // Include Noesis utility functions
 #include "../../include/core/memory.h"
 #include "../../include/core/perception.h"
 #include "../../include/core/logic.h"
 #include "../../include/core/emotion.h"
+#include "../../include/utils/noesis_lib.h" // Include Noesis utility functions
 #include "../../include/core/intent.h" // Include declaration for handle_io
 
 // Main function: Entry point for the program

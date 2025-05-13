@@ -4,7 +4,9 @@
  */
 
 /*
-/* 
+ * intent.h - Header file for intent processing
+ */
+
 #ifndef INTENT_H
 #define INTENT_H
 
