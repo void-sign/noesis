@@ -38,8 +38,7 @@ API_OBJS = $(OBJ_API)/noesis_api.o
 
 # Quantum objects
 QUANTUM_OBJS = $(OBJ_QUANTUM)/backend_ibm.o $(OBJ_QUANTUM)/backend_stub.o \
-               $(OBJ_QUANTUM)/compiler.o $(OBJ_QUANTUM)/export_json.o \
-               $(OBJ_QUANTUM)/export_qasm.o $(OBJ_QUANTUM)/quantum.o
+               $(OBJ_QUANTUM)/compiler.o $(OBJ_QUANTUM)/export_qasm.o $(OBJ_QUANTUM)/quantum.o
 
 # Field objects
 FIELD_OBJS = $(OBJ_FIELD)/quantum_field.o
