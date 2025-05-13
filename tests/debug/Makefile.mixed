@@ -1,0 +1,8 @@
+mixed_test: mixed_test.c io_with_c.s
+	gcc -Wall -o mixed_test mixed_test.c io_with_c.s
+	
+run: mixed_test
+	./mixed_test
+	
+clean:
+	rm -f mixed_test
