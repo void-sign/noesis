@@ -87,4 +87,27 @@ find . -type f \( -name "*.sh" -o -name "*.fish" \) | while read -r file; do
     update_file "$file" "script" "$script_header"
 done
 
+# Fix any malformed headers by cleaning up consecutive empty lines
+find . -type f \( -name "*.c" -o -name "*.h" -o -name "*.s" -o -name "*.sh" -o -name "*.fish" \) | while read -r file; do
+    tmp_file=$(mktemp)
+    awk '
+    BEGIN { empty_line_count = 0; }
+    /^[ \t]*$/ {
+        empty_line_count++;
+        if (empty_line_count <= 1) print "";
+        next;
+    }
+    {
+        empty_line_count = 0;
+        print;
+    }
+    END {
+        if (empty_line_count > 0) print "";
+    }
+    ' "$file" > "$tmp_file"
+    
+    # Apply changes to original file
+    mv "$tmp_file" "$file"
+done
+
 echo "Header update process completed successfully!"
