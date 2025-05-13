@@ -223,9 +223,9 @@ NLIBC_FILE* nlibc_stdout = NULL;
 NLIBC_FILE* nlibc_stderr = NULL;
 
 /* Initialize basic file handles for stdin/stdout/stderr */
-static NLIBC_FILE _stdin  = {0};  /* fd 0 */
-static NLIBC_FILE _stdout = {1};  /* fd 1 */
-static NLIBC_FILE _stderr = {2};  /* fd 2 */
+static NLIBC_FILE _stdin  = {0, 0, 0, 0};  /* fd 0, flags 0, error 0, eof 0 */
+static NLIBC_FILE _stdout = {1, 0, 0, 0};  /* fd 1, flags 0, error 0, eof 0 */
+static NLIBC_FILE _stderr = {2, 0, 0, 0};  /* fd 2, flags 0, error 0, eof 0 */
 
 /* Initialize function to set up the file handles */
 void __attribute__((constructor)) nlibc_init(void) {
