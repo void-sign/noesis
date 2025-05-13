@@ -32,9 +32,11 @@ _noesis_read:
     pushq %rbp          # Save caller's base pointer
     movq %rsp, %rbp     # Set our base pointer
 
-    # No need for alignment space as our calls are already aligned
-    # Buffer pointer is already in %rsi and size in %rdx
-    # These are in the correct registers for a C function call
+    # Buffer pointer is in %rsi and size in %rdx
+    # Store a copy of size in our debug variable for safety
+    movq %rdx, debug_rdx(%rip)
+    
+    # Call our C helper function to do the actual reading
     call _write_test_to_buffer
 
     # The C function returns the number of bytes read in %rax

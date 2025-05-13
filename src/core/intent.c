@@ -114,25 +114,56 @@ void handle_io() {
     char input[256];
     int max_attempts = 10; // Add maximum attempts to prevent infinite loops
     int attempts = 0;
+    int read_bytes = 0;
+    
+    // Clear input buffer before first use
+    for (int i = 0; i < 256; i++) {
+        input[i] = 0;
+    }
     
     while (attempts < max_attempts) {
         noesis_print("Enter input: ");
-        if (noesis_read(input, sizeof(input)) <= 0) {
+        
+        // Call noesis_read with explicit buffer size and check return value
+        read_bytes = noesis_read(input, 255); // Leave room for null terminator
+        
+        if (read_bytes <= 0) {
             // Error or no input, break the loop
             noesis_print("Input error detected, exiting.\n");
             break;
         }
         
+        // Ensure null termination
+        input[read_bytes] = '\0';
+        
         attempts++;
         
-        if (noesis_scmp(input, "exit") == 0) {
+        // Check for exit command with safe string comparison
+        int is_exit = 1;
+        if (read_bytes == 4) { // "exit" has 4 characters
+            const char* exit_str = "exit";
+            for (int i = 0; i < 4; i++) {
+                if (input[i] != exit_str[i]) {
+                    is_exit = 0;
+                    break;
+                }
+            }
+        } else {
+            is_exit = 0;
+        }
+        
+        if (is_exit) {
             noesis_print("Exiting program.\n");
             break;
         }
         
+        // Process valid input
         noesis_print("You entered: ");
         noesis_print(input);
         noesis_print("\n");
+        
+        // Learn from valid input
+        learn_from_input(input);
     }
     
     if (attempts >= max_attempts) {

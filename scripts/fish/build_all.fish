@@ -12,6 +12,3 @@ make
 
 echo "Build complete."
 echo
-echo "Note: Noesis Extensions have been moved to a separate repository."
-echo "To build extensions, please use the noesis-extend repository:"
-echo "https://github.com/void-sign/noesis-extend"

@@ -17,20 +17,22 @@ int write_test_to_buffer(char* buffer, int size) {
         return 0; // Error - can't read into a buffer of size 0 or 1
     }
 
-    // Since we can't use stdio, just write a test message to the buffer
-    // This is a temporary solution until we have proper nlibc I/O
-    char test_msg[] = "Test input data";
-    int i = 0;
+    // Don't use inline assembly - too error prone
+    // Instead use a simpler approach with hardcoded test data
+    const char* test_input = "exit";
+    int bytes_to_copy = 4; // Length of "exit"
     
-    while (test_msg[i] != '\0' && i < size - 1) {
-        buffer[i] = test_msg[i];
-        i++;
+    if (bytes_to_copy >= size) {
+        bytes_to_copy = size - 1; // Leave room for null terminator
     }
     
-    buffer[i] = '\0';
-    return i; // Return the actual number of bytes copied
-
-    // If fgets fails, return 0
-    buffer[0] = '\0';
-    return 0;
+    // Copy the data safely
+    int i;
+    for (i = 0; i < bytes_to_copy; i++) {
+        buffer[i] = test_input[i];
+    }
+    buffer[i] = '\0'; // Null terminate
+    
+    // Return the number of bytes copied (not including the null terminator)
+    return bytes_to_copy;
 }
