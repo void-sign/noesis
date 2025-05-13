@@ -234,6 +234,8 @@ typedef struct lldiv_t lldiv_t;
 #endif
 
 /* This marker helps external code know our stdlib structures are defined */
+#ifndef NOESIS_STDLIB_TYPES_DEFINED
 #define NOESIS_STDLIB_TYPES_DEFINED
+#endif
 
 #endif /* NOESIS_TYPES_H */
