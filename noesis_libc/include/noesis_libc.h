@@ -3,6 +3,11 @@
 
 /* Meta-header for the Noesis custom libc implementation */
 
+/* Prevent including system headers */
+#ifndef NOESIS_LIBC_STANDALONE
+#define NOESIS_LIBC_STANDALONE 1
+#endif
+
 /* Include all standard library headers */
 #include "noesis_types.h"
 #include "stdlib/stdlib.h"

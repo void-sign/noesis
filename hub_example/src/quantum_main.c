@@ -3,8 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-// 
 #include <noesis/noesis_api.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -3,10 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-/*
-/* 
 .section __TEXT,__text
 .global ___start
 .global _write_message

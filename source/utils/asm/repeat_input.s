@@ -3,10 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-/*
-/* 
 .global _start
 
 .data

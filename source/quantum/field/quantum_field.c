@@ -8,6 +8,8 @@
 // Include stdlib.h which provides malloc and free declarations needed for new and del macros
 #include <stdlib/stdlib.h>
 #include <noesis_libc.h>  // Include all noesis_libc functionality with short names
+#include "../../../noesis_libc/include/noesis_names.h" // Ensure proper inclusion of nlibc_malloc and nlibc_free
+#include <stdint.h> // For uintptr_t
 
 // Helper function - allocate memory for a field
 static float* allocate_field_memory(int dimensions, int* size) {
@@ -15,12 +17,12 @@ static float* allocate_field_memory(int dimensions, int* size) {
     for (int i = 0; i < dimensions && i < 3; i++) {
         total_size *= size[i];
     }
-    return (float*)new(sizeof(float) * total_size);
+    return (float*)(uintptr_t)new(sizeof(float) * total_size); // Ensure proper casting
 }
 
 // Initialize a quantum field
 QuantumField* qf_create(int dimensions, int* size) {
-    QuantumField* field = (QuantumField*)new(sizeof(QuantumField));
+    QuantumField* field = (QuantumField*)(uintptr_t)new(sizeof(QuantumField)); // Ensure proper casting
     if (!field) return NULL;
 
     field->dimensions = dimensions > 3 ? 3 : dimensions;

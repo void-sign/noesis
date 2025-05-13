@@ -91,6 +91,9 @@ long long nlibc_atoll(const char* nptr) {
     return result * sign;
 }
 
+/* Forward declaration for strtod which is defined later */
+double nlibc_strtod(const char* nptr, char** endptr);
+
 /* Convert string to double */
 double nlibc_atof(const char* nptr) {
     return nlibc_strtod(nptr, NULL);

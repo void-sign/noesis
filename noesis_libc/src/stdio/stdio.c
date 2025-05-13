@@ -69,17 +69,17 @@ static void temp_free(void* ptr, size_t size) {
 #define _FILE_FLAG_BINARY   0x0008
 
 /* Static file tables */
-static FILE _stdin = { STDIN_FD, _FILE_FLAG_READ | _FILE_FLAG_OPEN, 0, 0, NULL, 0, 0, 0, _IONBF };
-static FILE _stdout = { STDOUT_FD, _FILE_FLAG_WRITE | _FILE_FLAG_OPEN, 0, 0, NULL, 0, 0, 0, _IONBF };
-static FILE _stderr = { STDERR_FD, _FILE_FLAG_WRITE | _FILE_FLAG_OPEN, 0, 0, NULL, 0, 0, 0, _IONBF };
+static NLIBC_FILE _stdin = { STDIN_FD, _FILE_FLAG_READ | _FILE_FLAG_OPEN, 0, 0, NULL, 0, 0, 0, _IONBF };
+static NLIBC_FILE _stdout = { STDOUT_FD, _FILE_FLAG_WRITE | _FILE_FLAG_OPEN, 0, 0, NULL, 0, 0, 0, _IONBF };
+static NLIBC_FILE _stderr = { STDERR_FD, _FILE_FLAG_WRITE | _FILE_FLAG_OPEN, 0, 0, NULL, 0, 0, 0, _IONBF };
 
 /* Public file pointers */
-FILE* nlibc_stdin = &_stdin;
-FILE* nlibc_stdout = &_stdout;
-FILE* nlibc_stderr = &_stderr;
+NLIBC_FILE* nlibc_stdin = &_stdin;
+NLIBC_FILE* nlibc_stdout = &_stdout;
+NLIBC_FILE* nlibc_stderr = &_stderr;
 
 /* Array of all open file streams */
-static FILE* open_files[MAX_OPEN_FILES] = { &_stdin, &_stdout, &_stderr };
+static NLIBC_FILE* open_files[MAX_OPEN_FILES] = { &_stdin, &_stdout, &_stderr };
 
 /* System call wrapper for write */
 static ssize_t sys_write(int fd, const void* buf, size_t count) {
@@ -156,7 +156,7 @@ static int sys_close(int fd) {
 }
 
 /* Initialize a file stream */
-static int init_file_stream(FILE* fp, int fd, int flags) {
+static int init_file_stream(NLIBC_FILE* fp, int fd, int flags) {
     fp->fd = fd;
     fp->flags = flags | _FILE_FLAG_OPEN;
     fp->error = 0;
@@ -179,10 +179,10 @@ static int init_file_stream(FILE* fp, int fd, int flags) {
 }
 
 /* Open a file */
-FILE* nlibc_fopen(const char* pathname, const char* mode) {
+NLIBC_FILE* nlibc_fopen(const char* pathname, const char* mode) {
     int flags = 0;
     int open_mode = 0;
-    FILE* fp;
+    NLIBC_FILE* fp;
     
     /* Parse mode string */
     switch (mode[0]) {
@@ -228,8 +228,8 @@ FILE* nlibc_fopen(const char* pathname, const char* mode) {
         return NULL;
     }
     
-    /* Allocate and initialize FILE structure */
-    fp = (FILE*)temp_malloc(sizeof(FILE));  /* Use temporary malloc */
+    /* Allocate and initialize NLIBC_FILE structure */
+    fp = (NLIBC_FILE*)temp_malloc(sizeof(NLIBC_FILE));  /* Use temporary malloc */
     if (!fp) {
         sys_close(fd);
         return NULL;
@@ -241,7 +241,7 @@ FILE* nlibc_fopen(const char* pathname, const char* mode) {
 }
 
 /* Close a file */
-int nlibc_fclose(FILE* stream) {
+int nlibc_fclose(NLIBC_FILE* stream) {
     int result = 0;
     
     if (!stream) {
@@ -269,9 +269,9 @@ int nlibc_fclose(FILE* stream) {
         }
     }
     
-    /* If this is not a standard stream, free the FILE structure */
+    /* If this is not a standard stream, free the NLIBC_FILE structure */
     if (stream != nlibc_stdin && stream != nlibc_stdout && stream != nlibc_stderr) {
-        temp_free(stream, sizeof(FILE));
+        temp_free(stream, sizeof(NLIBC_FILE));
     } else {
         stream->flags &= ~_FILE_FLAG_OPEN;
     }
@@ -280,7 +280,7 @@ int nlibc_fclose(FILE* stream) {
 }
 
 /* Read data from a file */
-size_t nlibc_fread(void* ptr, size_t size, size_t nmemb, FILE* stream) {
+size_t nlibc_fread(void* ptr, size_t size, size_t nmemb, NLIBC_FILE* stream) {
     if (!ptr || !stream || size == 0 || nmemb == 0 || !(stream->flags & _FILE_FLAG_READ)) {
         return 0;
     }
@@ -301,7 +301,7 @@ size_t nlibc_fread(void* ptr, size_t size, size_t nmemb, FILE* stream) {
 }
 
 /* Write data to a file */
-size_t nlibc_fwrite(const void* ptr, size_t size, size_t nmemb, FILE* stream) {
+size_t nlibc_fwrite(const void* ptr, size_t size, size_t nmemb, NLIBC_FILE* stream) {
     if (!ptr || !stream || size == 0 || nmemb == 0 || !(stream->flags & _FILE_FLAG_WRITE)) {
         return 0;
     }
@@ -318,7 +318,7 @@ size_t nlibc_fwrite(const void* ptr, size_t size, size_t nmemb, FILE* stream) {
 }
 
 /* Set file position */
-int nlibc_fseek(FILE* stream, long offset, int whence) {
+int nlibc_fseek(NLIBC_FILE* stream, long offset, int whence) {
     if (!stream) {
         return -1;
     }
@@ -338,7 +338,7 @@ int nlibc_fseek(FILE* stream, long offset, int whence) {
 }
 
 /* Get current file position */
-long nlibc_ftell(FILE* stream) {
+long nlibc_ftell(NLIBC_FILE* stream) {
     if (!stream) {
         return -1;
     }
@@ -355,7 +355,7 @@ long nlibc_ftell(FILE* stream) {
 }
 
 /* Reset file position to the beginning */
-void nlibc_rewind(FILE* stream) {
+void nlibc_rewind(NLIBC_FILE* stream) {
     if (stream) {
         nlibc_fseek(stream, 0, SEEK_SET);
         nlibc_clearerr(stream);
@@ -363,7 +363,7 @@ void nlibc_rewind(FILE* stream) {
 }
 
 /* Flush a file's buffer */
-int nlibc_fflush(FILE* stream) {
+int nlibc_fflush(NLIBC_FILE* stream) {
     if (!stream || !(stream->flags & _FILE_FLAG_OPEN)) {
         return EOF;
     }
@@ -392,7 +392,7 @@ int nlibc_fflush(FILE* stream) {
 /* Character input/output functions */
 
 /* Get a character from a stream */
-int nlibc_fgetc(FILE* stream) {
+int nlibc_fgetc(NLIBC_FILE* stream) {
     if (!stream || !(stream->flags & _FILE_FLAG_READ)) {
         return EOF;
     }
@@ -407,7 +407,7 @@ int nlibc_fgetc(FILE* stream) {
 }
 
 /* Wrapper for fgetc */
-int nlibc_getc(FILE* stream) {
+int nlibc_getc(NLIBC_FILE* stream) {
     return nlibc_fgetc(stream);
 }
 
@@ -417,7 +417,7 @@ int nlibc_getchar(void) {
 }
 
 /* Put a character to a stream */
-int nlibc_fputc(int c, FILE* stream) {
+int nlibc_fputc(int c, NLIBC_FILE* stream) {
     if (!stream || !(stream->flags & _FILE_FLAG_WRITE)) {
         return EOF;
     }
@@ -432,7 +432,7 @@ int nlibc_fputc(int c, FILE* stream) {
 }
 
 /* Wrapper for fputc */
-int nlibc_putc(int c, FILE* stream) {
+int nlibc_putc(int c, NLIBC_FILE* stream) {
     return nlibc_fputc(c, stream);
 }
 
@@ -442,7 +442,7 @@ int nlibc_putchar(int c) {
 }
 
 /* Get a string from a stream */
-char* nlibc_fgets(char* s, int size, FILE* stream) {
+char* nlibc_fgets(char* s, int size, NLIBC_FILE* stream) {
     if (!stream || !s || size <= 0 || !(stream->flags & _FILE_FLAG_READ)) {
         return NULL;
     }
@@ -476,7 +476,7 @@ char* nlibc_fgets(char* s, int size, FILE* stream) {
 }
 
 /* Put a string to a stream */
-int nlibc_fputs(const char* s, FILE* stream) {
+int nlibc_fputs(const char* s, NLIBC_FILE* stream) {
     if (!stream || !s || !(stream->flags & _FILE_FLAG_WRITE)) {
         return EOF;
     }
@@ -504,7 +504,7 @@ int nlibc_puts(const char* s) {
 }
 
 /* Push a character back to input stream */
-int nlibc_ungetc(int c, FILE* stream) {
+int nlibc_ungetc(int c, NLIBC_FILE* stream) {
     /* Simplified implementation - would need a proper buffer mechanism for real usage */
     if (!stream || c == EOF) {
         return EOF;
@@ -614,7 +614,7 @@ int nlibc_printf(const char* format, ...) {
 }
 
 /* Print formatted output to a stream */
-int nlibc_fprintf(FILE* stream, const char* format, ...) {
+int nlibc_fprintf(NLIBC_FILE* stream, const char* format, ...) {
     va_list args;
     int result;
     
@@ -663,7 +663,7 @@ int nlibc_vprintf(const char* format, va_list args) {
 }
 
 /* Print formatted output to a stream using va_list */
-int nlibc_vfprintf(FILE* stream, const char* format, va_list args) {
+int nlibc_vfprintf(NLIBC_FILE* stream, const char* format, va_list args) {
     if (!stream || !(stream->flags & _FILE_FLAG_WRITE)) {
         return -1;
     }
@@ -827,7 +827,7 @@ int nlibc_scanf(const char* format, ...) {
 }
 
 /* Read formatted input from a stream */
-int nlibc_fscanf(FILE* stream, const char* format, ...) {
+int nlibc_fscanf(NLIBC_FILE* stream, const char* format, ...) {
     if (!stream || !(stream->flags & _FILE_FLAG_READ)) {
         return EOF;
     }
@@ -868,7 +868,7 @@ int nlibc_sscanf(const char* str, const char* format, ...) {
 /* Buffer handling functions */
 
 /* Set buffering mode for a stream */
-int nlibc_setvbuf(FILE* stream, char* buf, int mode, size_t size) {
+int nlibc_setvbuf(NLIBC_FILE* stream, char* buf, int mode, size_t size) {
     if (!stream) {
         return -1;
     }
@@ -914,7 +914,7 @@ int nlibc_setvbuf(FILE* stream, char* buf, int mode, size_t size) {
 }
 
 /* Set buffering for a stream */
-void nlibc_setbuf(FILE* stream, char* buf) {
+void nlibc_setbuf(NLIBC_FILE* stream, char* buf) {
     if (buf) {
         nlibc_setvbuf(stream, buf, _IOFBF, BUFSIZ);
     } else {
@@ -923,17 +923,17 @@ void nlibc_setbuf(FILE* stream, char* buf) {
 }
 
 /* Error status */
-int nlibc_ferror(FILE* stream) {
+int nlibc_ferror(NLIBC_FILE* stream) {
     return stream ? stream->error : 0;
 }
 
 /* EOF indicator */
-int nlibc_feof(FILE* stream) {
+int nlibc_feof(NLIBC_FILE* stream) {
     return stream ? stream->eof : 0;
 }
 
 /* Clear error and EOF indicators */
-void nlibc_clearerr(FILE* stream) {
+void nlibc_clearerr(NLIBC_FILE* stream) {
     if (stream) {
         stream->error = 0;
         stream->eof = 0;
@@ -941,6 +941,6 @@ void nlibc_clearerr(FILE* stream) {
 }
 
 /* Get file descriptor associated with stream */
-int nlibc_fileno(FILE* stream) {
+int nlibc_fileno(NLIBC_FILE* stream) {
     return stream ? stream->fd : -1;
 }

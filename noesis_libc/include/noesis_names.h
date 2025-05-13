@@ -94,7 +94,7 @@
     #define halt    nlibc_abort
     #define onexit  nlibc_atexit
     #define qexit   nlibc_at_quick_exit
-    #define getenv  nlibc_getenv
+    #define getenv getenv
     #define setenv  nlibc_setenv
     #define unenv   nlibc_unsetenv
     #define putenv  nlibc_putenv
@@ -104,5 +104,9 @@
 #define instr   nlibc_stdin
 #define outstr  nlibc_stdout
 #define errstr  nlibc_stderr
+
+/* Explicit declarations for memory management functions */
+void* nlibc_malloc(size_t size);
+void nlibc_free(void* ptr);
 
 #endif /* NOESIS_NAMES_H */

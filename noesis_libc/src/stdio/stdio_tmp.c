@@ -79,7 +79,7 @@ int nlibc_rename(const char* oldname, const char* newname) {
 }
 
 /* Implementation of tmpfile function - create a temporary file */
-FILE* nlibc_tmpfile(void) {
+NLIBC_FILE* nlibc_tmpfile(void) {
     char template[] = "/tmp/nlibc_tmpXXXXXX";
     int fd;
     
@@ -98,14 +98,14 @@ FILE* nlibc_tmpfile(void) {
         return NULL;
     }
     
-    /* Create a FILE structure for the open file descriptor */
-    FILE* fp = (FILE*)temp_malloc(sizeof(FILE));
+    /* Create a NLIBC_FILE structure for the open file descriptor */
+    NLIBC_FILE* fp = (NLIBC_FILE*)temp_malloc(sizeof(NLIBC_FILE));
     if (!fp) {
         nlibc_close(fd);
         return NULL;
     }
     
-    /* Initialize the FILE structure */
+    /* Initialize the NLIBC_FILE structure */
     fp->fd = fd;
     fp->flags = _FILE_FLAG_READ | _FILE_FLAG_WRITE | _FILE_FLAG_OPEN;
     fp->error = 0;
@@ -137,7 +137,7 @@ char* nlibc_tmpnam(char* s) {
 }
 
 /* Implementation of fileno function - get the file descriptor for a stream */
-int nlibc_fileno(FILE* stream) {
+int nlibc_fileno(NLIBC_FILE* stream) {
     if (!stream) {
         return -1;
     }
@@ -146,7 +146,7 @@ int nlibc_fileno(FILE* stream) {
 }
 
 /* Implementation of setvbuf function - change stream buffering */
-int nlibc_setvbuf(FILE* stream, char* buf, int mode, size_t size) {
+int nlibc_setvbuf(NLIBC_FILE* stream, char* buf, int mode, size_t size) {
     if (!stream) {
         return -1;
     }
@@ -195,7 +195,7 @@ int nlibc_setvbuf(FILE* stream, char* buf, int mode, size_t size) {
 }
 
 /* Implementation of setbuf function - change stream buffering */
-void nlibc_setbuf(FILE* stream, char* buf) {
+void nlibc_setbuf(NLIBC_FILE* stream, char* buf) {
     if (buf) {
         nlibc_setvbuf(stream, buf, _IOFBF, BUFSIZ);
     } else {

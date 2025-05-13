@@ -46,7 +46,7 @@ OBJS = $(patsubst $(CORE_DIR)/%.c, $(OBJ_DIR)/core/%.o, $(filter $(CORE_DIR)/%, 
        $(patsubst $(UTILS_DIR)/%.c, $(OBJ_DIR)/utils/%.o, $(filter $(UTILS_DIR)/%, $(SRCS))) \
        $(patsubst $(API_DIR)/%.c, $(OBJ_DIR)/api/%.o, $(filter $(API_DIR)/%, $(SRCS))) \
        $(patsubst $(QUANTUM_DIR)/%.c, $(OBJ_DIR)/quantum/%.o, $(filter $(QUANTUM_DIR)/%, $(SRCS))) \
-       $(OBJ_DIR)/quantum/field/quantum_field.o \
+       $(patsubst $(FIELD_DIR)/%.c, $(OBJ_DIR)/quantum/field/%.o, $(filter $(FIELD_DIR)/%, $(SRCS))) \
        $(OBJ_DIR)/asm/repeat_input.o $(OBJ_DIR)/asm/mcopy.o $(OBJ_DIR)/asm/scomp.o $(OBJ_DIR)/asm/slen.o $(OBJ_DIR)/asm/write.o $(OBJ_DIR)/asm/io.o
 
 # Tools
@@ -73,16 +73,16 @@ quantum_tools: $(QBUILD_TARGET) $(QRUN_TARGET)
 
 # Link main target
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET)
+	$(CC) $(OBJS) -o $(TARGET) -L./lib -lnlibc_stubs
 	
 # Build quantum tools
 $(QBUILD_TARGET): $(OBJ_DIR)/tools/qbuild.o $(filter $(OBJ_DIR)/quantum/%.o, $(OBJS))
 	@mkdir -p bin
-	$(CC) $^ -o bin/$(QBUILD_TARGET)
+	$(CC) $^ -o bin/$(QBUILD_TARGET) -L./lib -lnlibc_stubs
 	
 $(QRUN_TARGET): $(OBJ_DIR)/tools/qrun.o $(filter $(OBJ_DIR)/quantum/%.o, $(OBJS))
 	@mkdir -p bin
-	$(CC) $^ -o bin/$(QRUN_TARGET)
+	$(CC) $^ -o bin/$(QRUN_TARGET) -L./lib -lnlibc_stubs
 	
 $(OBJ_DIR)/tools/%.o: $(TOOLS_DIR)/%.c
 	@mkdir -p $(dir $@)
@@ -115,7 +115,7 @@ $(OBJ_DIR)/asm/%.o: $(UTILS_DIR)/asm/%.s
 
 # Build test executable
 test: $(OBJS)
-	$(CC) $(CFLAGS) $(TESTS) -o $(TEST_TARGET) $(OBJS)
+	$(CC) $(CFLAGS) $(TESTS) -o $(TEST_TARGET) $(OBJS) -L./lib -lnlibc_stubs
 
 # Clean
 clean:

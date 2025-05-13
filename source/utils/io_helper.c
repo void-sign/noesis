@@ -6,7 +6,7 @@
 // C helper for noesis_read
 // This provides support functions for the assembly implementation
 
-// Include standard C headers for fgets and stdin
+// Include standard C headers for fgets and stdin (temporary solution)
 #include <stdio.h>
 
 // Include noesis_libc with both short names and standard names
@@ -20,10 +20,10 @@ int write_test_to_buffer(char* buffer, int size) {
         return 0; // Error - can't read into a buffer of size 0 or 1
     }
 
-    // Actually read from stdin
+    // Actually read from stdin - using standard C library for now
     if (fgets(buffer, size, stdin) != NULL) {
         // Remove trailing newline if present
-        int length = len(buffer);
+        int length = nlibc_strlen(buffer);
         if (length > 0 && buffer[length-1] == '\n') {
             buffer[length-1] = '\0';
             length--;
