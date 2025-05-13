@@ -51,7 +51,6 @@ noesis/
 │   ├── lib/                # Compiled libraries
 │   └── obj/                # Object files
 │       ├── api/            # API object files
-│       ├── asm/            # Assembly object files
 │       ├── core/           # Core system object files
 │       ├── quantum/        # Quantum computation object files
 │       └── utils/          # Utility object files
@@ -152,14 +151,14 @@ noesis/
 ### Prerequisites
 
 - **GCC compiler** (version 9.0+)
-  - Required for building C source files and assembly components
+  - Required for building C source files
   - Must support C11 standard features
   - Optimization flags required for quantum processing modules
 
 - **Make** (version 4.0+)
   - Used for managing build rules and dependencies
   - Core Makefile supports parallel builds with `-j` option
-  - Custom rules for assembly and object file generation
+  - Custom rules for object file generation
 
 - **Bash shell** or **Fish shell**
   - Required for running installation and build scripts

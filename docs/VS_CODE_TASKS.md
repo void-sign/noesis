@@ -61,7 +61,7 @@ This file contains VS Code tasks for the new directory structure.
     {
       "label": "Create Shared Library",
       "type": "shell",
-      "command": "gcc -shared -o build/lib/libnoesis_core.so build/obj/core/*.o build/obj/utils/*.o build/obj/asm/*.o",
+      "command": "gcc -shared -o build/lib/libnoesis_core.so build/obj/core/*.o build/obj/utils/*.o",
       "presentation": {
         "reveal": "always",
         "panel": "new"

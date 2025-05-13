@@ -34,7 +34,6 @@ noesis/
 │   ├── quantum/               # Quantum implementation
 │   ├── tools/                 # Tools implementation
 │   └── utils/                 # Utility implementation
-│       └── asm/               # Assembly implementations
 ├── tests/                     # Test suite
 │   ├── debug/                 # Debug tests
 │   └── unit/                  # Unit tests

@@ -8,6 +8,8 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+#include <stddef.h> // Include for size_t type
+
 // Function to compare two strings (simple comparison)
 int compare_strings(const char* str1, const char* str2);
 
@@ -19,5 +21,14 @@ int string_length(const char* str);
 
 // Function to reset the system (generic helper)
 void reset_system();
+
+/**
+ * Writes test content to a buffer
+ * 
+ * @param buffer The buffer to write to
+ * @param size   Maximum size of the buffer
+ * @return       Number of bytes written
+ */
+int write_test_to_buffer(char *buffer, size_t size);
 
 #endif // HELPER_H
