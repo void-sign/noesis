@@ -6,7 +6,7 @@ This checklist will help you finalize the Noesis repository split to ensure ever
 
 - [ ] Create GitHub repositories:
   - [ ] Create https://github.com/void-sign/noesis for Noesis Core
-  - [ ] Create https://github.com/void-sign/noesis-extend for Noesis-Extend
+  - [ ] Create https://github.com/void-sign/noesis-hub for Noesis Hub
 
 - [ ] Configure git for each repository:
   ```bash
@@ -17,11 +17,11 @@ This checklist will help you finalize the Noesis repository split to ensure ever
   git commit -m "Initial commit for Noesis Core v1.0.0 after repository split"
   git remote add origin https://github.com/void-sign/noesis.git
   
-  # For Noesis-Extend
+  # For Noesis Hub
   cd /path/to/noesis-hub
   git init
   git add .
-  git commit -m "Initial commit for Noesis-Hub v1.0.0"
+  git commit -m "Initial commit for Noesis Hub v1.0.0"
   git remote add origin https://github.com/void-sign/noesis-hub.git
   ```
 
@@ -43,7 +43,7 @@ This checklist will help you finalize the Noesis repository split to ensure ever
   cd /path/to/noesis
   git push -u origin main
   
-  # For Noesis-Hub
+  # For Noesis Hub
   cd /path/to/noesis-hub
   git push -u origin main
   ```
@@ -57,7 +57,7 @@ This checklist will help you finalize the Noesis repository split to ensure ever
   
 - [ ] Create releases:
   - [ ] Create v1.0.0 release for Noesis Core with notes from CHANGELOG_v1.0.0.md
-  - [ ] Create v1.0.0 release for Noesis-Hub with notes from CHANGELOG_v1.0.0.md
+  - [ ] Create v1.0.0 release for Noesis Hub with notes from CHANGELOG_v1.0.0.md
   - [ ] Add appropriate tags
 
 - [ ] Update documentation:
@@ -74,7 +74,7 @@ This checklist will help you finalize the Noesis repository split to ensure ever
   ./install.sh
   ./run_core.sh
   
-  # Test Noesis-Hub
+  # Test Noesis Hub
   cd /path/to/noesis-hub
   ./scripts/install_dependency.sh
   ./install.sh

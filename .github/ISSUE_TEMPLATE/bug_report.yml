@@ -10,7 +10,7 @@ body:
         Thanks for taking the time to fill out this bug report!
         
         Please note that this repository is for Noesis Core only.
-        For issues related to extensions, please use the [Noesis-Extend repository](https://github.com/yourusername/noesis-extend).
+        For Noesis Hub related issues, please use the [Noesis Hub repository](https://github.com/void-sign/noesis-hub).
   - type: textarea
     id: description
     attributes:

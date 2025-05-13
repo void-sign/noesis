@@ -41,9 +41,9 @@ Contributions to Noesis Core are licensed under the Noesis License. By contribut
 - Ensure all tests pass before submitting
 - Include documentation for new features
 
-## Extensions
+## Noesis Hub
 
-If you want to contribute extensions, quantum computing functionality, or tools, please use the [Noesis-Extend repository](https://github.com/void-sign/noesis-extend) instead.
+If you want to contribute to quantum computing functionality or tools, please use the [Noesis Hub repository](https://github.com/void-sign/noesis-hub) instead. Noesis Hub is an independent platform that communicates with Noesis Core via the standard API.
 
 ## Communication
 

@@ -202,7 +202,7 @@ You can still use the individual scripts directly if you prefer:
 
 ## Noesis Hub Repository
 
-For the extensions, quantum computing modules, and tools, please check the separate repository:
+For quantum computing modules and additional tools, please check the separate Noesis Hub repository:
 
 **Repository URL:** https://github.com/void-sign/noesis-hub
 

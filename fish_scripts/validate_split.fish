@@ -23,7 +23,7 @@ if not test -d $NOESIS_PATH
 end
 
 if not test -d $NOESIS_EXTEND_PATH
-    echo "Error: Noesis-Hub directory not found at $NOESIS_EXTEND_PATH"
+    echo "Error: Noesis Hub directory not found at $NOESIS_EXTEND_PATH"
     exit 1
 end
 
