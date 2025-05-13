@@ -64,7 +64,7 @@ CFLAGS = -Wall -Wextra -std=c99
 ASFLAGS = -g
 
 # Add include directories to the compiler's include path
-CFLAGS += -Iinclude -I. -I/Users/plugio/Documents/GitHub/noesis
+CFLAGS += -Iinclude -I. -I/Users/plugio/Documents/GitHub/noesis -I/Users/plugio/Documents/GitHub/noesis/noesis_libc/include
 
 # Default target
 all: $(TARGET) quantum_tools

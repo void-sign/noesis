@@ -3,12 +3,9 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-// 
-/*
-// 
 // export_qasm.c – minimal QASM-like output
 
+#include <noesis_libc.h>  // Include all noesis_libc functionality
 #include "../../include/quantum/quantum.h"
 #include "../../include/quantum/export.h"
 

@@ -3,9 +3,14 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-#include "quantum_field.h"
+#include "../../../include/quantum/field/quantum_field.h"
+
+// Define these before including noesis_libc.h
 #define NOESIS_LIBC_USE_STD_NAMES
-#include "noesis_libc/include/noesis_libc.h"
+// Include stdlib.h which provides malloc and free declarations needed for new and del macros
+#include <stdlib/stdlib.h>
+#include <noesis_libc.h>  // Include all noesis_libc functionality
+#include <noesis_short.h> // Include short aliases
 
 // Helper function - allocate memory for a field
 static float* allocate_field_memory(int dimensions, int* size) {
@@ -13,12 +18,12 @@ static float* allocate_field_memory(int dimensions, int* size) {
     for (int i = 0; i < dimensions && i < 3; i++) {
         total_size *= size[i];
     }
-    return (float*)malloc(sizeof(float) * total_size);
+    return (float*)new(sizeof(float) * total_size);
 }
 
 // Initialize a quantum field
 QuantumField* qf_create(int dimensions, int* size) {
-    QuantumField* field = (QuantumField*)malloc(sizeof(QuantumField));
+    QuantumField* field = (QuantumField*)new(sizeof(QuantumField));
     if (!field) return NULL;
 
     field->dimensions = dimensions > 3 ? 3 : dimensions;
@@ -28,7 +33,7 @@ QuantumField* qf_create(int dimensions, int* size) {
 
     field->data = allocate_field_memory(field->dimensions, field->size);
     if (!field->data) {
-        free(field);
+        del(field);
         return NULL;
     }
 
@@ -49,9 +54,9 @@ QuantumField* qf_create(int dimensions, int* size) {
 void qf_destroy(QuantumField* field) {
     if (field) {
         if (field->data) {
-            free(field->data);
+            del(field->data);
         }
-        free(field);
+        del(field);
     }
 }
 

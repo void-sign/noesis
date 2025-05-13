@@ -7,7 +7,7 @@
 // This provides support functions for the assembly implementation
 
 #define NOESIS_LIBC_USE_STD_NAMES
-#include <noesis_libc/noesis_libc.h>
+#include <noesis_libc.h>  // Include all noesis_libc functionality
 
 // Helper function called from assembly to read from stdin into the buffer
 // Returns the number of bytes read (excluding null terminator)
@@ -20,12 +20,12 @@ int write_test_to_buffer(char* buffer, int size) {
     // Actually read from stdin
     if (fgets(buffer, size, stdin) != NULL) {
         // Remove trailing newline if present
-        int len = strlen(buffer);
-        if (len > 0 && buffer[len-1] == '\n') {
-            buffer[len-1] = '\0';
-            len--;
+        int length = len(buffer);
+        if (length > 0 && buffer[length-1] == '\n') {
+            buffer[length-1] = '\0';
+            length--;
         }
-        return len; // Return the actual number of bytes read
+        return length; // Return the actual number of bytes read
     }
 
     // If fgets fails, return 0

@@ -101,3 +101,54 @@ int nlibc_system(const char* command) {
     }
     return -1; /* Indicate failure */
 }
+
+/* Quick exit implementation */
+static void (*quick_exit_funcs[32])(void);
+static int quick_exit_count = 0;
+
+/* Register a function to be called on quick_exit */
+int nlibc_at_quick_exit(void (*func)(void)) {
+    if (func == NULL || quick_exit_count >= 32) {
+        return -1;
+    }
+    
+    quick_exit_funcs[quick_exit_count++] = func;
+    return 0;
+}
+
+/* Exit the program without calling atexit handlers */
+void nlibc_quick_exit(int status) {
+    /* Call all registered at_quick_exit functions in reverse order */
+    for (int i = quick_exit_count - 1; i >= 0; i--) {
+        if (quick_exit_funcs[i] != NULL) {
+            quick_exit_funcs[i]();
+        }
+    }
+    
+    /* Call _Exit to terminate immediately */
+    nlibc_exit(status);
+}
+
+/* Set an environment variable directly from a string "NAME=value" */
+int nlibc_putenv(char* string) {
+    if (string == NULL || !nlibc_strchr(string, '=')) {
+        return -1;
+    }
+    
+    /* Extract the name part */
+    char* name_end = nlibc_strchr(string, '=');
+    size_t name_len = name_end - string;
+    
+    /* Create a temporary buffer for the name */
+    char name_buf[256];
+    if (name_len >= sizeof(name_buf)) {
+        return -1; /* Name too long */
+    }
+    
+    /* Copy the name part */
+    nlibc_strncpy(name_buf, string, name_len);
+    name_buf[name_len] = '\0';
+    
+    /* Set the environment variable */
+    return nlibc_setenv(name_buf, name_end + 1, 1);
+}

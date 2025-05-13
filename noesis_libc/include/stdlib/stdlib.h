@@ -3,61 +3,87 @@
 
 #include "../noesis_types.h"
 
-/* Memory allocation functions */
-void* nlibc_malloc(size_t size);
-void nlibc_free(void* ptr);
-void* nlibc_calloc(size_t nmemb, size_t size);
-void* nlibc_realloc(void* ptr, size_t size);
-void* nlibc_aligned_alloc(size_t alignment, size_t size);
+/* 
+ * Division structures are now defined in noesis_types.h
+ * No need to redefine them here
+ */
 
-/* Conversion functions */
-int nlibc_atoi(const char* nptr);
-long nlibc_atol(const char* nptr);
-long long nlibc_atoll(const char* nptr);
-double nlibc_atof(const char* nptr);
-long nlibc_strtol(const char* nptr, char** endptr, int base);
-unsigned long nlibc_strtoul(const char* nptr, char** endptr, int base);
-long long nlibc_strtoll(const char* nptr, char** endptr, int base);
-unsigned long long nlibc_strtoull(const char* nptr, char** endptr, int base);
-double nlibc_strtod(const char* nptr, char** endptr);
-
-/* Random number generation */
-int nlibc_rand(void);
-void nlibc_srand(unsigned int seed);
-
-/* Algorithm functions */
-void nlibc_qsort(void* base, size_t nmemb, size_t size, int (*compar)(const void*, const void*));
-void* nlibc_bsearch(const void* key, const void* base, size_t nmemb, size_t size, int (*compar)(const void*, const void*));
-
-/* Environment functions */
-int nlibc_atexit(void (*func)(void));
-void nlibc_exit(int status);
-void nlibc_abort(void);
-char* nlibc_getenv(const char* name);
-int nlibc_system(const char* command);
-
-/* Types for div functions */
-typedef struct {
-    int quot;
-    int rem;
-} div_t;
-
-typedef struct {
-    long quot;
-    long rem;
-} ldiv_t;
-
-typedef struct {
-    long long quot;
-    long long rem;
-} lldiv_t;
-
-/* Integer arithmetic */
-int nlibc_abs(int j);
-long nlibc_labs(long j);
-long long nlibc_llabs(long long j);
+/* First declare the implementation functions */
 div_t nlibc_div(int numer, int denom);
 ldiv_t nlibc_ldiv(long numer, long denom);
 lldiv_t nlibc_lldiv(long long numer, long long denom);
+
+/* Then create the standard C aliases using macros */
+#define div nlibc_div
+#define ldiv nlibc_ldiv
+#define lldiv nlibc_lldiv
+
+/* Memory allocation constants */
+#ifndef NULL
+#define NULL ((void *)0)
+#endif
+
+/* Maximum size_t value */
+#ifndef SIZE_MAX
+#define SIZE_MAX ((size_t)-1)
+#endif
+
+/* Function prototypes */
+void *malloc(size_t size);
+void free(void *ptr);
+void *realloc(void *ptr, size_t size);
+void *calloc(size_t nmemb, size_t size);
+
+int atoi(const char *str);
+long atol(const char *str);
+long long atoll(const char *str);
+double atof(const char *str);
+
+/* Standard C division functions that map to our implementations */
+
+int abs(int n);
+long labs(long n);
+long long llabs(long long n);
+
+int rand(void);
+void srand(unsigned int seed);
+
+void qsort(void *base, size_t nmemb, size_t size,
+           int (*compar)(const void *, const void *));
+
+void *bsearch(const void *key, const void *base,
+              size_t nmemb, size_t size,
+              int (*compar)(const void *, const void *));
+
+void exit(int status);
+void abort(void);
+int atexit(void (*func)(void));
+int at_quick_exit(void (*func)(void));
+void quick_exit(int status);
+
+char *getenv(const char *name);
+int setenv(const char *name, const char *value, int overwrite);
+int unsetenv(const char *name);
+int putenv(char *string);
+
+/* Integer to string conversion functions with explicit implementations */
+char *nlibc_itoa(int value, char *str, int base);
+char *nlibc_ltoa(long value, char *str, int base);
+char *nlibc_lltoa(long long value, char *str, int base);
+
+/* Define standard aliases using macros */
+#define itoa nlibc_itoa
+#define ltoa nlibc_ltoa
+#define lltoa nlibc_lltoa
+
+/* Execute a shell command */
+int system(const char *command);
+
+/* Maximum value returned by the rand function */
+#define RAND_MAX 32767
+
+/* Constants for exit status */
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
 
 #endif /* NOESIS_STDLIB_H */

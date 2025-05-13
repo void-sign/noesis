@@ -5,7 +5,11 @@
  
 // quantum.c – core gate & circuit logic
 #define NOESIS_LIBC_USE_STD_NAMES
-#include "noesis_libc/include/noesis_libc.h"
+#define NOESIS_STDLIB_TYPES_DEFINED 1
+#include <noesis_libc.h>  // Include all noesis_libc functionality
+#include "include/quantum/quantum_stdlib.h"
+
+// For getenv
 
 #include "../include/quantum/quantum.h"
 #include "../include/api/noesis_api.h"
