@@ -6,7 +6,10 @@
 // C helper for noesis_read
 // This provides support functions for the assembly implementation
 
-#define NOESIS_LIBC_USE_STD_NAMES
+// Include standard C headers for fgets and stdin
+#include <stdio.h>
+
+// Include noesis_libc with both short names and standard names
 #include <noesis_libc.h>  // Include all noesis_libc functionality
 
 // Helper function called from assembly to read from stdin into the buffer

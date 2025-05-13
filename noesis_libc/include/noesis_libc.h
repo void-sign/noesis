@@ -12,12 +12,8 @@
 #include "unistd/unistd.h"
 #include "sys/syscall.h"
 
-/* Include function name mappings (both short and standard names) */
+/* Include function name mappings (short names) */
 #include "noesis_names.h"
-
-/* Legacy includes (deprecated) */
-/* #include "noesis_short.h" */
-/* #include "noesis_std_names.h" */
 
 /* Version information */
 #define NOESIS_LIBC_VERSION_MAJOR 1

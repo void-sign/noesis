@@ -5,12 +5,9 @@
 
 #include "../../../include/quantum/field/quantum_field.h"
 
-// Define these before including noesis_libc.h
-#define NOESIS_LIBC_USE_STD_NAMES
 // Include stdlib.h which provides malloc and free declarations needed for new and del macros
 #include <stdlib/stdlib.h>
-#include <noesis_libc.h>  // Include all noesis_libc functionality
-#include <noesis_short.h> // Include short aliases
+#include <noesis_libc.h>  // Include all noesis_libc functionality with short names
 
 // Helper function - allocate memory for a field
 static float* allocate_field_memory(int dimensions, int* size) {

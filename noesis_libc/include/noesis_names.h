@@ -8,12 +8,10 @@
 
 /* 
  * This file defines short aliases for Noesis libc functions
- * Use #define NOESIS_USE_SHORT_NAMES to enable short names
+ * Short names are the recommended approach for Noesis libc
  */
 
-/* Short names are now the recommended approach */
-#ifdef NOESIS_USE_SHORT_NAMES
-    /* I/O Functions */
+/* I/O Functions */
     #define out     nlibc_printf
     #define fout    nlibc_fprintf
     #define sout    nlibc_sprintf
@@ -102,10 +100,9 @@
     #define putenv  nlibc_putenv
     #define sys     nlibc_system
     
-    /* Standard streams */
-    #define instr   nlibc_stdin
-    #define outstr  nlibc_stdout
-    #define errstr  nlibc_stderr
-#endif /* NOESIS_USE_SHORT_NAMES */
+/* Standard streams */
+#define instr   nlibc_stdin
+#define outstr  nlibc_stdout
+#define errstr  nlibc_stderr
 
 #endif /* NOESIS_NAMES_H */
