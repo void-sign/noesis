@@ -7,7 +7,7 @@
 make clean
 
 # Build with short names enabled and standard names
-make CFLAGS="-Wall -Wextra -std=c99 -DNOESIS_USE_SHORT_NAMES -DNOESIS_LIBC_USE_STD_NAMES -Iinclude -I. -I/Users/plugio/Documents/GitHub/noesis -I/Users/plugio/Documents/GitHub/noesis/noesis_libc/include"
+make CFLAGS="-Wall -Wextra -std=c99 -DNOESIS_USE_SHORT_NAMES -DNOESIS_LIBC_USE_STD_NAMES -Iinclude -I. -Ilibs/noesis_libc/include"
 
 # Run the executable if build was successful
 if test $status -eq 0

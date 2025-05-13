@@ -86,9 +86,10 @@ switch "$argv[1]"
         
         # Skip extension cleanup if the extension repo doesn't exist
         echo $PINK"Step 4: Checking for extensions..."$NC
-        if test -d "/Users/plugio/Documents/GitHub/noesis-extend"
+        set NOESIS_EXTEND_PATH "$HOME/Documents/GitHub/noesis-extend"
+        if test -d "$NOESIS_EXTEND_PATH"
             echo $PINK"  Extensions repository found. Cleaning up extensions..."$NC
-            fish "fish_scripts/cleanup_extensions.fish" $argv[2..-1]
+            fish "scripts/fish/cleanup_extensions.fish" $argv[2..-1]
         else
             echo $YELLOW"  Extensions repository not found. Skipping extension cleanup."$NC
         end
