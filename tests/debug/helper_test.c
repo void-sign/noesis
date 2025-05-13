@@ -3,8 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-// 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

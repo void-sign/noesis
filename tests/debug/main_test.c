@@ -3,8 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-// 
 // Minimal implementation for testing
 #include <stdio.h>
 #include <stdlib.h>
