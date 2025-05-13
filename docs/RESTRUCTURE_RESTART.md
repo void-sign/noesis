@@ -7,14 +7,26 @@ This document outlines how to restart the restructuring process from the last sa
 Use the following simple commands to save or restore the project structure:
 
 ```bash
-# To save the current project structure
-./noesis.fish save  # For fish shell
-./noesis.sh save    # For bash shell
+# Using the short ncom command (recommended)
+./ncom save       # For fish shell
+./ncom.sh save    # For bash shell
 
 # To restore the latest saved structure state
+./ncom continue      # For fish shell
+./ncom.sh continue   # For bash shell
+
+# Using short aliases
+./ncom -s     # Save structure state
+./ncom -c     # Continue from latest state
+
+# Using the longer noesis command
+./noesis.fish save      # For fish shell
+./noesis.sh save        # For bash shell
 ./noesis.fish continue  # For fish shell
 ./noesis.sh continue    # For bash shell
 ```
+
+For more information about the `ncom` command, see [NCOM.md](NCOM.md).
 
 ## Method 2: Using Git Tag
 
