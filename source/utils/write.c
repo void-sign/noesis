@@ -4,9 +4,9 @@
  */
 
 /*
-/* 
+// 
 /*
-/* 
+// 
 // Manually declare the _exit system call
 __attribute__((noreturn)) void _exit(int status);
 

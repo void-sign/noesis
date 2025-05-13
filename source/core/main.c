@@ -5,11 +5,8 @@
 
 // main.c - Entry point for the Noesis project
 
-// Include system headers first
-#include <stdio.h>    // Standard I/O for printf
-#include <stdlib.h>   // For exit()
-#include <stdarg.h>   // For va_list and related macros
-#include <string.h>   // For string functions like strcmp
+// Include noesis_libc header
+#include <noesis_libc.h>  // Include all noesis_libc functionality
 
 // Then include project headers
 #include "../../include/core/memory.h"
@@ -28,33 +25,33 @@ int main() {
     initialize_emotion();     // Initialize emotion simulation
 
     // Welcome message
-    printf("NOESIS Synthetic Consciousness System\n");
-    printf("====================================\n");
-    printf("Version 0.1.2 - May 2025\n\n");
+    out("NOESIS Synthetic Consciousness System\n");
+    out("====================================\n");
+    out("Version 0.1.2 - May 2025\n\n");
 
     // Create a buffer for user input
     char buffer[128] = {0};
 
-    printf("Enter a command or type 'help' for assistance.\n");
-    printf("noesis> ");
+    out("Enter a command or type 'help' for assistance.\n");
+    out("noesis> ");
 
     // Read user input
     int bytes_read = noesis_read(buffer, sizeof(buffer));
 
     if (bytes_read > 0) {
-        printf("You entered: %s\n", buffer);
+        out("You entered: %s\n", buffer);
 
         // Process the command (placeholder for future implementation)
-        if (strcmp(buffer, "help") == 0) {
-            printf("Available commands:\n");
-            printf("  help - Display this help message\n");
-            printf("  exit - Exit the program\n");
+        if (cmp(buffer, "help") == 0) {
+            out("Available commands:\n");
+            out("  help - Display this help message\n");
+            out("  exit - Exit the program\n");
         }
     } else {
-        printf("No input received.\n");
+        out("No input received.\n");
     }
 
-    printf("\nNOESIS system terminated normally.\n");
+    out("\nNOESIS system terminated normally.\n");
 
     return 0;
 }

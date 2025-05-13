@@ -4,10 +4,8 @@
  */
 
 /*
-/* 
-/*
-/* 
-// data.c - Implementation of data management system in the Noesis project
+ * data.c - Implementation of data management system in the Noesis project
+ */
 
 #include "../../include/utils/data.h"
 

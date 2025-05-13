@@ -4,9 +4,9 @@
  */
 
 /*
-/* 
+// 
 /*
-/* 
+// 
 // core_tests.c - Unit tests for core functionality in the Noesis project
 
 #include "../include/core/emotion.h"

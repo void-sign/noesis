@@ -4,8 +4,8 @@
  */
 
 /*
-/* 
-// data.h - Header file for data management in the Noesis project
+ * data.h - Header file for data management in the Noesis project
+ */
 
 #ifndef DATA_H
 #define DATA_H

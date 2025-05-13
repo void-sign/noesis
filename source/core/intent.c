@@ -6,10 +6,15 @@
 /*
  * intent.c - Implementation of intent handling in the Noesis project
  */
+
 #include "../../include/core/intent.h"
 #include "../../include/core/memory.h" // For memory management
 #include "../../include/utils/data.h"   // For storing and retrieving data
 #include "../../include/utils/noesis_lib.h" // For noesis_scmp and noesis_ss
+
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
 
 // Memory for storing intentions
 #define MAX_INTENTIONS 100
@@ -107,16 +112,31 @@ void free_all_intentions(void) {
 // Add a function to handle input and output using noesis_lib
 void handle_io() {
     char input[256];
-    while (1) {
+    int max_attempts = 10; // Add maximum attempts to prevent infinite loops
+    int attempts = 0;
+    
+    while (attempts < max_attempts) {
         noesis_print("Enter input: ");
-        noesis_read(input, sizeof(input)); // Assuming noesis_read is implemented in noesis_lib.c
+        if (noesis_read(input, sizeof(input)) <= 0) {
+            // Error or no input, break the loop
+            noesis_print("Input error detected, exiting.\n");
+            break;
+        }
+        
+        attempts++;
+        
         if (noesis_scmp(input, "exit") == 0) {
             noesis_print("Exiting program.\n");
             break;
         }
+        
         noesis_print("You entered: ");
         noesis_print(input);
         noesis_print("\n");
+    }
+    
+    if (attempts >= max_attempts) {
+        noesis_print("Maximum input attempts reached, exiting.\n");
     }
 }
 

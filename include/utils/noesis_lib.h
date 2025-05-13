@@ -64,6 +64,6 @@ int noesis_scmp(const char* s1, const char* s2);
 void noesis_printf(const char* format, ...);
 
 // Function declarations for noesis utility functions
-char* noesis_read(void);
+char* noesis_read_line(void);  // Changed from noesis_read to noesis_read_line
 
 #endif // NOESIS_LIB_H

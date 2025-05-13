@@ -5,6 +5,11 @@ This is a custom C standard library implementation for the Noesis project. It pr
 ## Features
 
 - Namespace-isolated with `nlibc_` prefix on all functions
+- Short, intuitive function names (see `FUNCTION_NAMES.md`)
+  - `printf` → `out`
+  - `fopen` → `open` 
+  - `malloc` → `new`
+  - And many more!
 - Implements core functionality from:
   - `<stdlib.h>`: Memory allocation, conversions, etc.
   - `<stdio.h>`: I/O operations

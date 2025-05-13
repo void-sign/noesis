@@ -3,10 +3,9 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
 #include "quantum_field.h"
-#include <stdlib.h>
+#define NOESIS_LIBC_USE_STD_NAMES
+#include "noesis_libc/include/noesis_libc.h"
 
 // Helper function - allocate memory for a field
 static float* allocate_field_memory(int dimensions, int* size) {

@@ -3,10 +3,8 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-/*
-/* 
+// mcopy.s - Assembly code for memory copying operations
+
 .section __TEXT,__text
 .global _mcopy
 _mcopy:

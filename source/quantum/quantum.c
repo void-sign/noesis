@@ -2,16 +2,14 @@
  * Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
  * Licensed under Noesis License - See LICENSE file for details
  */
-
-/*
-/* 
-/*
-/* 
+ 
 // quantum.c – core gate & circuit logic
+#define NOESIS_LIBC_USE_STD_NAMES
+#include "noesis_libc/include/noesis_libc.h"
+
 #include "../include/quantum/quantum.h"
 #include "../include/api/noesis_api.h"
 #include "../data/gate_defs.h"
-#include <stdlib.h>
 
 #define MAX_QUBITS 16
 #define MAX_GATES  256

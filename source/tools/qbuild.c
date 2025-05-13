@@ -4,9 +4,9 @@
  */
 
 /*
-/* 
+// 
 /*
-/* 
+// 
 // qbuild.c - Quantum circuit builder for the Noesis project
 
 // Function to build a quantum circuit

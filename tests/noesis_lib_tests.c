@@ -4,9 +4,9 @@
  */
 
 /*
-/* 
+// 
 /*
-/* 
+// 
 // noesis_lib_tests.c - Unit tests for Noesis-specific utility functions
 
 #include "../include/utils/noesis_lib.h"

@@ -3,13 +3,11 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
 // C helper for noesis_read
 // This provides support functions for the assembly implementation
 
-#include <stdio.h>
-#include <string.h>
+#define NOESIS_LIBC_USE_STD_NAMES
+#include <noesis_libc/noesis_libc.h>
 
 // Helper function called from assembly to read from stdin into the buffer
 // Returns the number of bytes read (excluding null terminator)

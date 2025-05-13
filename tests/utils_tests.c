@@ -4,9 +4,9 @@
  */
 
 /*
-/* 
+// 
 /*
-/* 
+// 
 // utils_tests.c - Unit tests for utility functions in the Noesis project
 
 #include "../include/utils/data.h"

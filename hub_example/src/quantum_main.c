@@ -4,7 +4,7 @@
  */
 
 /*
-/* 
+// 
 #include <noesis/noesis_api.h>
 #include <stdio.h>
 #include <stdlib.h>

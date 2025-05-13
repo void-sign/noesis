@@ -3,10 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-/*
-/* 
 // noesis_lib.c - Implementation of Noesis-specific utility functions
 
 #include "../../include/utils/noesis_lib.h"

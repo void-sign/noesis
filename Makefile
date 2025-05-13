@@ -63,8 +63,8 @@ QRUN_TARGET = qrun
 CFLAGS = -Wall -Wextra -std=c99
 ASFLAGS = -g
 
-# Add include directory to the compiler's include path
-CFLAGS += -Iinclude
+# Add include directories to the compiler's include path
+CFLAGS += -Iinclude -I. -I/Users/plugio/Documents/GitHub/noesis
 
 # Default target
 all: $(TARGET) quantum_tools

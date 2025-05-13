@@ -3,9 +3,7 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-// helper.h - Header file for utility functions in the Noesis project
+// helper.h - Header file for helper functions in the Noesis project
 
 #ifndef HELPER_H
 #define HELPER_H
@@ -22,7 +20,7 @@ int string_length(const char* str);
 // Function to reset the system (generic helper)
 void reset_system();
 
-// Declare custom_output as extern
-extern void custom_output(const char* str);
+// Function to output custom messages
+void custom_output(const char* message);
 
 #endif // HELPER_H

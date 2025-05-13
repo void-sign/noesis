@@ -63,6 +63,6 @@ void handle_external_event(LogicEvent* event);
 
 // Generate an output event to communicate with other systems (e.g., movement, UI)
 // Note: Returns a pointer to a LogicEvent structure
-LogicEvent* generate_output_event(void);
+LogicEvent generate_output_event(void);  // Changed from LogicEvent* to LogicEvent
 
 #endif // LOGIC_H

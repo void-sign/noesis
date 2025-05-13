@@ -3,10 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-/*
-/* 
 // timer.c - Implementation of timer utilities in the Noesis project
 
 #include "../../include/utils/timer.h"

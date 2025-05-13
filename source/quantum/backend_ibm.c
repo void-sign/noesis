@@ -3,10 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-/*
-/* 
 // backend_ibm.c – stub for IBM Quantum backend interaction
 
 #include "../../include/quantum/backend.h"

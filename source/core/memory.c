@@ -9,6 +9,10 @@
 
 #include "../../include/core/memory.h"
 
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
+
 // Memory management system state
 static void* allocated_memory = NULL;
 
@@ -16,6 +20,13 @@ static void* allocated_memory = NULL;
 void initialize_memory() {
     // Initialize memory-related settings
     allocated_memory = NULL;  // No memory allocated initially
+}
+
+// Function to allocate memory of specified size
+void* allocate_memory(unsigned int size) {
+    // Simple implementation - in real system would use malloc or custom allocator
+    (void)size;  // Avoid unused parameter warning in this simplified version
+    return NULL;  // Return NULL to indicate we're not actually allocating memory
 }
 
 // Function to free allocated memory
@@ -37,7 +48,7 @@ void manage_memory() {
 }
 
 // Function to reset memory to its initial state
-void reset_memory(void* allocated_memory) {
+void reset_memory(void) {
     // Reset memory management system, releasing any allocated memory
     if (allocated_memory != NULL) {
         allocated_memory = NULL;
@@ -53,7 +64,7 @@ void* memory_init() {
 void memory_cleanup(void* module) {
     // Clean up resources
     (void)module; // Avoid unused parameter warning
-    reset_memory(allocated_memory);
+    reset_memory();
 }
 
 void* memory_process(void* module, void* input) {

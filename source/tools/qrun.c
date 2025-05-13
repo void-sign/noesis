@@ -4,9 +4,9 @@
  */
 
 /*
-/* 
+// 
 /*
-/* 
+// 
 // qrun.c - Quantum circuit runner for the Noesis project
 
 // Function to run a quantum circuit

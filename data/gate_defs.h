@@ -3,7 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
 // gate_defs.h – definitions of supported quantum gates
 
 #ifndef GATE_DEFS_H

@@ -3,8 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
 // backend.h – interface to quantum hardware backends
 
 #ifndef BACKEND_H

@@ -4,9 +4,9 @@
  */
 
 /*
-/* 
+// 
 /*
-/* 
+// 
 // export_qasm.c – minimal QASM-like output
 
 #include "../../include/quantum/quantum.h"

@@ -4,7 +4,7 @@
  */
 
 /*
-/* 
+// 
 // export.h – export quantum circuit to QASM or JSON
 
 #ifndef EXPORT_H

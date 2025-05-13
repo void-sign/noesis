@@ -4,7 +4,7 @@
  */
 
 /*
-/* 
+// 
 // quantum_field.h - Header for quantum field calculations
 // Part of the Noesis Quantum Module
 

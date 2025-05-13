@@ -66,6 +66,12 @@ void process_logic() {
     decide_action();        // Decide what action to take based on the intent
 }
 
+// Manage deeper logic, for future expansion (like advanced reasoning)
+void manage_deeper_logic() {
+    // Reserved for future implementation of advanced reasoning capabilities
+    // Currently a placeholder for extensibility
+}
+
 // manage_logic() - Manage deeper logic, decision-making, or emotional processing
 // This function now accepts input and returns a result
 
@@ -128,8 +134,8 @@ void handle_external_event(LogicEvent* event) {
 }
 
 // Generate an output event to send to other systems (e.g., control actions like movement, UI updates)
-LogicEvent generate_output_event() {
-    LogicEvent event;
+LogicEvent generate_output_event(void) {
+    LogicEvent event; // Create a local event structure instead of dynamically allocating
 
     // Create an event based on the current intent
     switch (current_intent) {
@@ -148,7 +154,7 @@ LogicEvent generate_output_event() {
     }
 
     event.payload = NULL;  // Currently, no additional data attached to the event
-    return event;
+    return event; // Return the event by value, not by pointer
 }
 
 // Updated custom_output function to use noesis_print

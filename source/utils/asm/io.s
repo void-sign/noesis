@@ -3,13 +3,9 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-/*
-/* 
 // io.s - Assembly code for I/O operations
 
-// Function to print a message to the terminalc
+// Function to print a message to the terminal
 .global _noesis_print
 _noesis_print:
     movq $0x2000004, %rax  // syscall: write on macOS
@@ -46,7 +42,6 @@ _noesis_read:
     // Clean up and return - use standard epilogue
     popq %rbp           // Restore caller's base pointer
     ret                 // Return to caller
-    ret
 
 // Declare the external C helper function
 .extern _write_test_to_buffer

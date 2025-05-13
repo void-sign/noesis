@@ -3,8 +3,6 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
 // Ultra simplified io_fixed.s
 .global _noesis_read
 _noesis_read:

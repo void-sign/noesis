@@ -4,7 +4,7 @@
  */
 
 /*
-/* 
+// 
 // Minimal implementation for testing
 #include <stdio.h>
 #include <stdlib.h>

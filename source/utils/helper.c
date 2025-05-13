@@ -3,13 +3,10 @@
  * Licensed under Noesis License - See LICENSE file for details
  */
 
-/*
-/* 
-/*
-/* 
 // helper.c - Implementation of helper functions in the Noesis project
 
 #include "../../include/utils/helper.h"
+#include "../../include/utils/noesis_lib.h" // Add this include for noesis_print
 
 // Function to compare two strings (simple comparison)
 int compare_strings(const char* str1, const char* str2) {
@@ -45,4 +42,10 @@ void reset_system() {
     // Example: Resetting global variables or system configurations
     // Add actual reset logic here as needed
     custom_output("System reset successfully.\n");
+}
+
+// Function to output a message using platform-specific methods
+void custom_output(const char* message) {
+    // Implementation using noesis_print
+    noesis_print(message);
 }
