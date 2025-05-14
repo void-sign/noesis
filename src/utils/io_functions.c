@@ -196,8 +196,8 @@ static int execute_shell_script_direct(const char* script_path, const char* oper
         syscall(SYS_execve, shell_path, shell_args, 0);
         
         // If we get here, execve failed - try fallback to /bin/sh
-        if (shell_path != "/bin/sh") {
-            syscall(SYS_execve, "/bin/sh", (char*[]) {"/bin/sh", "-c", cmd, 0}, 0);
+        if (noesis_scmp(shell_path, "/bin/sh") != 0) {
+            syscall(SYS_execve, "/bin/sh", (char*const[]){"/bin/sh", "-c", cmd, 0}, 0);
         }
         
         // If we still get here, both attempts failed
@@ -276,92 +276,25 @@ void noesis_print(const char* message) {
 // Replaces _noesis_read in io.s
 int noesis_read(char* buffer, unsigned long size) {
     if (!buffer || size <= 1) {
-        return 0; // Error - can't read into a buffer of size 0 or 1
+        noesis_print("Error: Buffer too small\n");
+        return 0;
     }
 
-    // For testing/debugging - insert a test input
-    #ifdef NOESIS_DEBUG_TEST_MODE
-    const char* test_input = "test input\n";
-    int len = 0;
-    while (test_input[len] && len < size - 1) {
-        buffer[len] = test_input[len];
-        len++;
-    }
-    buffer[len] = '\0';
-    return len;
-    #else
-    // Try to use shell for input handling (better readline capabilities)
-    int use_shell_input = 0;
+    // Skip the shell script approach for now and use direct syscall
+    noesis_print("Debug: About to read directly from stdin...\n");
     
-    // Check for available shells
-    int use_fish = syscall(SYS_access, "/usr/bin/fish", F_OK) == 0;
-    int use_bash = syscall(SYS_access, "/bin/bash", F_OK) == 0;
+    // Direct read from stdin - simpler approach first
+    int bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
     
-    // Print a debug message before reading
-    noesis_print("Debug: Waiting for input...\n");
-    
-    int bytes_read = 0;
-    
-    // First try to get input through a shell script if possible
-    if (use_fish || use_bash) {
-        // Create a temporary file for the script
-        const char* script_file = "/tmp/noesis_input.sh";
-        const char* input_file = "/tmp/noesis_input_result.txt";
-        
-        // Create file descriptor
-        int fd = syscall(SYS_open, script_file, 0x0601, 0777); // O_WRONLY | O_CREAT | O_TRUNC
-        if (fd >= 0) {
-            // Prepare script content based on available shell
-            const char* script_content;
-            if (use_fish) {
-                script_content = "#!/usr/bin/fish\nread -P \"\" input\necho $input > /tmp/noesis_input_result.txt\n";
-            } else {
-                script_content = "#!/bin/bash\nread -p \"\" input\necho \"$input\" > /tmp/noesis_input_result.txt\n";
-            }
-            
-            // Write script content
-            syscall(SYS_write, fd, script_content, noesis_strlen(script_content));
-            syscall(SYS_close, fd);
-            
-            // Execute script
-            char* shell_path = use_fish ? "/usr/bin/fish" : "/bin/bash";
-            int pid = syscall(SYS_fork);
-            if (pid == 0) {
-                // Child process - execute the script
-                syscall(SYS_execve, shell_path, (char*[]){shell_path, script_file, 0}, 0);
-                
-                // If execve fails, try with sh
-                syscall(SYS_execve, "/bin/sh", (char*[]){"/bin/sh", script_file, 0}, 0);
-                syscall(SYS_exit, 1);
-            } else if (pid > 0) {
-                // Parent process - wait for child to complete
-                int status;
-                syscall(SYS_wait4, pid, &status, 0, 0);
-                
-                // Read the result
-                fd = syscall(SYS_open, input_file, O_RDONLY, 0);
-                if (fd >= 0) {
-                    bytes_read = syscall(SYS_read, fd, buffer, size - 1);
-                    syscall(SYS_close, fd);
-                    use_shell_input = 1;
-                }
-            }
-        }
-    }
-    
-    // If shell input failed or wasn't attempted, fall back to direct syscall
-    if (!use_shell_input) {
-        // Use direct read syscall on stdin - block until user provides input
-        bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
-    }
-    
-    // Debug - print what we received
-    noesis_print("Debug: Raw read complete, bytes: ");
+    noesis_print("Debug: Read completed with result: ");
     char bytes_str[20];
     int i = 0;
     int temp = bytes_read;
     if (temp == 0) {
         bytes_str[i++] = '0';
+    } else if (temp < 0) {
+        bytes_str[i++] = '-';
+        bytes_str[i++] = '1';
     } else {
         do {
             bytes_str[i++] = '0' + (temp % 10);
@@ -379,34 +312,34 @@ int noesis_read(char* buffer, unsigned long size) {
     noesis_print(bytes_str);
     noesis_print("\n");
     
+    // Print the raw bytes for debugging
     if (bytes_read > 0) {
-        // Filter out control characters (except newline)
-        int valid_bytes = 0;
-        for (int i = 0; i < bytes_read; i++) {
+        noesis_print("Debug: Raw bytes: [");
+        for (int i = 0; i < bytes_read && i < 20; i++) {
+            char hex[4];
             unsigned char c = (unsigned char)buffer[i];
-            // Accept only printable ASCII, space, tab, newline
-            if (c >= 32 || c == '\n' || c == '\t') {
-                buffer[valid_bytes++] = c;
-            }
+            hex[0] = "0123456789ABCDEF"[(c >> 4) & 0xF];
+            hex[1] = "0123456789ABCDEF"[c & 0xF];
+            hex[2] = ' ';
+            hex[3] = '\0';
+            noesis_print(hex);
         }
-        
-        // Update bytes_read to valid count
-        bytes_read = valid_bytes;
-        
-        // Handle newlines - replace with null terminator if it's the last character
-        if (bytes_read > 0 && buffer[bytes_read - 1] == '\n') {
+        noesis_print("]\n");
+    }
+    
+    if (bytes_read > 0) {
+        // Handle newlines
+        if (buffer[bytes_read - 1] == '\n') {
             buffer[bytes_read - 1] = '\0';
             bytes_read--;
         } else {
             buffer[bytes_read] = '\0'; // Null-terminate
         }
-        
         return bytes_read;
     } else {
         buffer[0] = '\0';
         return 0;
     }
-    #endif
 }
 
 // Function to read a line of input from stdin
@@ -445,12 +378,26 @@ int noesis_getline(char* buffer, unsigned long size) {
     return index;
 }
 
-// Function to get a single character from stdin
+// Add this near the top of your file with other global variables
+
+#define INPUT_BUFFER_SIZE 1024
+static char input_buffer[INPUT_BUFFER_SIZE];
+static int buffer_position = 0;
+static int buffer_size = 0;
+
+// Then modify noesis_getchar to use the buffer:
+
 int noesis_getchar(void) {
-    char ch = 0;
-    int result = syscall(SYS_read, STDIN_FILENO, &ch, 1);
-    if (result <= 0) {
-        return -1; // Error or EOF
+    // If buffer is empty or we've read all characters, refill it
+    if (buffer_position >= buffer_size) {
+        buffer_size = syscall(SYS_read, STDIN_FILENO, input_buffer, INPUT_BUFFER_SIZE);
+        buffer_position = 0;
+        
+        if (buffer_size <= 0) {
+            return -1; // Error or EOF
+        }
     }
-    return ch;
+    
+    // Return next character from buffer
+    return (unsigned char)input_buffer[buffer_position++];
 }
