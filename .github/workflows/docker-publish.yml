@@ -8,6 +8,11 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    
+    # Add concurrency group to ensure only one job runs per day
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.repository.name }}-${{ format('{0:yyyy-MM-dd}', github.event.repository.pushed_at) }}
+      cancel-in-progress: true
 
     steps:
     - name: Checkout code
