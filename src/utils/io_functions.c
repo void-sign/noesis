@@ -280,51 +280,18 @@ int noesis_read(char* buffer, unsigned long size) {
         return 0;
     }
 
-    // Skip the shell script approach for now and use direct syscall
-    noesis_print("Debug: About to read directly from stdin...\n");
+    noesis_print("Please type your input: ");
     
-    // Direct read from stdin - simpler approach first
+    // First, flush any pending input
+    char flush_buffer[8];
+    while (syscall(SYS_read, STDIN_FILENO, flush_buffer, 1) == 1 && flush_buffer[0] != '\n');
+
+    // Direct read from stdin with clear prompt
     int bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
     
-    noesis_print("Debug: Read completed with result: ");
-    char bytes_str[20];
-    int i = 0;
-    int temp = bytes_read;
-    if (temp == 0) {
-        bytes_str[i++] = '0';
-    } else if (temp < 0) {
-        bytes_str[i++] = '-';
-        bytes_str[i++] = '1';
-    } else {
-        do {
-            bytes_str[i++] = '0' + (temp % 10);
-            temp /= 10;
-        } while (temp > 0);
-    }
-    bytes_str[i] = '\0';
-    
-    // Reverse the string
-    for (int j = 0; j < i/2; j++) {
-        char tmp = bytes_str[j];
-        bytes_str[j] = bytes_str[i-j-1];
-        bytes_str[i-j-1] = tmp;
-    }
-    noesis_print(bytes_str);
-    noesis_print("\n");
-    
-    // Print the raw bytes for debugging
-    if (bytes_read > 0) {
-        noesis_print("Debug: Raw bytes: [");
-        for (int i = 0; i < bytes_read && i < 20; i++) {
-            char hex[4];
-            unsigned char c = (unsigned char)buffer[i];
-            hex[0] = "0123456789ABCDEF"[(c >> 4) & 0xF];
-            hex[1] = "0123456789ABCDEF"[c & 0xF];
-            hex[2] = ' ';
-            hex[3] = '\0';
-            noesis_print(hex);
-        }
-        noesis_print("]\n");
+    // Minimal debug output (remove if not needed)
+    if (bytes_read <= 0) {
+        noesis_print("No input received\n");
     }
     
     if (bytes_read > 0) {
