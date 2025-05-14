@@ -129,8 +129,3 @@ changelogs/*
 !docs/
 !examples/
 
-# Explicitly ignore removed files
-src/quantum/export_json.c
-src/quantum/export_json.o
-build/obj/quantum/export_json.o
-src/utils/asm/
