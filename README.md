@@ -1,4 +1,4 @@
-# Noesis v1.2.0
+# Noesis v2.0.0
 
 ![Noesis Logo](noesis-logo.jpg)
 
@@ -54,13 +54,60 @@ The two repositories are now completely independent and communicate via the stan
 noesis/
 ├── build/                                         # Build artifacts
 │   ├── bin/                                       # Compiled binaries
+│   ├── fish-only/                                 # Fish shell specific implementation
+│   │   ├── fish-only-run.fish                     # Fish-specific run script
+│   │   ├── run.fish                               # Main run script for fish shell
+│   │   └── src/                                   # Fish source code
+│   │       ├── api/                               # API implementation in Fish
+│   │       │   └── noesis_api.fish                # Noesis API Fish implementation
+│   │       ├── core/                              # Core system implementation in Fish
+│   │       │   ├── emotion.fish                   # Emotion processing in Fish
+│   │       │   ├── intent.fish                    # Intent processing in Fish
+│   │       │   ├── logic.fish                     # Logic processing in Fish
+│   │       │   ├── main.fish                      # Main program in Fish
+│   │       │   ├── memory.fish                    # Memory management in Fish
+│   │       │   └── perception.fish                # Perception processing in Fish
+│   │       ├── quantum/                           # Quantum computation in Fish
+│   │       │   ├── backend_ibm.fish               # IBM Quantum backend in Fish
+│   │       │   ├── backend_stub.fish              # Stub backend in Fish
+│   │       │   ├── compiler.fish                  # Quantum compiler in Fish
+│   │       │   ├── export_qasm.fish               # QASM export in Fish
+│   │       │   ├── quantum.fish                   # Main quantum implementation in Fish
+│   │       │   └── field/                         # Quantum field implementation
+│   │       │       └── quantum_field.fish         # Quantum field in Fish
+│   │       └── utils/                             # Utility functions in Fish
+│   │           ├── data.fish                      # Data utility in Fish
+│   │           └── noesis_lib.fish                # Noesis library in Fish
 │   ├── lib/                                       # Compiled libraries
+│   │   ├── libnlibc_stubs.a                       # Noesis C library stubs archive
+│   │   └── libnlibc_stubs.a.bak                   # Backup of library stubs
 │   └── obj/                                       # Object files
 │       ├── api/                                   # API object files
+│       │   └── noesis_api.o                       # API implementation object file
 │       ├── core/                                  # Core system object files
+│       │   ├── emotion.o                          # Emotion processing object file
+│       │   ├── intent.o                           # Intent processing object file
+│       │   ├── logic.o                            # Logic processing object file
+│       │   ├── main.o                             # Main program object file
+│       │   ├── memory.o                           # Memory management object file
+│       │   └── perception.o                       # Perception processing object file
 │       ├── quantum/                               # Quantum computation object files
+│       │   ├── backend_ibm.o                      # IBM Quantum backend object file
+│       │   ├── backend_stub.o                     # Stub backend object file
+│       │   ├── compiler.o                         # Quantum compiler object file
+│       │   ├── export_qasm.o                      # QASM export object file
+│       │   ├── quantum.o                          # Main quantum implementation object file
+│       │   └── field/                             # Quantum field object files
+│       │       └── quantum_field.o                # Quantum field object file
 │       └── utils/                                 # Utility object files
-├── data/                                          # Core data files for simulations
+│           ├── data.o                             # Data utility object file
+│           ├── helper.o                           # Helper functions object file
+│           ├── io_functions.o                     # I/O functions object file
+│           ├── io_helper.o                        # I/O helper functions object file
+│           ├── noesis_lib.o                       # Noesis library object file
+│           ├── noesis_libc_stubs.o                # Noesis C library stubs object file
+│           ├── string_functions.o                 # String functions object file
+│           └── timer.o                            # Timer functions object file
 ├── docs/                                          # Documentation files
 │   ├── CHECKLIST.md                               # Repository split checklist
 │   ├── CONTRIBUTING.md                            # Contribution guidelines
@@ -72,78 +119,37 @@ noesis/
 │       ├── CHANGELOG_v0.1.2.md
 │       ├── CHANGELOG_v0.2.0.md
 │       ├── CHANGELOG_v1.0.0.md
-│       └── CHANGELOG_v1.1.0.md
-├── examples/                                      # Example usage and implementations
-│   ├── hub_example/                               # Template for extension creation
-│   ├── Makefile                                   # Example Makefile
-│   └── noesis_client.c                            # Example client application
-├── include/                                       # Header files
-│   ├── api/                                       # API interface headers
-│   ├── core/                                      # Core system headers
-│   │   ├── emotion.h                              # Emotion processing headers
-│   │   ├── intent.h                               # Intent processing headers
-│   │   ├── logic.h                                # Logic processing headers
-│   │   ├── memory.h                               # Memory management headers
-│   │   └── perception.h                           # Perception processing headers
-│   ├── quantum/                                   # Quantum computation headers
-│   │   ├── backend.h                              # Quantum backend headers
-│   │   ├── compiler.h                             # Quantum circuit compiler headers
-│   │   ├── export.h                               # Quantum export headers
-│   │   ├── field/                                 # Quantum field headers
-│   │   ├── quantum.h                              # Main quantum headers
-│   │   └── quantum_stdlib.h                       # Quantum standard library headers
-│   └── utils/                                     # Utility function headers
-│       ├── data.h                                 # Data utility headers
-│       ├── helper.h                               # Helper function headers
-│       ├── noesis_lib.h                           # Noesis library headers
-│       └── timer.h                                # Timer utility headers
-├── libs/                                          # Libraries
-│   ├── include/                                   # Library header files
-│   ├── lib/                                       # Compiled library files
-│   ├── noesis_libc/                               # Custom C library implementation
-│   ├── obj/                                       # Object files
-│   └── src/                                       # Source files
-├── logs/                                          # Log output files
-├── scripts/                                       # Shell scripts
-│   ├── bash/                                      # Bash shell scripts
-│   │   ├── build_all.sh                           # Build script for all components
-│   │   ├── cleanup_extensions.sh                  # Script to clean extension artifacts
-│   │   ├── cleanup_folders.sh                     # Script to clean temporary folders
-│   │   ├── cleanup_repo.sh                        # Script to clean repository state
-│   │   ├── fix_headers.sh                         # Script to fix header files
-│   │   ├── install.sh                             # Installation script
-│   │   ├── launch_noesis_env.sh                   # Launch Noesis environment
-│   │   ├── link_libraries.sh                      # Script to link libraries
-│   │   ├── migrate.sh                             # Migration script
-│   │   ├── run_all_tests.sh                       # Script to execute all test suites
-│   │   ├── run_core.sh                            # Script to run core functionality
-│   │   ├── run_noesis.sh                          # Main execution script
-│   │   ├── run_tests.sh                           # Script to run tests
-│   │   ├── update_headers.sh                      # Script to update headers
-│   │   └── validate_split.sh                      # Validation script for repository split
-│   └── fish/                                      # Fish shell scripts
-│       ├── build_all.fish                         # Build script for all components (fish)
-│       ├── cleanup_extensions.fish                # Script to clean extension artifacts (fish)
-│       ├── cleanup_folders.fish                   # Script to clean temporary folders (fish)
-│       ├── cleanup_repo.fish                      # Script to clean repository state (fish)
-│       ├── fix_headers.fish                       # Script to fix header files (fish)
-│       ├── install.fish                           # Installation script (fish)
-│       ├── launch_noesis_env.fish                 # Launch Noesis environment (fish)
-│       ├── link_libraries.fish                    # Script to link libraries (fish)
-│       ├── migrate.fish                           # Migration script (fish)
-│       ├── run_all_tests.fish                     # Script to execute all test suites (fish)
-│       ├── run_core.fish                          # Script to run core functionality (fish)
-│       ├── run_noesis.fish                        # Main execution script (fish)
-│       └── validate_split.fish                    # Validation script for repository split (fish)
+│       ├── CHANGELOG_v1.1.0.md
+│       └── CHANGELOG_v1.2.0.md
 ├── src/                                           # Source code files
 │   ├── api/                                       # API interface implementation
+│   │   ├── noesis_api.c                           # Noesis API C implementation
+│   │   └── noesis_api.fish                        # Noesis API Fish implementation
 │   ├── core/                                      # Core system implementation
-│   ├── quantum/                                   # Quantum computation implementation
-│   ├── tools/                                     # Tools implementation
-│   └── utils/                                     # Utility function implementation
-└── tests/                                         # Test suites and unit tests
-    ├── debug/                                     # Debug tests
-    └── unit/                                      # Unit tests
+│   │   ├── emotion.c                              # Emotion processing in C
+│   │   ├── emotion.fish                           # Emotion processing in Fish
+│   │   ├── intent.c                               # Intent processing in C
+│   │   ├── intent.fish                            # Intent processing in Fish
+│   │   ├── intent_shell.c                         # Intent shell in C
+│   │   ├── intent_shell.fish                      # Intent shell in Fish
+│   │   ├── logic.c                                # Logic processing in C
+│   │   ├── logic.fish                             # Logic processing in Fish
+│   │   ├── main.c                                 # Main program in C
+│   │   ├── main.fish                              # Main program in Fish
+│   │   ├── memory.c                               # Memory management in C
+│   │   ├── memory.fish                            # Memory management in Fish
+│   │   ├── perception.c                           # Perception processing in C
+│   │   └── perception.fish                        # Perception processing in Fish
+│   └── quantum/                                   # Quantum computation implementation
+│       ├── backend_ibm.fish                       # IBM Quantum backend in Fish
+│       ├── backend_stub.fish                      # Stub backend in Fish
+│       ├── compiler.fish                          # Quantum compiler in Fish
+│       ├── export_qasm.fish                       # QASM export in Fish
+│       ├── quantum.fish                           # Main quantum implementation in Fish
+│       └── field/                                 # Quantum field implementation
+│           └── quantum_field.fish                 # Quantum field in Fish
+├── build.fish                                     # Main build script for Fish shell
+└── run.fish                                       # Main run script for Fish shell
 ```
 
 ## Project Documentation
@@ -271,6 +277,7 @@ requirements for attribution and profit-sharing for commercial use.
 ## Documentation
 
 - See the [changelogs](docs/changelogs/) directory for version history:
+  - [CHANGELOG_v2.0.0.md](docs/changelogs/CHANGELOG_v2.0.0.md) (Latest)
   - [CHANGELOG_v1.2.0.md](docs/changelogs/CHANGELOG_v1.2.0.md)
   - [CHANGELOG_v1.1.0.md](docs/changelogs/CHANGELOG_v1.1.0.md)
   - [CHANGELOG_v1.0.0.md](docs/changelogs/CHANGELOG_v1.0.0.md)
