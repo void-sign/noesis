@@ -211,36 +211,36 @@ Noesis provides a central control interface for both Bash and Fish shells. You c
 
 ```bash
 # Main interface with helpful commands
-./noesis.sh help
+./run.sh help
 
 # Common operations
-./noesis.sh build     # Build the Noesis core
-./noesis.sh run       # Run the Noesis core
-./noesis.sh test      # Run all tests
-./noesis.sh clean     # Clean up build artifacts
-./noesis.sh install   # Install Noesis
+./run.sh build     # Build the Noesis core
+./run.sh run       # Run the Noesis core
+./run.sh test      # Run all tests
+./run.sh clean     # Clean up build artifacts
+./run.sh install   # Install Noesis
 
 # Run any script directly
-./noesis.sh run_core  # Run just the core
-./noesis.sh <script>  # Run any script from scripts/bash/
+./run.sh run_core  # Run just the core
+./run.sh <script>  # Run any script from scripts/bash/
 ```
 
 ### Fish Shell
 
 ```fish
 # Main interface with helpful commands
-./noesis.fish help
+./run.fish help
 
 # Common operations
-./noesis.fish build     # Build the Noesis core
-./noesis.fish run       # Run the Noesis core
-./noesis.fish test      # Run all tests
-./noesis.fish clean     # Clean up build artifacts
-./noesis.fish install   # Install Noesis
+./run.fish build     # Build the Noesis core
+./run.fish run       # Run the Noesis core
+./run.fish test      # Run all tests
+./run.fish clean     # Clean up build artifacts
+./run.fish install   # Install Noesis
 
 # Run any script directly
-./noesis.fish run_core  # Run just the core
-./noesis.fish <script>  # Run any script from scripts/fish/
+./run.fish run_core  # Run just the core
+./run.fish <script>  # Run any script from scripts/fish/
 ```
 
 You can still use the individual scripts directly if you prefer:

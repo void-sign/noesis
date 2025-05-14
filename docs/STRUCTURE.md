@@ -41,8 +41,8 @@ noesis/
 ├── Dockerfile                 # Docker build file
 ├── LICENSE                    # License file
 ├── Makefile                   # Main makefile
-├── noesis.fish                # Fish shell runner
-├── noesis.sh                  # Bash shell runner
+├── run.fish                   # Fish shell runner
+├── run.sh                     # Bash shell runner
 └── README.md                  # Project readme
 ```
 

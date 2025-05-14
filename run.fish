@@ -29,7 +29,7 @@ function print_header
 end
 
 function print_usage
-    echo $YELLOW"Usage:"$NC" ./noesis.fish <command> [args...]"
+    echo $YELLOW"Usage:"$NC" ./run.fish <command> [args...]"
     echo
     echo $YELLOW"Common commands:"$NC
     echo "  "$GREEN"build"$NC"        - Build the Noesis core"

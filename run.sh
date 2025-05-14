@@ -39,7 +39,7 @@ print_header() {
 }
 
 print_usage() {
-    echo -e "${YELLOW}Usage:${NC} ./noesis.sh <command> [args...]"
+    echo -e "${YELLOW}Usage:${NC} ./run.sh <command> [args...]"
     echo
     echo -e "${YELLOW}Common commands:${NC}"
     echo -e "  ${GREEN}build${NC}        - Build the Noesis core"
