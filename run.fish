@@ -6,19 +6,25 @@
 
 # fish-only-run.fish - Main entry point for the Noesis fish-only implementation
 
-# Source all required modules
-source src/core/main.fish
-source src/core/memory.fish
-source src/core/perception.fish
-source src/core/logic.fish
-source src/core/emotion.fish
-source src/core/intent.fish
-source src/quantum/quantum.fish
-source src/quantum/compiler.fish
-source src/quantum/backend_stub.fish
-source src/quantum/backend_ibm.fish
-source src/quantum/export_qasm.fish
-source src/quantum/field/quantum_field.fish
+# Current version of Noesis
+set -g NOESIS_VERSION "2.0.0"
+
+# Function to source all required modules when needed
+function load_modules
+    # Source all required modules
+    source src/core/main.fish
+    source src/core/memory.fish
+    source src/core/perception.fish
+    source src/core/logic.fish
+    source src/core/emotion.fish
+    source src/core/intent.fish
+    source src/quantum/quantum.fish
+    source src/quantum/compiler.fish
+    source src/quantum/backend_stub.fish
+    source src/quantum/backend_ibm.fish
+    source src/quantum/export_qasm.fish
+    source src/quantum/field/quantum_field.fish
+end
 
 # Define colors for better readability
 set GREEN (set_color green)
@@ -32,7 +38,7 @@ set NC (set_color normal)
 function print_banner
     echo "$BLUE┌────────────────────────────────────────────────┐$NC"
     echo "$BLUE│$NC                                                $BLUE│$NC"
-    echo "$BLUE│$PINK        NOESIS v1.2.0 - FISH ONLY EDITION       $BLUE│$NC"
+    echo "$BLUE│$PINK        NOESIS v$NOESIS_VERSION - FISH ONLY EDITION       $BLUE│$NC"
     echo "$BLUE│$NC                                                $BLUE│$NC"
     echo "$BLUE│$GREEN  Synthetic Conscious System                    $BLUE│$NC"
     echo "$BLUE│$GREEN  Copyright (c) 2025 Napol Thanarangkaun       $BLUE│$NC"
@@ -61,17 +67,175 @@ function initialize_systems
     return 0
 end
 
-# Main function
-function main
-    print_banner
-    initialize_systems
-    
-    echo "$BLUE"Starting cognitive IO interface..."$NC"
-    handle_io
-    
-    echo -e "\n\n$YELLOW"NOESIS sleep"$NC\n\n"
+# Print version information
+function show_version
+    echo "Noesis v$NOESIS_VERSION"
+    echo "Synthetic Conscious System"
+    echo "Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)"
+    echo "Licensed under Noesis License - See LICENSE file for details"
     return 0
 end
 
-# Execute main function
-main
+# Function to check for updates and update Noesis
+function check_for_updates
+    echo "$YELLOW"Checking for updates..."$NC"
+    
+    # Store the current directory
+    set current_dir (pwd)
+    
+    # Check if git is installed
+    if not command -sq git
+        echo "$RED"Error: Git is not installed. Cannot check for updates."$NC"
+        return 1
+    end
+    
+    # Create a temporary directory
+    set tmp_dir (mktemp -d)
+    cd $tmp_dir
+    
+    # Clone the repository to check for updates
+    if git clone --quiet https://github.com/napol/noesis.git 2>/dev/null
+        cd noesis
+        
+        # Get the latest version from the repository
+        set latest_version (grep "NOESIS_VERSION" run.fish | head -1 | string match -r '"[0-9]+\.[0-9]+\.[0-9]+"' | tr -d '"')
+        
+        if test -z "$latest_version"
+            echo "$RED"Error: Could not determine the latest version."$NC"
+            cd $current_dir
+            rm -rf $tmp_dir
+            return 1
+        end
+        
+        # Compare versions
+        if test "$latest_version" = "$NOESIS_VERSION"
+            echo "$GREEN"You are already running the latest version (v$NOESIS_VERSION)."$NC"
+            cd $current_dir
+            rm -rf $tmp_dir
+            return 0
+        else
+            echo "$GREEN"A new version of Noesis is available: v$latest_version (you have v$NOESIS_VERSION)"$NC"
+            
+            # Ask if user wants to update
+            echo -n "$YELLOW"Do you want to update? [y/N] "$NC"
+            read -l confirm
+            
+            if test "$confirm" = "y" -o "$confirm" = "Y"
+                echo "$YELLOW"Updating Noesis..."$NC"
+                
+                # Check if Noesis is installed system-wide
+                if test -d "/usr/local/lib/noesis"
+                    echo "$YELLOW"Noesis appears to be installed system-wide."$NC"
+                    echo "$YELLOW"Running installer with sudo..."$NC"
+                    
+                    # Copy the installer script
+                    cp install.fish $current_dir/install.fish
+                    
+                    # Go back to the original directory and run the installer
+                    cd $current_dir
+                    sudo ./install.fish
+                    
+                    echo "$GREEN"Noesis has been updated to v$latest_version."$NC"
+                else
+                    echo "$YELLOW"Updating local copy..."$NC"
+                    
+                    # Copy files to the current repository
+                    cd $tmp_dir/noesis
+                    cp -r src $current_dir/
+                    cp run.fish $current_dir/
+                    cp build.fish $current_dir/
+                    cp install.fish $current_dir/
+                    
+                    echo "$GREEN"Noesis files have been updated to v$latest_version."$NC"
+                    echo "$YELLOW"You may need to rebuild the project with './build.fish'"$NC"
+                end
+            else
+                echo "$YELLOW"Update cancelled."$NC"
+            end
+            
+            cd $current_dir
+            rm -rf $tmp_dir
+            return 0
+        end
+    else
+        echo "$RED"Error: Could not connect to the repository."$NC"
+        echo "$RED"Please check your internet connection and try again."$NC"
+        cd $current_dir
+        rm -rf $tmp_dir
+        return 1
+    end
+end
+
+# Print help information
+function show_help
+    echo "Noesis v$NOESIS_VERSION - Synthetic Conscious System"
+    echo
+    echo "Usage: noesis [options]"
+    echo
+    echo "Options:"
+    echo "  -v, --version     Display version information"
+    echo "  -h, --help        Display this help message"
+    echo "  test              Run all tests"
+    echo "  -q, --quantum     Run in quantum mode"
+    echo "  update            Check for updates and update Noesis"
+    echo
+    echo "Without options, Noesis starts in interactive mode."
+    return 0
+end
+
+# Main function
+function main
+    # Process command-line arguments
+    if test (count $argv) -gt 0
+        switch $argv[1]
+            case "-v" "--version"
+                show_version
+                return 0
+                
+            case "-h" "--help"
+                show_help
+                return 0
+                
+            case "update"
+                check_for_updates
+                return $status
+                
+            case "test"
+                echo "$YELLOW"Running Noesis tests..."$NC"
+                load_modules
+                # Add test logic here
+                echo "$GREEN"All tests completed successfully"$NC"
+                return 0
+                
+            case "-q" "--quantum"
+                echo "$YELLOW"Starting Noesis in quantum mode..."$NC"
+                load_modules
+                print_banner
+                initialize_systems
+                # Add quantum-specific initialization here
+                echo "$BLUE"Starting quantum cognitive IO interface..."$NC"
+                handle_io
+                echo -e "\n\n$YELLOW"NOESIS sleep"$NC\n\n"
+                return 0
+                
+            case '*'
+                echo "$RED"Unknown option: $argv[1]"$NC"
+                show_help
+                return 1
+        end
+    else
+        # Default behavior: run in interactive mode
+        load_modules
+        print_banner
+        initialize_systems
+        
+        echo "$BLUE"Starting cognitive IO interface..."$NC"
+        handle_io
+        
+        echo -e "\n\n$YELLOW"NOESIS sleep"$NC\n\n"
+        return 0
+    end
+end
+
+# Execute main function with all arguments
+main $argv

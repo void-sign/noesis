@@ -19,8 +19,8 @@ WORKDIR /app
 COPY . /app
 
 # Build the project
-RUN chmod +x ./scripts/fish/build_all.fish && \
-    fish ./scripts/fish/build_all.fish
+RUN chmod +x ./build.fish && \
+    fish ./build.fish
 
 # Command to run the application
-CMD ["fish", "./run.fish", "core"]
+CMD ["fish", "./run.fish"]

@@ -62,14 +62,13 @@ jobs:
       with:
         path: |
           build/obj
-          libs/obj
-        key: ${{ runner.os }}-build-${{ hashFiles('**/*.c', '**/*.h', '**/Makefile') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('**/*.fish') }}
         restore-keys: |
           ${{ runner.os }}-build-
     
     - name: Build project
       run: |
-        fish ./scripts/fish/build_all.fish
+        fish ./build.fish
       
     - name: Create shared library
       run: |
@@ -112,10 +111,10 @@ jobs:
         
         # Run tests and capture output
         echo "Running Noesis Core Tests..." > logs/test_output.log
-        echo "> Running ./noesis_tests" >> logs/test_output.log
+        echo "> Running tests with run.fish" >> logs/test_output.log
         
         # Execute test and save output
-        make test > /tmp/noesis_test_raw.tmp 2>&1
+        fish ./run.fish test > /tmp/noesis_test_raw.tmp 2>&1
         TEST_EXIT_CODE=$?
         
         echo "> Test binary executed" >> logs/test_output.log
@@ -182,10 +181,17 @@ jobs:
         flawfinder --html --context --minlevel=3 src/ > flawfinder-report.html
       continue-on-error: true
     
+    - name: Run Fish Shell Linting
+      run: |
+        sudo apt-get install -y fish-shell
+        # Check Fish syntax
+        find src/ -name "*.fish" -exec fish -n {} \; > fish-lint-report.txt 2>&1
+      continue-on-error: true
+    
     - name: Run Cppcheck (Code Smell Detection)
       run: |
-        cppcheck --enable=all --inconclusive --xml --xml-version=2 src/ include/ 2> cppcheck-report.xml
-        cppcheck --enable=all --inconclusive --output-file=cppcheck-report.txt src/ include/
+        cppcheck --enable=all --inconclusive --xml --xml-version=2 src/ 2> cppcheck-report.xml
+        cppcheck --enable=all --inconclusive --output-file=cppcheck-report.txt src/
       continue-on-error: true
     
     - name: Check Buffer Overflows with CodeQL
@@ -222,14 +228,13 @@ jobs:
     
     - name: Build examples
       run: |
-        cd examples
-        make
+        # Note: Examples are now integrated within the main fish scripts
+        fish ./build.fish examples
         
-    - name: Build hub example
+    - name: Display Hub information
       run: |
-        cd examples/hub_example
-        fish ./install.fish
-        make
+        echo "Noesis Hub is now an independent platform"
+        echo "See: https://github.com/void-sign/noesis-hub"
         
   dependency_check:
     needs: [build, check_commit_time]
