@@ -64,8 +64,7 @@ noesis_handle_t noesis_initialize(void) {
     system->perception_module = perception_init();
     system->logic_module = logic_init();
     system->emotion_module = emotion_init();
-    system->intent_module = intent_init();
-
+    
     /* Initialize callback fields */
     system->callback = NULL;
     system->callback_user_data = NULL;

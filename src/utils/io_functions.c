@@ -4,24 +4,54 @@
  */
 
 // io_functions.c - Pure C implementation of I/O operations using shell scripts
-// No external libc headers used
+// We need stddef.h for size_t
+#include <stddef.h>
+
+#define NOESIS_USE_SHORT_NAMES
 
 #include "../../include/utils/noesis_lib.h"
+#include "../../libs/noesis_libc/include/noesis_names.h"
 
-// Define syscall numbers - these will be overridden in platform-specific sections
-#define SYS_write 1
-#define SYS_execve 59
-#define SYS_access 21
-#define SYS_pipe 22
-#define SYS_fork 57
-#define SYS_read 0
-#define SYS_close 3
-#define SYS_wait4 61
-#define SYS_dup2 33
-#define SYS_exit 60
-#define STDOUT_FILENO 1
-#define STDIN_FILENO 0
-#define O_RDONLY 00
+// Define syscall numbers if not already defined
+#ifndef SYS_write
+  #define SYS_write 1
+#endif
+#ifndef SYS_execve
+  #define SYS_execve 59
+#endif
+#ifndef SYS_access
+  #define SYS_access 21
+#endif
+#ifndef SYS_pipe
+  #define SYS_pipe 22
+#endif
+#ifndef SYS_fork
+  #define SYS_fork 57
+#endif
+#ifndef SYS_read
+  #define SYS_read 0
+#endif
+#ifndef SYS_close
+  #define SYS_close 3
+#endif
+#ifndef SYS_wait4
+  #define SYS_wait4 61
+#endif
+#ifndef SYS_dup2
+  #define SYS_dup2 33
+#endif
+#ifndef SYS_exit
+  #define SYS_exit 60
+#endif
+#ifndef STDOUT_FILENO
+  #define STDOUT_FILENO 1
+#endif
+#ifndef STDIN_FILENO
+  #define STDIN_FILENO 0
+#endif
+#ifndef O_RDONLY
+  #define O_RDONLY 00
+#endif
 
 // Define access mode macros
 #define F_OK 0
@@ -280,7 +310,11 @@ int noesis_read(char* buffer, unsigned long size) {
         return 0;
     }
     
-    // Read directly from stdin without additional prompt or flushing
+    // Make sure the prompt is visible before waiting for input
+    // Use direct syscall to flush stdout
+    syscall(SYS_write, STDOUT_FILENO, "> ", 2); // Add a visible prompt character
+    
+    // Read directly from stdin
     int bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
     
     // Always null-terminate regardless of what's read
@@ -288,7 +322,7 @@ int noesis_read(char* buffer, unsigned long size) {
         buffer[bytes_read] = '\0';
     } else {
         buffer[0] = '\0';
-        return 0;
+        return -1; // Return error indicator, not 0
     }
     
     // Process the input buffer
@@ -299,30 +333,12 @@ int noesis_read(char* buffer, unsigned long size) {
             bytes_read--;
         }
         
-        // If buffer contains only a newline or whitespace, put a default value
-        if (bytes_read <= 0 || buffer[0] == '\0') {
-            const char* default_text = "help";
-            int i = 0;
-            while (default_text[i]) {
-                buffer[i] = default_text[i];
-                i++;
-            }
-            buffer[i] = '\0';
-            return i;  // Return the length of "help"
-        }
-        
+        // Return actual bytes read, even if it's just a newline that got stripped
         return bytes_read;
-    } else {
-        // Empty input, set a default value
-        const char* default_text = "help";
-        int i = 0;
-        while (default_text[i]) {
-            buffer[i] = default_text[i];
-            i++;
-        }
-        buffer[i] = '\0';
-        return i;  // Return the length of "help"
-    }
+    } 
+    
+    // For zero bytes read, return 0 to indicate empty input
+    return bytes_read;
 }
 
 // Function to read a line of input from stdin
@@ -383,4 +399,101 @@ int noesis_getchar(void) {
     
     // Return next character from buffer
     return (unsigned char)input_buffer[buffer_position++];
+}
+
+// Function to execute a shell command and capture its output
+// Uses direct system calls for maximum compatibility
+int execute_shell_command(const char* cmd, char* output_buffer, int output_buffer_size) {
+    if (!cmd || !output_buffer || output_buffer_size <= 0) {
+        return -1;
+    }
+    
+    // Create temporary file path
+    const char* tmp_file = "/tmp/noesis_output.txt";
+    
+    // Create the full command with output redirection
+    char command[1024] = {0};
+    int cmd_len = 0;
+    const char* s = cmd;
+    
+    // Copy the command
+    while (*s && cmd_len < 900) {
+        command[cmd_len++] = *s++;
+    }
+    command[cmd_len] = '\0';
+    
+    // Add output redirection
+    const char* redirect = " > ";
+    s = redirect;
+    while (*s && cmd_len < 1020) {
+        command[cmd_len++] = *s++;
+    }
+    
+    s = tmp_file;
+    while (*s && cmd_len < 1020) {
+        command[cmd_len++] = *s++;
+    }
+    command[cmd_len] = '\0';
+    
+    // Check for available shells
+    int use_fish = syscall(SYS_access, "/usr/bin/fish", F_OK) == 0;
+    int use_bash = syscall(SYS_access, "/bin/bash", F_OK) == 0;
+    
+    // Default shell path
+    const char* shell_path = "/bin/sh";
+    char* shell_args[] = {"/bin/sh", "-c", command, 0};
+    
+    // Use fish if available (macOS or Linux)
+    if (use_fish) {
+        shell_path = "/usr/bin/fish";
+        shell_args[0] = "/usr/bin/fish";
+        shell_args[1] = "-c";
+    } 
+    // Otherwise use bash if available
+    else if (use_bash) {
+        shell_path = "/bin/bash";
+        shell_args[0] = "/bin/bash";
+        shell_args[1] = "-c";
+    }
+    
+    // Fork a child process
+    int pid = syscall(SYS_fork);
+    if (pid == 0) {
+        // Child process - execute the command with the detected shell
+        syscall(SYS_execve, shell_path, shell_args, 0);
+        
+        // If we get here, execve failed - try fallback to /bin/sh
+        if (noesis_scmp(shell_path, "/bin/sh") != 0) {
+            syscall(SYS_execve, "/bin/sh", (char*const[]){"/bin/sh", "-c", command, 0}, 0);
+        }
+        
+        // If we still get here, both attempts failed
+        syscall(SYS_exit, 1); // Exit with error
+    } else if (pid < 0) {
+        // Fork failed
+        return -1;
+    }
+    
+    // Parent process - wait for child to complete
+    int status;
+    syscall(SYS_wait4, pid, &status, 0, 0);
+    
+    // Read back the output from the temporary file
+    int bytes_read = 0;
+    int fd = syscall(SYS_open, tmp_file, O_RDONLY, 0);
+    
+    if (fd >= 0) {
+        if (output_buffer && output_buffer_size > 0) {
+            bytes_read = syscall(SYS_read, fd, output_buffer, output_buffer_size - 1);
+            if (bytes_read > 0) {
+                output_buffer[bytes_read] = '\0'; // Null-terminate
+            } else {
+                output_buffer[0] = '\0';
+            }
+        }
+        
+        syscall(SYS_close, fd);
+    }
+    
+    return bytes_read;
 }

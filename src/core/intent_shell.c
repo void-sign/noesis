@@ -4,7 +4,7 @@
  */
 
 /*
- * intent.c - Implementation of intent handling in the Noesis project
+ * intent_shell.c - Shell script-based implementation of intent handling for Noesis
  */
 
 // Define NOESIS_USE_SHORT_NAMES to enable short function names like 'out'
@@ -118,7 +118,29 @@ void free_all_intentions(void) {
     intention_count = 0;
 }
 
-// Add a function to handle input and output using noesis_lib
+// Shell command execution helper function
+static int execute_shell_command(const char* command, char* output_buffer, int buffer_size) {
+    FILE* pipe = popen(command, "r");
+    if (!pipe) {
+        return -1;
+    }
+    
+    int bytes_read = 0;
+    if (fgets(output_buffer, buffer_size - 1, pipe) != NULL) {
+        bytes_read = noesis_strlen(output_buffer);
+        
+        // Remove newline if present
+        if (bytes_read > 0 && output_buffer[bytes_read-1] == '\n') {
+            output_buffer[bytes_read-1] = '\0';
+            bytes_read--;
+        }
+    }
+    
+    pclose(pipe);
+    return bytes_read;
+}
+
+// Add a function to handle input and output using shell script
 void handle_io() {
     char input[256];
     int max_attempts = 5; // Maximum number of interaction attempts
@@ -135,25 +157,8 @@ void handle_io() {
         }
         
         // Use shell script to prompt for and read input
-        out("\nTalk: ");
-        
-        // Create temporary file to store output
-        char temp_buffer[256] = {0};
-        
-        // Call the io_handler.fish script using direct syscall approach
-        int read_bytes = 0;
-        
-        // Use the helper function from io_functions.c to execute the shell command
-        // This function uses direct syscalls for process creation and file operations
-        extern int execute_shell_command(const char* cmd, char* output_buffer, int output_buffer_size);
-        
-        read_bytes = execute_shell_command("./scripts/fish/io_handler.fish read", input, sizeof(input) - 1);
-        
-        // Remove newline if present
-        if (read_bytes > 0 && input[read_bytes-1] == '\n') {
-            input[read_bytes-1] = '\0';
-            read_bytes--;
-        }
+        // The command will execute io_handler.fish with the readp operation
+        int read_bytes = execute_shell_command("./scripts/fish/io_handler.fish readp \"Talk: \"", input, sizeof(input));
         
         // Handle error cases
         if (read_bytes < 0) {
@@ -195,6 +200,16 @@ void handle_io() {
         // Process valid input by learning from it
         learn_from_input(input);
     }
+    
+    if (attempts >= max_attempts) {
+        out("Maximum input attempts reached, exiting.\n");
+    }
+}
+
+// API functions used in noesis_api.c
+void* intent_init() {
+    init_intent_system();
+    return (void*)1; // Non-NULL pointer to indicate success
 }
 
 void intent_cleanup(void* module) {

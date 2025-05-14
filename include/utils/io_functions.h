@@ -31,6 +31,7 @@ void noesis_print(const char* message);
  */
 int noesis_read(char* buffer, unsigned long size);
 
+
 /**
  * Writes test content to a buffer
  * 

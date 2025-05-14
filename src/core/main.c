@@ -22,23 +22,17 @@
 // Main function: Entry point for the program
 int main() {
     // Initialize the synthetic consciousness system
-    initialize_memory();      // Initialize memory management
-    initialize_perception();  // Initialize perception system
-    initialize_logic();       // Initialize logic processing
-    initialize_emotion();     // Initialize emotion simulation
+    init_intent_system();      // Initialize intent system
 
-    // Version info only (title is now displayed by display_noesis_title in perception.c)
-    out("Version 1.2.0 - May 2025\n");
-
-    // Initialize intent system (this initializes the intent handling)
-    init_intent_system();
+    // Version info only
+    out("\n\nNOESIS v1.2.0 - Synthetic Conscious\n\n");
 
     // Call the central control function from intent.c
     // This will handle input/output as the "consciousness" center
-    out("Starting cognitive IO interface...\n\n");
-    handle_io();  // This will show "Enter input: " and process user interactions
-
-    out("\nNOESIS system terminated normally.\n");
+    out("Starting cognitive IO interface...\n");
+    handle_io();  // Process user interactions
+    
+    out("\n\nNOESIS sleep\n\n");
 
     return 0;
 }

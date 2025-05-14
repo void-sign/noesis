@@ -12,6 +12,7 @@
 
 // Include noesis_api.h for common type definitions
 #include "../api/noesis_api.h"
+#include "../../include/utils/io_functions.h"
 
 // Use noesis_size_t from noesis_api.h
 
@@ -20,8 +21,6 @@
 #define NOESIS_NULL ((void*)0)
 #endif
 
-// Function to write a message to the terminal (C implementation)
-void noesis_print(const char* message);
 
 // Function to simulate getting the current time (in seconds since epoch)
 unsigned long noesis_get_time();
@@ -34,10 +33,6 @@ char* noesis_strdup(const char* str);
 
 // Memory deallocation function
 void noesis_free(void* ptr);
-
-// Function to read input from the user (C implementation)
-// Returns the number of bytes read (or 0 on error)
-int noesis_read(char* buffer, unsigned long size);
 
 // Function to compare two strings (C implementation)
 int noesis_strcmp(const char* str1, const char* str2);
@@ -60,12 +55,8 @@ typedef char* noesis_va_list;
 // String search function (C implementation)
 char *noesis_ss(const char *haystack, const char *needle);
 
-// Alias functions
-char* noesis_sdup(const char* s);
-int noesis_scmp(const char* s1, const char* s2);
-void noesis_printf(const char* format, ...);
 
-// Function to read a line of text
-char* noesis_read_line(void);
+int noesis_scmp(const char* s1, const char* s2);
+
 
 #endif // NOESIS_LIB_H
