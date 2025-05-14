@@ -114,21 +114,6 @@ static long syscall(long nr, ...) {
     return ret;
 }
 
-// Check if a file exists
-static int file_exists(const char* path) {
-    return syscall(SYS_access, path, F_OK) == 0;
-}
-
-// Helper function to determine which shell script to use (fish or bash)
-static const char* get_io_script_path() {
-    // Check if fish shell is available by testing if the file exists
-    if (file_exists("/usr/bin/fish") || file_exists("/bin/fish") || file_exists("/usr/local/bin/fish")) {
-        return "./scripts/fish/io_handler.fish";
-    } else {
-        return "./scripts/bash/io_handler.sh";
-    }
-}
-
 // Execute a shell script directly using the script's interpreter
 static int execute_shell_script_direct(const char* script_path, const char* operation, 
                                const char* arg, char* output_buffer, 
@@ -261,11 +246,58 @@ int noesis_read(char* buffer, unsigned long size) {
         buffer[len] = '\0';
         return len;
     #else
-        // Use direct read syscall on stdin
+        // Print a debug message before reading
+        noesis_print("Debug: Waiting for input...\n");
+        
+        // Use direct read syscall on stdin - block until user provides input
         int bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
         
+        // Debug - print what we received
+        noesis_print("Debug: Raw read complete, bytes: ");
+        char bytes_str[20];
+        int i = 0;
+        int temp = bytes_read;
+        if (temp == 0) {
+            bytes_str[i++] = '0';
+        } else {
+            do {
+                bytes_str[i++] = '0' + (temp % 10);
+                temp /= 10;
+            } while (temp > 0);
+        }
+        bytes_str[i] = '\0';
+        
+        // Reverse the string
+        for (int j = 0; j < i/2; j++) {
+            char tmp = bytes_str[j];
+            bytes_str[j] = bytes_str[i-j-1];
+            bytes_str[i-j-1] = tmp;
+        }
+        noesis_print(bytes_str);
+        noesis_print("\n");
+        
         if (bytes_read > 0) {
-            buffer[bytes_read] = '\0'; // Null-terminate
+            // Filter out control characters (except newline)
+            int valid_bytes = 0;
+            for (int i = 0; i < bytes_read; i++) {
+                unsigned char c = (unsigned char)buffer[i];
+                // Accept only printable ASCII, space, tab, newline
+                if (c >= 32 || c == '\n' || c == '\t') {
+                    buffer[valid_bytes++] = c;
+                }
+            }
+            
+            // Update bytes_read to valid count
+            bytes_read = valid_bytes;
+            
+            // Handle newlines - replace with null terminator if it's the last character
+            if (bytes_read > 0 && buffer[bytes_read - 1] == '\n') {
+                buffer[bytes_read - 1] = '\0';
+                bytes_read--;
+            } else {
+                buffer[bytes_read] = '\0'; // Null-terminate
+            }
+            
             return bytes_read;
         } else {
             buffer[0] = '\0';
@@ -281,7 +313,7 @@ int noesis_getline(char* buffer, unsigned long size) {
         return 0; // Error - can't read into a buffer of size 0 or 1
     }
     
-    int index = 0;
+    unsigned long index = 0;
     int ch;
     
     // Read characters one by one

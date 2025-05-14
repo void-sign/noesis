@@ -119,48 +119,93 @@ void free_all_intentions(void) {
 // Add a function to handle input and output using noesis_lib
 void handle_io() {
     char input[256];
-    int max_attempts = 10; // Add maximum attempts to prevent infinite loops
+    int max_attempts = 5; // Lower the max attempts to avoid excessive looping
     int attempts = 0;
     
     out("Debug: Starting handle_io function\n");
     
     while (attempts < max_attempts) {
+        attempts++; // Increment attempts counter
+        
         // Initialize buffer - we'll use a simple approach for testing
-        for (int i = 0; i < sizeof(input); i++) {
+        for (unsigned long i = 0; i < sizeof(input); i++) {
             input[i] = 0;
         }
         
-        out("Enter input: ");
+        out("Enter input (type 'exit' to quit): ");
         
         // Call our function to read input from stdin
-        int read_bytes = noesis_read(input, sizeof(input));
+        unsigned long read_bytes = noesis_read(input, sizeof(input));
         
-        // Remove newline if present
-        for (int i = 0; i < read_bytes; i++) {
-            if (input[i] == '\n' || input[i] == '\r') {
-                input[i] = '\0';
-                break;
-            }
+        if (read_bytes == 0) {
+            out("No input received, please try again.\n");
+            continue;
         }
+        
+        out("Debug: Read bytes: ");
+        // Convert read_bytes to string manually and print it
+        char bytes_str[20];
+        unsigned long temp = read_bytes;
+        int i = 0;
+        if (temp == 0) {
+            bytes_str[i++] = '0';
+        } else {
+            do {
+                bytes_str[i++] = '0' + (temp % 10);
+                temp /= 10;
+            } while (temp > 0);
+        }
+        bytes_str[i] = '\0';
+        
+        // Reverse the string
+        for (int j = 0; j < i/2; j++) {
+            char tmp = bytes_str[j];
+            bytes_str[j] = bytes_str[i-j-1];
+            bytes_str[i-j-1] = tmp;
+        }
+        
+        out(bytes_str);
+        out("\n");
+        if (read_bytes < 0) {
+            out("Error reading input\n");
+            break;
+        }
+        if (read_bytes == 0) {
+            out("No input received\n");
+            continue;
+        }
+        if (read_bytes >= sizeof(input)) {
+            out("Input too long, truncating\n");
+            read_bytes = sizeof(input) - 1; // Leave space for null terminator
+        }
+        input[read_bytes] = '\0'; // Null-terminate the string
+        out("Debug: Input buffer: ");
+        out(input);
+        out("\n");
         
         // Log what we got
         out("You entered: ");
         out(input);
         out("\n");
         
-        // Check for empty input
-        if (input[0] == '\0') {
-            out("Empty input, please try again.\n");
-            continue;
-        }
-        
-        attempts++;
-        
-        // Check for exit command
-        if (noesis_scmp(input, "exit") == 0) {
+        // Check for exit command first
+        if (noesis_scmp(input, "exit") == 0 || noesis_scmp(input, "quit") == 0) {
             out("Exiting program.\n");
             break;
         }
+        
+        // Check for empty input
+        if (input[0] == '\0') {
+            out("Empty input, please try again.\n");
+            if (attempts >= max_attempts) {
+                out("Too many empty inputs, exiting.\n");
+                break;
+            }
+            continue;
+        }
+        
+        // Reset the attempts counter when we get valid input
+        attempts = 0;
         
         // Process valid input by learning from it
         learn_from_input(input);
