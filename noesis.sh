@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 TITLE='Noesis Control Center v.'
 
 # Print version information
-VERSION="1.1.0"
+VERSION="1.2.0"
 
 # Fallback for realpath if it doesn't exist
 realpath_fallback() {

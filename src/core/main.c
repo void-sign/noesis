@@ -30,7 +30,7 @@ int main() {
     // Welcome message
     out("NOESIS Synthetic Consciousness System\n");
     out("====================================\n");
-    out("Version 0.1.2 - May 2025\n\n");
+    out("Version 1.2.0 - May 2025\n\n");
 
     // Initialize intent system (this initializes the intent handling)
     init_intent_system();

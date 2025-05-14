@@ -15,7 +15,7 @@ set PINK (set_color ff5fd7) # Bright pink
 set NC (set_color normal)
 
 # Print version information
-set VERSION "1.1.0"
+set VERSION "1.2.0"
 set NOESIS_ROOT (dirname (realpath (status filename)))
 
 function print_header
