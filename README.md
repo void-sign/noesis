@@ -120,7 +120,8 @@ noesis/
 │       ├── CHANGELOG_v0.2.0.md
 │       ├── CHANGELOG_v1.0.0.md
 │       ├── CHANGELOG_v1.1.0.md
-│       └── CHANGELOG_v1.2.0.md
+│       ├── CHANGELOG_v1.2.0.md
+│       └── CHANGELOG_v2.0.0.md                    # Latest version changelog
 ├── src/                                           # Source code files
 │   ├── api/                                       # API interface implementation
 │   │   ├── noesis_api.c                           # Noesis API C implementation
@@ -149,7 +150,10 @@ noesis/
 │       └── field/                                 # Quantum field implementation
 │           └── quantum_field.fish                 # Quantum field in Fish
 ├── build.fish                                     # Main build script for Fish shell
-└── run.fish                                       # Main run script for Fish shell
+├── run.fish                                       # Main run script for Fish shell
+├── Dockerfile                                     # Docker configuration file
+├── LICENSE                                        # License file
+└── noesis-logo.jpg                                # Project logo image
 ```
 
 ## Project Documentation
@@ -170,66 +174,36 @@ noesis/
 - **Make** (version 4.0+)
   - Used for managing build rules and dependencies
   - Core Makefile supports parallel builds with `-j` option
-  - Custom rules for object file generation
 
-- **Bash shell** or **Fish shell**
+- **Fish shell** (version 3.0+)
   - Required for running installation and build scripts
-  - Both Bash and Fish shell scripts are provided in the `scripts/` directory
+  - Primary implementation language for v2.0.0
 
 ### Build Commands
 
 To build the core components:
 
-```bash
-make
-```
-
-For a complete setup that includes creating libraries and setting up the environment:
-
-```bash
-# Using Bash
-./scripts/bash/build_all.sh   # Basic build with clean
-# or
-./scripts/bash/install.sh     # Full installation
-```
-
 ```fish
-# Using Fish
-./scripts/fish/build_all.fish   # Basic build with clean
-# or
-./scripts/fish/install.fish     # Full installation
+./build.fish
 ```
 
-The installation script will:
-1. Create necessary directories (bin, lib, include)
-2. Build the core components with proper flags (`-Wall -Wextra -std=c99 -fPIC`)
-3. Create static library (`lib/libnoesis.a`)
-4. Create shared library (`lib/libnoesis.so`)
-5. Install API headers for external use
-6. Run tests (if available)
-7. Set up environment variables and create symbolic links
+This build script will:
+1. Create necessary directories (bin, lib, obj)
+2. Build the core components with proper flags
+3. Create the required library files
+4. Set up the Fish shell environment
+
+For specific build tasks, you can use the VS Code tasks:
+
+```
+Build All            # Build the entire project
+Build Core           # Build just the core components
+Create Shared Library # Create the shared library file
+```
 
 ## Running
 
-Noesis provides a central control interface for both Bash and Fish shells. You can use these scripts to perform common operations with a simplified syntax:
-
-### Bash Shell
-
-```bash
-# Main interface with helpful commands
-./run.sh help
-
-# Common operations
-./run.sh build     # Build the Noesis core
-./run.sh run       # Run the Noesis core
-./run.sh test      # Run all tests
-./run.sh clean     # Clean up build artifacts
-./run.sh install   # Install Noesis
-
-# Run any script directly
-./run.sh run_core  # Run just the core
-./run.sh <script>  # Run any script from scripts/bash/
-```
+Noesis provides a central control interface for Fish shell. You can use these scripts to perform common operations with a simplified syntax:
 
 ### Fish Shell
 
@@ -244,23 +218,16 @@ Noesis provides a central control interface for both Bash and Fish shells. You c
 ./run.fish clean     # Clean up build artifacts
 ./run.fish install   # Install Noesis
 
-# Run any script directly
+# Run specific operations
 ./run.fish run_core  # Run just the core
-./run.fish <script>  # Run any script from scripts/fish/
 ```
 
-You can still use the individual scripts directly if you prefer:
-
-```bash
-# Bash
-./scripts/bash/run_noesis.sh
-./scripts/bash/run_core.sh
-```
+You can also access the Fish-specific implementation directly:
 
 ```fish
-# Fish
-./scripts/fish/run_noesis.fish
-./scripts/fish/run_core.fish
+# Fish-specific implementation
+./build/fish-only/fish-only-run.fish
+./build/fish-only/run.fish
 ```
 
 ## Noesis Hub Repository
