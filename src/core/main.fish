@@ -28,7 +28,7 @@ function main
     init_intent_system
 
     # Version info only
-    echo -e "\n\nNOESIS v1.2.0 - Synthetic Conscious\n\n"
+    echo -e "\n\nNOESIS v2.0.0 - Synthetic Conscious\n\n"
 
     # Call the central control function from intent.fish
     # This will handle input/output as the "consciousness" center

@@ -16,7 +16,7 @@ source src/utils/data.fish
 source src/utils/noesis_lib.fish
 
 # API version
-set -g API_VERSION "1.2.0"
+set -g API_VERSION "2.0.0"
 
 # Initialize the API
 function api_init
