@@ -33,7 +33,12 @@ typedef struct {
     int initialized;
 } noesis_system_t;
 
-/* Internal callback to route messages from the system to the registered callback */
+/* Internal callback to route messages from the system to the registered callback 
+ * This may be used in future versions for event handling
+ */
+#if defined(__GNUC__) || defined(__clang__)
+__attribute__((unused))
+#endif
 static void internal_callback(void* system, const char* message) {
     noesis_system_t* sys = (noesis_system_t*)system;
     if (sys && sys->callback) {
@@ -235,7 +240,7 @@ noesis_status_t noesis_get_config(
     noesis_system_t* system = (noesis_system_t*)handle;
     
     /* Validate parameters */
-    if (!system || !key || !value) {
+    if (!system || !key || !value || value_size == 0) {
         return NOESIS_ERROR_INVALID_PARAMETER;
     }
 

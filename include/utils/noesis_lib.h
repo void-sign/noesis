@@ -13,8 +13,7 @@
 // Include noesis_api.h for common type definitions
 #include "../api/noesis_api.h"
 
-// Define size_t equivalent for Noesis
-typedef unsigned long noesis_size_t;
+// Use noesis_size_t from noesis_api.h
 
 // Define NOESIS_NULL as a replacement for NULL
 #ifndef NOESIS_NULL

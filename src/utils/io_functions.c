@@ -279,33 +279,49 @@ int noesis_read(char* buffer, unsigned long size) {
         noesis_print("Error: Buffer too small\n");
         return 0;
     }
-
-    noesis_print("Please type your input: ");
     
-    // First, flush any pending input
-    char flush_buffer[8];
-    while (syscall(SYS_read, STDIN_FILENO, flush_buffer, 1) == 1 && flush_buffer[0] != '\n');
-
-    // Direct read from stdin with clear prompt
+    // Read directly from stdin without additional prompt or flushing
     int bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
     
-    // Minimal debug output (remove if not needed)
-    if (bytes_read <= 0) {
-        noesis_print("No input received\n");
-    }
-    
-    if (bytes_read > 0) {
-        // Handle newlines
-        if (buffer[bytes_read - 1] == '\n') {
-            buffer[bytes_read - 1] = '\0';
-            bytes_read--;
-        } else {
-            buffer[bytes_read] = '\0'; // Null-terminate
-        }
-        return bytes_read;
+    // Always null-terminate regardless of what's read
+    if (bytes_read >= 0) {
+        buffer[bytes_read] = '\0';
     } else {
         buffer[0] = '\0';
         return 0;
+    }
+    
+    // Process the input buffer
+    if (bytes_read > 0) {
+        // Strip trailing newline if present
+        if (buffer[bytes_read - 1] == '\n') {
+            buffer[bytes_read - 1] = '\0';
+            bytes_read--;
+        }
+        
+        // If buffer contains only a newline or whitespace, put a default value
+        if (bytes_read <= 0 || buffer[0] == '\0') {
+            const char* default_text = "help";
+            int i = 0;
+            while (default_text[i]) {
+                buffer[i] = default_text[i];
+                i++;
+            }
+            buffer[i] = '\0';
+            return i;  // Return the length of "help"
+        }
+        
+        return bytes_read;
+    } else {
+        // Empty input, set a default value
+        const char* default_text = "help";
+        int i = 0;
+        while (default_text[i]) {
+            buffer[i] = default_text[i];
+            i++;
+        }
+        buffer[i] = '\0';
+        return i;  // Return the length of "help"
     }
 }
 

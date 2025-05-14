@@ -27,10 +27,8 @@ int main() {
     initialize_logic();       // Initialize logic processing
     initialize_emotion();     // Initialize emotion simulation
 
-    // Welcome message
-    out("NOESIS Synthetic Consciousness System\n");
-    out("====================================\n");
-    out("Version 1.2.0 - May 2025\n\n");
+    // Version info only (title is now displayed by display_noesis_title in perception.c)
+    out("Version 1.2.0 - May 2025\n");
 
     // Initialize intent system (this initializes the intent handling)
     init_intent_system();
