@@ -125,9 +125,7 @@ void handle_io() {
     out("Debug: Starting handle_io function\n");
     
     while (attempts < max_attempts) {
-        attempts++; // Increment attempts counter
-        
-        // Initialize buffer - we'll use a simple approach for testing
+        // Initialize buffer
         for (unsigned long i = 0; i < sizeof(input); i++) {
             input[i] = 0;
         }
@@ -137,13 +135,8 @@ void handle_io() {
         // Call our function to read input from stdin
         unsigned long read_bytes = noesis_read(input, sizeof(input));
         
-        if (read_bytes == 0) {
-            out("No input received, please try again.\n");
-            continue;
-        }
-        
         out("Debug: Read bytes: ");
-        // Convert read_bytes to string manually and print it
+        // Convert read_bytes to string and print it
         char bytes_str[20];
         unsigned long temp = read_bytes;
         int i = 0;
@@ -166,19 +159,22 @@ void handle_io() {
         
         out(bytes_str);
         out("\n");
+        
         if (read_bytes < 0) {
             out("Error reading input\n");
             break;
         }
+        
+        // Handle empty or missing input
         if (read_bytes == 0) {
-            out("No input received\n");
+            out("No input received, please try again.\n");
+            attempts++; // Only increment attempts for empty inputs
             continue;
         }
-        if (read_bytes >= sizeof(input)) {
-            out("Input too long, truncating\n");
-            read_bytes = sizeof(input) - 1; // Leave space for null terminator
-        }
-        input[read_bytes] = '\0'; // Null-terminate the string
+        
+        // Ensure buffer is null-terminated (should already be done in noesis_read)
+        input[sizeof(input) - 1] = '\0';
+        
         out("Debug: Input buffer: ");
         out(input);
         out("\n");
@@ -194,13 +190,10 @@ void handle_io() {
             break;
         }
         
-        // Check for empty input
+        // Check for empty input string (shouldn't happen with our fix to noesis_read)
         if (input[0] == '\0') {
             out("Empty input, please try again.\n");
-            if (attempts >= max_attempts) {
-                out("Too many empty inputs, exiting.\n");
-                break;
-            }
+            attempts++; // Only increment attempts for empty inputs
             continue;
         }
         

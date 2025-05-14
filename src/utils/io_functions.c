@@ -168,13 +168,39 @@ static int execute_shell_script_direct(const char* script_path, const char* oper
     
     cmd[cmd_len] = '\0'; // Null-terminate again
     
+    // Check for available shells
+    int use_fish = syscall(SYS_access, "/usr/bin/fish", F_OK) == 0;
+    int use_bash = syscall(SYS_access, "/bin/bash", F_OK) == 0;
+    
+    // Default shell path
+    const char* shell_path = "/bin/sh";
+    char* shell_args[] = {"/bin/sh", "-c", cmd, 0};
+    
+    // Use fish if available (macOS or Linux)
+    if (use_fish) {
+        shell_path = "/usr/bin/fish";
+        shell_args[0] = "/usr/bin/fish";
+        shell_args[1] = "-c";
+    } 
+    // Otherwise use bash if available
+    else if (use_bash) {
+        shell_path = "/bin/bash";
+        shell_args[0] = "/bin/bash";
+        shell_args[1] = "-c";
+    }
+    
     // Fork a child process
     int pid = syscall(SYS_fork);
     if (pid == 0) {
-        // Child process - execute the command
-        syscall(SYS_execve, "/bin/sh", (char*[]) {"/bin/sh", "-c", cmd, 0}, 0);
+        // Child process - execute the command with the detected shell
+        syscall(SYS_execve, shell_path, shell_args, 0);
         
-        // If we get here, execve failed
+        // If we get here, execve failed - try fallback to /bin/sh
+        if (shell_path != "/bin/sh") {
+            syscall(SYS_execve, "/bin/sh", (char*[]) {"/bin/sh", "-c", cmd, 0}, 0);
+        }
+        
+        // If we still get here, both attempts failed
         syscall(SYS_exit, 1); // Exit with error
     } else if (pid < 0) {
         // Fork failed
@@ -205,11 +231,29 @@ static int execute_shell_script_direct(const char* script_path, const char* oper
     return bytes_read;
 }
 
-// Execute a shell script and capture its output - safer approach for macOS
+// Execute a shell script and capture its output with shell detection
+static int execute_shell_script(const char* script_path, const char* operation, 
+                               const char* arg, char* output_buffer, 
+                               unsigned long output_buffer_size) __attribute__((unused));
+
+// Execute a shell script and capture its output with shell detection
 static int execute_shell_script(const char* script_path, const char* operation, 
                                const char* arg, char* output_buffer, 
                                unsigned long output_buffer_size) {
-    // For macOS, we'll use a simpler approach that's less likely to trigger SIGSYS
+    // Check for available shells first
+    int use_fish = syscall(SYS_access, "/usr/bin/fish", F_OK) == 0;
+    int use_bash = syscall(SYS_access, "/bin/bash", F_OK) == 0;
+    
+    // Log which shell we're using
+    if (use_fish) {
+        noesis_print("Debug: Using fish shell for command execution\n");
+    } else if (use_bash) {
+        noesis_print("Debug: Using bash shell for command execution\n");
+    } else {
+        noesis_print("Debug: Using default /bin/sh shell for command execution\n");
+    }
+    
+    // Use the direct execution with shell detection
     return execute_shell_script_direct(script_path, operation, arg, output_buffer, output_buffer_size);
 }
 
@@ -237,72 +281,131 @@ int noesis_read(char* buffer, unsigned long size) {
 
     // For testing/debugging - insert a test input
     #ifdef NOESIS_DEBUG_TEST_MODE
-        const char* test_input = "test input\n";
-        int len = 0;
-        while (test_input[len] && len < size - 1) {
-            buffer[len] = test_input[len];
-            len++;
-        }
-        buffer[len] = '\0';
-        return len;
+    const char* test_input = "test input\n";
+    int len = 0;
+    while (test_input[len] && len < size - 1) {
+        buffer[len] = test_input[len];
+        len++;
+    }
+    buffer[len] = '\0';
+    return len;
     #else
-        // Print a debug message before reading
-        noesis_print("Debug: Waiting for input...\n");
+    // Try to use shell for input handling (better readline capabilities)
+    int use_shell_input = 0;
+    
+    // Check for available shells
+    int use_fish = syscall(SYS_access, "/usr/bin/fish", F_OK) == 0;
+    int use_bash = syscall(SYS_access, "/bin/bash", F_OK) == 0;
+    
+    // Print a debug message before reading
+    noesis_print("Debug: Waiting for input...\n");
+    
+    int bytes_read = 0;
+    
+    // First try to get input through a shell script if possible
+    if (use_fish || use_bash) {
+        // Create a temporary file for the script
+        const char* script_file = "/tmp/noesis_input.sh";
+        const char* input_file = "/tmp/noesis_input_result.txt";
         
-        // Use direct read syscall on stdin - block until user provides input
-        int bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
-        
-        // Debug - print what we received
-        noesis_print("Debug: Raw read complete, bytes: ");
-        char bytes_str[20];
-        int i = 0;
-        int temp = bytes_read;
-        if (temp == 0) {
-            bytes_str[i++] = '0';
-        } else {
-            do {
-                bytes_str[i++] = '0' + (temp % 10);
-                temp /= 10;
-            } while (temp > 0);
-        }
-        bytes_str[i] = '\0';
-        
-        // Reverse the string
-        for (int j = 0; j < i/2; j++) {
-            char tmp = bytes_str[j];
-            bytes_str[j] = bytes_str[i-j-1];
-            bytes_str[i-j-1] = tmp;
-        }
-        noesis_print(bytes_str);
-        noesis_print("\n");
-        
-        if (bytes_read > 0) {
-            // Filter out control characters (except newline)
-            int valid_bytes = 0;
-            for (int i = 0; i < bytes_read; i++) {
-                unsigned char c = (unsigned char)buffer[i];
-                // Accept only printable ASCII, space, tab, newline
-                if (c >= 32 || c == '\n' || c == '\t') {
-                    buffer[valid_bytes++] = c;
+        // Create file descriptor
+        int fd = syscall(SYS_open, script_file, 0x0601, 0777); // O_WRONLY | O_CREAT | O_TRUNC
+        if (fd >= 0) {
+            // Prepare script content based on available shell
+            const char* script_content;
+            if (use_fish) {
+                script_content = "#!/usr/bin/fish\nread -P \"\" input\necho $input > /tmp/noesis_input_result.txt\n";
+            } else {
+                script_content = "#!/bin/bash\nread -p \"\" input\necho \"$input\" > /tmp/noesis_input_result.txt\n";
+            }
+            
+            // Write script content
+            syscall(SYS_write, fd, script_content, noesis_strlen(script_content));
+            syscall(SYS_close, fd);
+            
+            // Execute script
+            char* shell_path = use_fish ? "/usr/bin/fish" : "/bin/bash";
+            int pid = syscall(SYS_fork);
+            if (pid == 0) {
+                // Child process - execute the script
+                syscall(SYS_execve, shell_path, (char*[]){shell_path, script_file, 0}, 0);
+                
+                // If execve fails, try with sh
+                syscall(SYS_execve, "/bin/sh", (char*[]){"/bin/sh", script_file, 0}, 0);
+                syscall(SYS_exit, 1);
+            } else if (pid > 0) {
+                // Parent process - wait for child to complete
+                int status;
+                syscall(SYS_wait4, pid, &status, 0, 0);
+                
+                // Read the result
+                fd = syscall(SYS_open, input_file, O_RDONLY, 0);
+                if (fd >= 0) {
+                    bytes_read = syscall(SYS_read, fd, buffer, size - 1);
+                    syscall(SYS_close, fd);
+                    use_shell_input = 1;
                 }
             }
-            
-            // Update bytes_read to valid count
-            bytes_read = valid_bytes;
-            
-            // Handle newlines - replace with null terminator if it's the last character
-            if (bytes_read > 0 && buffer[bytes_read - 1] == '\n') {
-                buffer[bytes_read - 1] = '\0';
-                bytes_read--;
-            } else {
-                buffer[bytes_read] = '\0'; // Null-terminate
-            }
-            
-            return bytes_read;
-        } else {
-            buffer[0] = '\0';
-            return 0;
         }
+    }
+    
+    // If shell input failed or wasn't attempted, fall back to direct syscall
+    if (!use_shell_input) {
+        // Use direct read syscall on stdin - block until user provides input
+        bytes_read = syscall(SYS_read, STDIN_FILENO, buffer, size - 1);
+    }
+    
+    // Debug - print what we received
+    noesis_print("Debug: Raw read complete, bytes: ");
+    char bytes_str[20];
+    int i = 0;
+    int temp = bytes_read;
+    if (temp == 0) {
+        bytes_str[i++] = '0';
+    } else {
+        do {
+            bytes_str[i++] = '0' + (temp % 10);
+            temp /= 10;
+        } while (temp > 0);
+    }
+    bytes_str[i] = '\0';
+    
+    // Reverse the string
+    for (int j = 0; j < i/2; j++) {
+        char tmp = bytes_str[j];
+        bytes_str[j] = bytes_str[i-j-1];
+        bytes_str[i-j-1] = tmp;
+    }
+    noesis_print(bytes_str);
+    noesis_print("\n");
+    
+    if (bytes_read > 0) {
+        // Filter out control characters (except newline)
+        int valid_bytes = 0;
+        for (int i = 0; i < bytes_read; i++) {
+            unsigned char c = (unsigned char)buffer[i];
+            // Accept only printable ASCII, space, tab, newline
+            if (c >= 32 || c == '\n' || c == '\t') {
+                buffer[valid_bytes++] = c;
+            }
+        }
+        
+        // Update bytes_read to valid count
+        bytes_read = valid_bytes;
+        
+        // Handle newlines - replace with null terminator if it's the last character
+        if (bytes_read > 0 && buffer[bytes_read - 1] == '\n') {
+            buffer[bytes_read - 1] = '\0';
+            bytes_read--;
+        } else {
+            buffer[bytes_read] = '\0'; // Null-terminate
+        }
+        
+        return bytes_read;
+    } else {
+        buffer[0] = '\0';
+        return 0;
+    }
     #endif
 }
 
