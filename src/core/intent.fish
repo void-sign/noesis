@@ -89,8 +89,12 @@ function handle_io
     echo "Type 'exit' to exit"
     
     while true
-        echo -n "> "
+        echo
+
+        echo -n "read > "
         read -l intention
+        
+        echo
         
         if test -z "$intention"
             continue

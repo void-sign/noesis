@@ -71,7 +71,7 @@ function optimize_light
     consolidate_rotations
     
     echo "Light optimization complete"
-}
+end
 
 # Full optimization
 function optimize_full
@@ -88,7 +88,7 @@ function optimize_full
     apply_template_matching
     
     echo "Full optimization complete"
-}
+end
 
 # Remove adjacent inverse gates
 function remove_adjacent_inverse_gates
@@ -103,7 +103,7 @@ function remove_adjacent_inverse_gates
     set -l removed_count 0
     
     echo "Removed $removed_count redundant gates"
-}
+end
 
 # Consolidate rotation gates
 function consolidate_rotations
@@ -116,7 +116,7 @@ function consolidate_rotations
     set -l consolidated_count 0
     
     echo "Consolidated $consolidated_count rotation gates"
-}
+end
 
 # Apply gate commutation rules
 function apply_gate_commutation
@@ -129,7 +129,7 @@ function apply_gate_commutation
     set -l commuted_count 0
     
     echo "Applied $commuted_count commutation optimizations"
-}
+end
 
 # Apply template matching
 function apply_template_matching
@@ -142,7 +142,7 @@ function apply_template_matching
     set -l templates_matched 0
     
     echo "Applied $templates_matched template optimizations"
-}
+end
 
 # Function to estimate circuit depth
 function estimate_circuit_depth
@@ -160,7 +160,7 @@ function estimate_circuit_depth
     
     echo "Estimated circuit depth: $depth"
     return $depth
-}
+end
 
 # Map logical qubits to physical qubits for a target device
 function map_to_physical_qubits

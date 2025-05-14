@@ -17,11 +17,9 @@ set RED (set_color red)
 set PINK (set_color ff5fd7) # Bright pink
 set NC (set_color normal)
 
-echo "$BLUE┌────────────────────────────────────────────────┐$NC"
-echo "$BLUE│$NC                                                $BLUE│$NC"
-echo "$BLUE│$PINK       NOESIS v2.0.0 - SYSTEM INSTALLER       $BLUE│$NC"
-echo "$BLUE│$NC                                                $BLUE│$NC"
-echo "$BLUE└────────────────────────────────────────────────┘$NC"
+echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
+echo "$PINK  NOESIS v2.0.0 - SYSTEM INSTALLER     $NC"
+echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
 echo
 
 # Check if running with sudo/as root

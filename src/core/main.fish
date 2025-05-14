@@ -14,6 +14,14 @@ source src/core/emotion.fish
 source src/utils/noesis_lib.fish
 source src/core/intent.fish
 
+# Source quantum modules
+source src/quantum/quantum.fish
+source src/quantum/compiler.fish
+source src/quantum/backend_stub.fish
+source src/quantum/backend_ibm.fish
+source src/quantum/export_qasm.fish
+source src/quantum/field/quantum_field.fish
+
 # Function: Main entry point
 function main
     # Initialize the synthetic consciousness system

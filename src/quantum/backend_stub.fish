@@ -115,7 +115,7 @@ function stub_get_state
             set -l amplitude_real (math "scale=4; rand() / 32767.0")
             set -l amplitude_imag (math "scale=4; rand() / 32767.0")
             
-            echo "  |$binary_state>: $amplitude_real + ${amplitude_imag}i"
+            echo "  |$binary_state>: $amplitude_real + $amplitude_imag"i""
         end
     else
         # For larger circuits, just show that it's too large to display

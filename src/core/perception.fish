@@ -80,7 +80,12 @@ end
 
 # Read from STDIN with improved handling
 function read_input
+    echo
+    
+    echo -n "input > "
     read -l input
+    
+    echo
     echo $input
 end
 

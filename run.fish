@@ -36,14 +36,10 @@ set NC (set_color normal)
 
 # Print a nice welcome banner
 function print_banner
-    echo "$BLUE┌────────────────────────────────────────────────┐$NC"
-    echo "$BLUE│$NC                                                $BLUE│$NC"
-    echo "$BLUE│$PINK        NOESIS v$NOESIS_VERSION - FISH ONLY EDITION       $BLUE│$NC"
-    echo "$BLUE│$NC                                                $BLUE│$NC"
-    echo "$BLUE│$GREEN  Synthetic Conscious System                    $BLUE│$NC"
-    echo "$BLUE│$GREEN  Copyright (c) 2025 Napol Thanarangkaun       $BLUE│$NC"
-    echo "$BLUE│$NC                                                $BLUE│$NC"
-    echo "$BLUE└────────────────────────────────────────────────┘$NC"
+    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
+    echo "$PINK  NOESIS v$NOESIS_VERSION - FISH ONLY EDITION  $NC"
+    echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM           $NC"
+    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
     echo
 end
 
@@ -117,8 +113,12 @@ function check_for_updates
             echo "$GREEN"A new version of Noesis is available: v$latest_version (you have v$NOESIS_VERSION)"$NC"
             
             # Ask if user wants to update
-            echo -n "$YELLOW"Do you want to update? [y/N] "$NC"
+            echo
+            
+            echo -n "$YELLOW"update > "$NC"
             read -l confirm
+            
+            echo
             
             if test "$confirm" = "y" -o "$confirm" = "Y"
                 echo "$YELLOW"Updating Noesis..."$NC"

@@ -82,10 +82,15 @@ function evolve_field
                 set idx (math "$y * $FIELD_SIZE + $x + 1")
                 
                 # Get neighboring points with periodic boundary conditions
-                set idx_up (math "$((($y - 1 + $FIELD_SIZE) % $FIELD_SIZE)) * $FIELD_SIZE + $x + 1")
-                set idx_down (math "$((($y + 1) % $FIELD_SIZE)) * $FIELD_SIZE + $x + 1")
-                set idx_left (math "$y * $FIELD_SIZE + (($x - 1 + $FIELD_SIZE) % $FIELD_SIZE) + 1")
-                set idx_right (math "$y * $FIELD_SIZE + (($x + 1) % $FIELD_SIZE) + 1")
+                set y_up (math "($y - 1 + $FIELD_SIZE) % $FIELD_SIZE")
+                set y_down (math "($y + 1) % $FIELD_SIZE")
+                set x_left (math "($x - 1 + $FIELD_SIZE) % $FIELD_SIZE")
+                set x_right (math "($x + 1) % $FIELD_SIZE")
+                
+                set idx_up (math "$y_up * $FIELD_SIZE + $x + 1")
+                set idx_down (math "$y_down * $FIELD_SIZE + $x + 1")
+                set idx_left (math "$y * $FIELD_SIZE + $x_left + 1")
+                set idx_right (math "$y * $FIELD_SIZE + $x_right + 1")
                 
                 # Calculate Laplacian (sum of neighbors minus 4 * center)
                 set laplacian (math "$field_values[$idx_up] + $field_values[$idx_down] + \
