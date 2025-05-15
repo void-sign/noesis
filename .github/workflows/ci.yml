@@ -1,3 +1,4 @@
+# CI workflow for Noesis Core
 name: Noesis Core CI
 
 on:
@@ -41,7 +42,8 @@ jobs:
             echo "Last commit was made less than 1 hour ago ($TIME_DIFF seconds)"
             echo "should_run=false" >> $GITHUB_OUTPUT
           fi
-  build:
+          
+  check_files:
     runs-on: ubuntu-latest
     needs: check_commit_time
     if: ${{ needs.check_commit_time.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch' }}
@@ -55,38 +57,54 @@ jobs:
     - name: Set up environment
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential fish gcc g++ cmake
+        sudo apt-get install -y build-essential fish
         
-    - name: Setup build cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          build/obj
-        key: ${{ runner.os }}-build-${{ hashFiles('**/*.fish') }}
-        restore-keys: |
-          ${{ runner.os }}-build-
-    
-    - name: Build project
+    - name: Verify required files
       run: |
-        fish ./build.fish
+        # List of required files based on current project structure
+        required_files=(
+          "soul/intent.fish"
+          "system/memory/unit.fish"
+          "system/perception/unit.fish"
+          "system/emotion/unit.fish"
+          "system/memory/quantum/unit.fish"
+          "system/memory/quantum/compiler.fish"
+          "system/memory/quantum/backend_stub.fish"
+          "system/memory/quantum/backend_ibm.fish"
+          "system/memory/quantum/export_qasm.fish"
+          "system/memory/quantum/field/quantum_field.fish"
+          "system/memory/short.fish"
+          "system/memory/long.fish"
+          "system/perception/api.fish"
+        )
+        
+        all_files_exist=true
+        
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "Missing file: $file"
+            all_files_exist=false
+          fi
+        done
+        
+        if [ "$all_files_exist" = "false" ]; then
+          echo "Error: Some required files are missing"
+          exit 1
+        fi
+        
+        echo "All required files exist"
       
-    - name: Create shared library
-      run: |
-        mkdir -p build/lib
-        gcc -shared -o build/lib/libnoesis_core.so build/obj/core/*.o build/obj/utils/*.o build/obj/asm/*.o
-        
-    - name: Upload build artifacts
+    - name: Upload verified files list
       uses: actions/upload-artifact@v3
       with:
-        name: noesis-core-build
+        name: verified-files
         path: |
-          build/bin/
-          build/lib/
-          include/
-        retention-days: 7
+          soul/
+          system/
+        retention-days: 1
 
   test:
-    needs: [build, check_commit_time]
+    needs: [check_files, check_commit_time]
     runs-on: ubuntu-latest
     if: ${{ needs.check_commit_time.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch' }}
     
@@ -99,25 +117,25 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential fish
     
-    - name: Download build artifacts
+    - name: Download verified files
       uses: actions/download-artifact@v3
       with:
-        name: noesis-core-build
+        name: verified-files
         
-    - name: Run all tests and save logs
+    - name: Run tests
       run: |
         # Create logs directory if it doesn't exist
         mkdir -p logs
         
         # Run tests and capture output
         echo "Running Noesis Core Tests..." > logs/test_output.log
-        echo "> Running tests with run.fish" >> logs/test_output.log
+        echo "> Running tests with test.fish" >> logs/test_output.log
         
-        # Execute test and save output
-        fish ./run.fish test > /tmp/noesis_test_raw.tmp 2>&1
+        # Execute test script and save output
+        fish ./test.fish > /tmp/noesis_test_raw.tmp 2>&1
         TEST_EXIT_CODE=$?
         
-        echo "> Test binary executed" >> logs/test_output.log
+        echo "> Test script executed" >> logs/test_output.log
         echo "  Result: Test ran with exit code $TEST_EXIT_CODE" >> logs/test_output.log
         
         # Add status information
@@ -168,47 +186,64 @@ jobs:
     - name: Set up environment
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cppcheck flawfinder clang-tools
+        sudo apt-get install -y build-essential fish cppcheck flawfinder clang-tools
         
-    - name: Install CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: cpp
-        queries: security-and-quality
-    
-    - name: Run Flawfinder (C/C++ Security Scan)
-      run: |
-        flawfinder --html --context --minlevel=3 src/ > flawfinder-report.html
-      continue-on-error: true
-    
     - name: Run Fish Shell Linting
       run: |
-        sudo apt-get install -y fish-shell
-        # Check Fish syntax
-        find src/ -name "*.fish" -exec fish -n {} \; > fish-lint-report.txt 2>&1
+        # Check Fish syntax for all fish files
+        find . -name "*.fish" -exec fish -n {} \; > fish-lint-report.txt 2>&1
       continue-on-error: true
     
-    - name: Run Cppcheck (Code Smell Detection)
-      run: |
-        cppcheck --enable=all --inconclusive --xml --xml-version=2 src/ 2> cppcheck-report.xml
-        cppcheck --enable=all --inconclusive --output-file=cppcheck-report.txt src/
-      continue-on-error: true
-    
-    - name: Check Buffer Overflows with CodeQL
-      uses: github/codeql-action/analyze@v2
-      
     - name: Upload security reports
       uses: actions/upload-artifact@v3
       with:
         name: security-reports
         path: |
-          flawfinder-report.html
-          cppcheck-report.xml
-          cppcheck-report.txt
+          fish-lint-report.txt
+        retention-days: 7
+
+  install_test:
+    needs: [test, check_commit_time]
+    runs-on: ubuntu-latest
+    if: ${{ needs.check_commit_time.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential fish
+    
+    - name: Test installation process
+      run: |
+        # Run installation script
+        sudo fish ./install.fish
+        
+        # Test that the installed command works
+        noesis -v > version_output.txt 2>&1
+        INSTALL_EXIT_CODE=$?
+        
+        # Check output
+        if [ $INSTALL_EXIT_CODE -eq 0 ]; then
+          echo "✓ Installation successful and noesis command works"
+          cat version_output.txt
+        else
+          echo "✗ Installation test failed with exit code $INSTALL_EXIT_CODE"
+          cat version_output.txt
+          exit 1
+        fi
+        
+    - name: Upload installation test output
+      uses: actions/upload-artifact@v3
+      with:
+        name: install-test-output
+        path: version_output.txt
         retention-days: 7
 
   examples:
-    needs: [build, check_commit_time]
+    needs: [check_files, check_commit_time]
     runs-on: ubuntu-latest
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.check_commit_time.outputs.should_run == 'true') || github.event_name == 'workflow_dispatch'
     
@@ -221,108 +256,28 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential fish
     
-    - name: Download build artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: noesis-core-build
-    
-    - name: Build examples
+    - name: Execute examples
       run: |
-        # Note: Examples are now integrated within the main fish scripts
-        fish ./build.fish examples
+        # Create examples directory if it doesn't exist
+        mkdir -p examples_output
+        
+        # Run a simple example with Noesis
+        fish -c "cd $(pwd) && source soul/intent.fish && thoughts 'Example running from CI workflow'" > examples_output/simple_example.txt 2>&1 || true
         
     - name: Display Hub information
       run: |
         echo "Noesis Hub is now an independent platform"
         echo "See: https://github.com/void-sign/noesis-hub"
         
-  dependency_check:
-    needs: [build, check_commit_time]
-    runs-on: ubuntu-latest
-    if: ${{ needs.check_commit_time.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch' }}
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        
-    - name: Set up environment
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential binutils nm readelf file
-    
-    - name: Download build artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: noesis-core-build
-        
-    - name: Check for unauthorized external dependencies
-      run: |
-        echo "# Dependency Check Report" > dependency-report.md
-        echo "## Generated on: $(date)" >> dependency-report.md
-        echo "### Checking for external libc dependencies" >> dependency-report.md
-        
-        # Create a list of allowed symbols from noesis_libc
-        mkdir -p checks
-        find . -path "*/libs/noesis_libc/*" -name "*.h" -exec grep -h "^[a-zA-Z_]* [a-zA-Z0-9_]*(" {} \; | sed 's/(.*//' > checks/allowed_functions.txt
-        find . -path "*/libs/include/*" -name "*.h" -exec grep -h "^[a-zA-Z_]* [a-zA-Z0-9_]*(" {} \; | sed 's/(.*//' >> checks/allowed_functions.txt
-        
-        # Check each binary and library file
-        echo "## Checking binaries in bin directory" >> dependency-report.md
-        echo '```' >> dependency-report.md
-        find . -path "*/bin/*" -type f -executable | while read binary; do
-          echo "Checking $binary..." >> dependency-report.md
-          
-          # Check if the binary is dynamically linked
-          if file "$binary" | grep -q "dynamically linked"; then
-            echo "ERROR: $binary is dynamically linked!" >> dependency-report.md
-            ldd "$binary" >> dependency-report.md
-          fi
-          
-          # Check for glibc symbols
-          nm -D "$binary" 2>/dev/null | grep -E " U |GLIBC|GLIBCXX" | grep -v "noesis_" >> dependency-report.md || true
-        done
-        echo '```' >> dependency-report.md
-        
-        echo "## Checking libraries in lib directories" >> dependency-report.md
-        echo '```' >> dependency-report.md
-        find . -path "*/lib/*" \( -name "*.so" -o -name "*.a" \) | while read library; do
-          echo "Checking $library..." >> dependency-report.md
-          
-          # For shared libraries, check if they are linked against libc
-          if [[ "$library" == *.so ]]; then
-            if ldd "$library" 2>/dev/null | grep -q "libc.so"; then
-              echo "ERROR: $library depends on external libc!" >> dependency-report.md
-              ldd "$library" >> dependency-report.md
-            fi
-          fi
-          
-          # Check for glibc symbols
-          nm "$library" 2>/dev/null | grep -E " U |GLIBC|GLIBCXX" | grep -v "noesis_" >> dependency-report.md || true
-        done
-        echo '```' >> dependency-report.md
-        
-        # Create a summary
-        echo "## Summary" >> dependency-report.md
-        if grep -q "ERROR" dependency-report.md; then
-          echo "❌ External dependencies found! See details above." >> dependency-report.md
-          echo "::error::External dependencies detected. Build fails policy check."
-          exit 1
-        else
-          echo "✅ No unauthorized external dependencies found. All tests passed." >> dependency-report.md
-        fi
-      continue-on-error: true
-        
-    - name: Upload dependency report
+    - name: Upload example outputs
       uses: actions/upload-artifact@v3
       with:
-        name: dependency-reports
-        path: dependency-report.md
+        name: example-outputs
+        path: examples_output/
         retention-days: 7
 
   security_report:
-    needs: [security_scan, dependency_check, check_commit_time]
+    needs: [security_scan, check_commit_time]
     runs-on: ubuntu-latest
     if: ${{ always() && (needs.check_commit_time.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch') }}
     
@@ -331,11 +286,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: security-reports
-    
-    - name: Download dependency reports
-      uses: actions/download-artifact@v3
-      with:
-        name: dependency-reports
         
     - name: Generate combined summary
       run: |
@@ -343,15 +293,10 @@ jobs:
         echo "## Generated on: $(date)" >> validation-summary.md
         
         echo "## Security Issues" >> validation-summary.md
-        echo "### Cppcheck Issues" >> validation-summary.md
+        echo "### Fish Syntax Issues" >> validation-summary.md
         echo '```' >> validation-summary.md
-        grep -E "error|warning|style|performance" cppcheck-report.txt | head -n 50 >> validation-summary.md
+        cat fish-lint-report.txt | head -n 50 >> validation-summary.md || echo "No fish lint report found" >> validation-summary.md
         echo '```' >> validation-summary.md
-        echo "### Flawfinder Issues" >> validation-summary.md
-        echo "See HTML report for detailed findings" >> validation-summary.md
-        
-        echo "## Dependency Check Results" >> validation-summary.md
-        cat dependency-report.md >> validation-summary.md
         
     - name: Upload combined summary
       uses: actions/upload-artifact@v3
@@ -359,3 +304,22 @@ jobs:
         name: validation-summary
         path: validation-summary.md
         retention-days: 7
+
+  docker_build:
+    needs: [check_files, check_commit_time]
+    runs-on: ubuntu-latest
+    if: ${{ needs.check_commit_time.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      
+    - name: Build Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: false
+        tags: noesis:latest
