@@ -7,7 +7,7 @@
 # compiler.fish - Quantum circuit compiler for Noesis
 
 # Source the quantum core
-source src/quantum/quantum.fish
+source system/memory/quantum/unit.fish
 
 # Constants
 set -g OPTIMIZATION_NONE 0

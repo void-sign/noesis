@@ -7,7 +7,7 @@
 # quantum_field.fish - Quantum field theory simulation (simplified)
 
 # Source the quantum core
-source src/quantum/quantum.fish
+source system/memory/quantum/unit.fish
 
 # Constants for field simulation
 set -g FIELD_SIZE 10

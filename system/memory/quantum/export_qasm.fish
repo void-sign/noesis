@@ -7,7 +7,7 @@
 # export_qasm.fish - Functions for exporting quantum circuits to OpenQASM 2.0 format
 
 # Source the quantum core
-source src/quantum/quantum.fish
+source system/memory/quantum/unit.fish
 
 # Export a circuit to OpenQASM 2.0 format
 function export_qasm

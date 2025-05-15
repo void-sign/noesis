@@ -14,7 +14,7 @@ source src/core/perception.fish
 source src/core/emotion.fish
 
 # Source quantum modules
-source src/quantum/quantum.fish
+source system/memory/quantum/unit.fish
 source src/quantum/compiler.fish
 source src/quantum/backend_stub.fish
 source src/quantum/backend_ibm.fish
