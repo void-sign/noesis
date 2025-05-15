@@ -1,49 +1,38 @@
-# Use an official lightweight image as a parent image
-FROM debian:bullseye-slim
+# Noesis Dockerfile
+# Base image with Fish shell
+FROM ubuntu:22.04
 
-# Set environment variables
+# Set non-interactive frontend for apt-get
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies for Noesis system
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    gcc \
-    g++ \
-    make \
+# Install Fish shell and minimal dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     fish \
-    git \
-    curl \
-    libssl-dev \
-    pkg-config \
-    python3 \
-    python3-pip \
+    ca-certificates \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies for quantum modules
-RUN pip3 install qiskit numpy matplotlib
+# Set Fish as the default shell
+SHELL ["/usr/bin/fish", "-c"]
 
-# Set the working directory
+# Create app directory
 WORKDIR /app
 
-# Copy the project files into the container
-COPY . /app
+# Copy project files
+COPY . .
 
-# Set proper permissions for scripts
-RUN chmod +x ./run.fish ./test.fish ./install.fish
+# Make scripts executable
+RUN chmod +x *.fish
 
-# Environment setup
-ENV NOESIS_ROOT=/app
-ENV NOESIS_QUANTUM_BACKEND=stub
-ENV PYTHONPATH=${PYTHONPATH}:/app/system/memory/quantum
-# Optional: Set your IBM Quantum API key here or mount as a secret
-# ENV IBM_QUANTUM_KEY=your_api_key_here
+# Set environment variables
+ENV NOESIS_VERSION="2.1.0" 
 
-# Expose port (if your application needs network access)
-EXPOSE 8080
+# Expose any necessary ports (if applicable)
+# EXPOSE 8080
 
-# Volume for persistent data
-VOLUME ["/app/data"]
+# Default command to run when starting the container
+ENTRYPOINT ["/usr/bin/fish", "./run.fish"]
 
-# Command to run the application
-ENTRYPOINT ["fish"]
-CMD ["./run.fish"]
+# If you want to use specific arguments or enable test mode:
+# CMD ["test"]
