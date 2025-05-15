@@ -26,7 +26,7 @@ source system/memory/quantum/export_qasm.fish
 source system/memory/quantum/field/quantum_field.fish
 
 # Define colors for better readability
-set GREEN (set_color green)
+set GREEN (set_color 32cd32)
 set BLUE (set_color blue)
 set YELLOW (set_color yellow)
 set RED (set_color red)
@@ -35,6 +35,7 @@ set NC (set_color normal)
 
 # Print a nice welcome banner
 function print_banner
+    echo
     echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
     echo "$PINK  NOESIS v$NOESIS_VERSION            $NC"
     echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"
@@ -259,10 +260,7 @@ function handle_io
     
     while true
         echo
-
-        echo -n "read > "
-        read -l intention
-        
+        read -P "$GREEN""noesis > ""$NC" intention
         echo
         
         if test -z "$intention"

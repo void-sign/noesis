@@ -24,15 +24,6 @@ set RED (set_color red)
 set PINK (set_color ff5fd7) # Bright pink
 set NC (set_color normal)
 
-# Print a nice welcome banner
-function print_banner
-    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo "$PINK  NOESIS v$NOESIS_VERSION  $NC"
-    echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM           $NC"
-    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo
-end
-
 # Initialize all systems
 function initialize_systems
     echo "$YELLOW"Initializing Noesis systems..."$NC"
@@ -209,9 +200,10 @@ function main
                 return 1
         end
     else
-        # Default behavior: run in interactive mode
-        # Source intent.fish which will handle everything
+        # Source intent.fish which will handle loading all other required modules
         source soul/intent.fish
+        # Explicitly call main function from intent.fish
+        main
         return $status
     end
 end
