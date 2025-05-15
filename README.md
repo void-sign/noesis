@@ -1,4 +1,4 @@
-# Noesis v2.1.0
+# Noesis v2.1.1
 
 ![Noesis Logo](noesis-logo.jpg)
 
@@ -46,11 +46,4 @@ requirements for attribution and profit-sharing for commercial use.
 Documentation for Noesis is organized into several key resources:
 
 - **Changelogs** - Complete version history with detailed changes:
-  - [CHANGELOG_v2.1.0.md](docs/changelogs/CHANGELOG_v2.1.0.md) (Current release)
-  - [CHANGELOG_v2.0.0.md](docs/changelogs/CHANGELOG_v2.0.0.md)
-  - [CHANGELOG_v1.2.0.md](docs/changelogs/CHANGELOG_v1.2.0.md)
-  - [CHANGELOG_v1.1.0.md](docs/changelogs/CHANGELOG_v1.1.0.md)
-  - [CHANGELOG_v1.0.0.md](docs/changelogs/CHANGELOG_v1.0.0.md)
-  - [CHANGELOG_v0.2.0.md](docs/changelogs/CHANGELOG_v0.2.0.md)
-  - [CHANGELOG_v0.1.2.md](docs/changelogs/CHANGELOG_v0.1.2.md)
-  - [CHANGELOG_v0.1.1.md](docs/changelogs/CHANGELOG_v0.1.1.md)
+  - [CHANGELOG_v2.1.1.md](docs/changelogs/CHANGELOG_v2.1.1.md)

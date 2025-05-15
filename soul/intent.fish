@@ -9,7 +9,7 @@
 # the central component of the Noesis system
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.1.0"
+set -g NOESIS_VERSION "2.1.1"
 
 # Source dependent modules - absolute minimum needed here since intent.fish is now central
 # Using the new system directory structure - no need to load utils files anymore

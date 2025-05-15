@@ -7,16 +7,14 @@
 # noesis_api.fish - API implementation for Noesis
 
 # Source all required modules
-source src/core/memory.fish
-source src/core/perception.fish
-source src/core/logic.fish
-source src/core/emotion.fish
-source src/core/intent.fish
-source src/utils/data.fish
-source src/utils/noesis_lib.fish
+source /system/memory/unit.fish
+source /system/perception/unit.fish
+source /system/control/old_intent.fish
+source /system/emotion/unit.fish
+source /soul/intent.fish
 
 # API version
-set -g API_VERSION "2.1.0"
+set -g API_VERSION "2.1.1"
 
 # Initialize the API
 function api_init

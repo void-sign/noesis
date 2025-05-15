@@ -26,7 +26,7 @@ COPY . .
 RUN chmod +x *.fish
 
 # Set environment variables
-ENV NOESIS_VERSION="2.1.0" 
+ENV NOESIS_VERSION="2.1.1" 
 
 # Expose any necessary ports (if applicable)
 # EXPOSE 8080
