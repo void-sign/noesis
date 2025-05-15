@@ -192,6 +192,7 @@ function main
                 echo "$YELLOW"Starting Noesis in quantum mode..."$NC"
                 # Source intent.fish which will handle everything
                 source soul/intent.fish
+                main --quantum
                 return $status
                 
             case '*'

@@ -46,6 +46,7 @@ end
 # Initialize all systems
 function initialize_systems
     echo "$YELLOW"Initializing Noesis systems..."$NC"
+    echo
     
     # Initialize core systems
     init_memory_system
@@ -55,9 +56,8 @@ function initialize_systems
     init_intent_system
     
     # Initialize quantum systems - using the new unit.fish functions
-    q_init
     stub_init
-    
+    echo
     echo "$GREEN"All systems initialized successfully"$NC"
     echo
     return 0
@@ -214,7 +214,7 @@ function process_intention
             echo "  - clear: Clear the screen"
             echo "  - reason about *: Reason about a problem"
             echo "  - logic *: Process a logical expression (AND, OR, NOT, XOR, IMPLIES)"
-        case "*exit*"
+        case "*exit*" "*e*"
             echo "Exiting..."
             return 1
         case "*status*"
@@ -273,15 +273,74 @@ function handle_io
     end
 end
 
+# Quantum interaction loop
+function handle_quantum_io
+    echo "Welcome to NOESIS Quantum Interface"
+    echo "Available quantum demos:"
+    echo "  - demo_quantum_field: Interactive quantum field demo"
+    echo "  - demo_wave_interference: Quantum wave interference demo"
+    echo "  - demo_quantum_vs_classical: Compare quantum and classical computing"
+    echo "  - q_init: Initialize quantum system" 
+    echo "  - exit: Return to main shell"
+    echo
+    
+    while true
+        read -P "$GREEN""quantum > ""$NC" command
+        
+        if test -z "$command"
+            continue
+        end
+        
+        switch $command
+            case "demo_quantum_field"
+                demo_quantum_field
+            case "demo_wave_interference"
+                demo_wave_interference
+            case "demo_quantum_vs_classical"
+                demo_quantum_vs_classical
+            case "q_init"
+                q_init
+                # Message is already output by q_init function
+            case "exit" "e"
+                echo
+                echo "Exiting quantum mode..."
+                echo
+                return 0
+            case "help"
+                echo "Available quantum demos:"
+                echo
+                echo "  - demo_quantum_field: Interactive quantum field demo"
+                echo "  - demo_wave_interference: Quantum wave interference demo" 
+                echo "  - demo_quantum_vs_classical: Compare quantum and classical computing"
+                echo "  - q_init: Initialize quantum system"
+                echo "  - exit: Return to main shell"
+            case "*"
+                echo "Unknown command: $command"
+                echo "Type 'help' for available commands"
+        end
+    end
+end
+
 # Main function - central entry point for the system
 function main
     print_banner
     initialize_systems
     
-    echo "$BLUE"Starting cognitive IO interface..."$NC"
-    handle_io
+    # Check if we're in quantum mode by looking at the arguments
+    for arg in $argv
+        if test "$arg" = "--quantum" -o "$arg" = "-q"
+            echo "$BLUE"Starting quantum IO interface..."$NC"
+            echo
+            handle_quantum_io
+            return 0
+        end
+    end
     
-    echo -e "\n\n$YELLOW"NOESIS sleep"$NC\n\n"
+    # Regular mode
+    echo "$BLUE"Starting cognitive IO interface..."$NC"
+    echo
+    handle_io
+    echo -e "\n$YELLOW"NOESIS sleep"$NC\n"
     return 0
 end
 
