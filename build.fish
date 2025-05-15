@@ -15,7 +15,7 @@ set PINK (set_color ff5fd7) # Bright pink
 set NC (set_color normal)
 
 echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-echo "$PINK  NOESIS v2.0.0 - BUILDER                  $NC"
+echo "$PINK  NOESIS v2.1.0 - BUILDER                  $NC"
 echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
 echo
 

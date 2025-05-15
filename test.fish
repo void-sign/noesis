@@ -7,7 +7,7 @@
 # test.fish - Test script for Noesis
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.0.0"
+set -g NOESIS_VERSION "2.1.0"
 
 # Define colors for better readability
 set GREEN (set_color green)

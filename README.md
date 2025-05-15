@@ -1,4 +1,4 @@
-# Noesis v2.0.0
+# Noesis v2.1.0
 
 ![Noesis Logo](noesis-logo.jpg)
 
@@ -11,36 +11,26 @@ Noesis is a synthetic consciousness simulation engine designed to explore the pr
 ### Directory Structure
 ```
 noesis/
-├── src/                                   # Fish source code
-│   ├── api/                               # API implementation in Fish
-│   │   └── noesis_api.fish                # Noesis API Fish implementation
-│   ├── core/                              # Core system implementation in 
-│   │   ├── emotion.fish                   # Emotion processing in Fish
-│   │   ├── intent.fish                    # Intent processing in Fish
-│   │   ├── logic.fish                     # Logic processing in Fish
-│   │   ├── main.fish                      # Main program in Fish
-│   │   ├── memory.fish                    # Memory management in Fish
-│   │   └── perception.fish                # Perception processing in Fish
-│   └── quantum/                           # Quantum computation in Fish
-│       ├── backend_ibm.fish               # IBM Quantum backend in Fish
-│       ├── backend_stub.fish              # Stub backend in Fish
-│       ├── compiler.fish                  # Quantum compiler in Fish
-│       ├── export_qasm.fish               # QASM export in Fish
-│       ├── quantum.fish                   # Main quantum implementation in 
-│       └── field/                         # Quantum field implementation
-│           └── quantum_field.fish         # Quantum field in Fish
+├── soul/                                  # Consciousness core implementation
+│   └── intent.fish                        # Intent processing system
+├── system/                                # System components
+│   ├── control/                           # Control subsystems
+│   │   ├── limbric/                       # Limbric system
+│   │   └── ...
+│   ├── emotion/                           # Emotion processing
+│   ├── memory/                            # Memory subsystems
+│   │   ├── quantum/                       # Quantum memory implementation
+│   │   │   └── field/                     # Quantum field implementation
+│   │   └── ...
+│   └── perception/                        # Perception processing
 ├── docs/                                  # Documentation files
 │   ├── SECURITY.md                        # Security policy
 │   └── changelogs/                        # Version history and release notes
-│       ├── CHANGELOG_v0.1.1.md
-│       ├── CHANGELOG_v0.1.2.md
-│       ├── CHANGELOG_v0.2.0.md
-│       ├── CHANGELOG_v1.0.0.md
-│       ├── CHANGELOG_v1.1.0.md
-│       ├── CHANGELOG_v1.2.0.md
-│       └── CHANGELOG_v2.0.0.md            # Latest version changelog
+│       └── CHANGELOG_v2.1.0.md            # Latest version changelog
 ├── build.fish                             # Main build script for Fish shell
 ├── run.fish                               # Main run script for Fish shell
+├── test.fish                              # Test execution script
+├── install.fish                           # Installation script
 ├── Dockerfile                             # Docker configuration file
 ├── LICENSE                                # License file
 └── noesis-logo.jpg                        # Project logo image
@@ -56,7 +46,8 @@ requirements for attribution and profit-sharing for commercial use.
 Documentation for Noesis is organized into several key resources:
 
 - **Changelogs** - Complete version history with detailed changes:
-  - [CHANGELOG_v2.0.0.md](docs/changelogs/CHANGELOG_v2.0.0.md) (Current release)
+  - [CHANGELOG_v2.1.0.md](docs/changelogs/CHANGELOG_v2.1.0.md) (Current release)
+  - [CHANGELOG_v2.0.0.md](docs/changelogs/CHANGELOG_v2.0.0.md)
   - [CHANGELOG_v1.2.0.md](docs/changelogs/CHANGELOG_v1.2.0.md)
   - [CHANGELOG_v1.1.0.md](docs/changelogs/CHANGELOG_v1.1.0.md)
   - [CHANGELOG_v1.0.0.md](docs/changelogs/CHANGELOG_v1.0.0.md)
