@@ -4,7 +4,7 @@
 # Licensed under Noesis License - See LICENSE file for details
 #
 
-# fish-only-run.fish - Main entry point for the Noesis fish-only implementation
+# run.fish - Main entry point for the Noesis implementation
 
 # Current version of Noesis
 set -g NOESIS_VERSION "2.0.0"
@@ -199,14 +199,9 @@ function main
                 
             case "-q" "--quantum"
                 echo "$YELLOW"Starting Noesis in quantum mode..."$NC"
-                load_modules
-                print_banner
-                initialize_systems
-                # Add quantum-specific initialization here
-                echo "$BLUE"Starting quantum cognitive IO interface..."$NC"
-                handle_io
-                echo -e "\n\n$YELLOW"NOESIS sleep"$NC\n\n"
-                return 0
+                # Source intent.fish which will handle everything
+                source soul/intent.fish
+                return $status
                 
             case '*'
                 echo "$RED"Unknown option: $argv[1]"$NC"
@@ -215,17 +210,12 @@ function main
         end
     else
         # Default behavior: run in interactive mode
-        load_modules
-        print_banner
-        initialize_systems
-        
-        echo "$BLUE"Starting cognitive IO interface..."$NC"
-        handle_io
-        
-        echo -e "\n\n$YELLOW"NOESIS sleep"$NC\n\n"
-        return 0
+        # Source intent.fish which will handle everything
+        source soul/intent.fish
+        return $status
     end
 end
 
 # Execute main function with all arguments
 main $argv
+exit $status

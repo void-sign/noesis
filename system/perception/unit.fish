@@ -11,7 +11,9 @@
 #********************************************************************
 
 # Source required dependencies
-source src/utils/noesis_lib.fish
+# Use system directory structure instead of src
+# source src/utils/noesis_lib.fish
+# This file is now directly in system/perception/unit.fish, no need to source
 
 # Define access mode macros
 set -g F_OK 0

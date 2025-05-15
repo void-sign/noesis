@@ -8,7 +8,8 @@
 # This provides a simple simulator for testing
 
 # Source the quantum core
-source src/quantum/quantum.fish
+# The quantum functionality is now in system/memory/quantum/unit.fish
+# No need to source it here as it's already sourced in soul/intent.fish
 
 # Initialize the stub backend
 function stub_init

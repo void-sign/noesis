@@ -287,19 +287,25 @@ function main
     return 0
 end
 
-# Check if we're being sourced or run directly
-# Use older fish shell compatibility approach
-set -l sourced_status $status
-if test $sourced_status -eq 0
-    # Fish shell doesn't have a standardized way to check if script is sourced in all versions
-    # So we just check the caller variable which is set when sourced
-    if set -q _
-        # Do nothing when sourced
-    else
-        # Execute main when run directly
-        main
+# Execute main function when intent.fish is run directly
+# Use a more compatible method to check if sourced
+set -l is_sourced 0
+if status --is-interactive
+    if test (count $argv) -eq 0
+        # Running interactively with no arguments
+        set is_sourced 0
     end
 else
+    # Likely sourced by another script
+    set is_sourced 1
+end
+
+if test $is_sourced -eq 0
     # Execute main when run directly
     main
+    # Make sure we exit cleanly
+    exit $status
 end
+
+# If we're sourced, we'll just make the functions available
+# without executing main automatically

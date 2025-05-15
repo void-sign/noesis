@@ -20,23 +20,21 @@ echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━
 echo
 
 echo "$YELLOW"Checking fish files..."$NC"
-# Check if all required fish files exist
+# Check if all required fish files exist based on the new directory structure
 set required_files \
-    "src/core/main.fish" \
-    "src/core/memory.fish" \
-    "src/core/perception.fish" \
-    "src/core/emotion.fish" \
-    "src/core/intent.fish" \
-    "src/quantum/quantum.fish" \
-    "src/quantum/compiler.fish" \
-    "src/quantum/backend_stub.fish" \
-    "src/quantum/backend_ibm.fish" \
-    "src/quantum/export_qasm.fish" \
-    "src/quantum/field/quantum_field.fish" \
-    "src/utils/noesis_lib.fish" \
-    "src/utils/data.fish" \
-    "src/api/noesis_api.fish" \
-    "build/fish-only/fish-only-run.fish"
+    "soul/intent.fish" \
+    "system/memory/unit.fish" \
+    "system/perception/unit.fish" \
+    "system/emotion/unit.fish" \
+    "system/memory/quantum/unit.fish" \
+    "system/memory/quantum/compiler.fish" \
+    "system/memory/quantum/backend_stub.fish" \
+    "system/memory/quantum/backend_ibm.fish" \
+    "system/memory/quantum/export_qasm.fish" \
+    "system/memory/quantum/field/quantum_field.fish" \
+    "system/memory/short.fish" \
+    "system/memory/long.fish" \
+    "system/perception/api.fish"
 
 set all_files_exist true
 
@@ -70,6 +68,19 @@ for file in $required_files
     # Copy the file
     cp "$file" "build/fish-only/$file"
 end
+
+# Create a special runner file that points to the new main entry point
+echo "$YELLOW"Creating main runner file..."$NC"
+echo '#!/usr/bin/env fish
+#
+# Noesis central runner for the fish-only version
+#
+cd (dirname (status -f))
+source soul/intent.fish
+' > build/fish-only/fish-only-run.fish
+
+# Make it executable
+chmod +x build/fish-only/fish-only-run.fish
 
 # Create a simple runner script
 echo "$YELLOW"Creating runner script..."$NC"

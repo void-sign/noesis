@@ -18,7 +18,7 @@ set PINK (set_color ff5fd7) # Bright pink
 set NC (set_color normal)
 
 echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-echo "$PINK  NOESIS v2.0.0 - SYSTEM INSTALLER     $NC"
+echo "$PINK  NOESIS v$NOESIS_VERSION - SYSTEM INSTALLER     $NC"
 echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
 echo
 
@@ -28,6 +28,39 @@ if test (id -u) -ne 0
     echo "Please run: sudo ./install.fish""$NC"
     exit 1
 end
+
+# Verify all required files exist before installation
+echo "$YELLOW"Checking required files..."$NC"
+set required_files \
+    "soul/intent.fish" \
+    "system/memory/unit.fish" \
+    "system/perception/unit.fish" \
+    "system/emotion/unit.fish" \
+    "system/memory/quantum/unit.fish" \
+    "system/memory/quantum/compiler.fish" \
+    "system/memory/quantum/backend_stub.fish" \
+    "system/memory/quantum/backend_ibm.fish" \
+    "system/memory/quantum/export_qasm.fish" \
+    "system/memory/quantum/field/quantum_field.fish" \
+    "system/memory/short.fish" \
+    "system/memory/long.fish" \
+    "system/perception/api.fish"
+
+set all_files_exist true
+
+for file in $required_files
+    if not test -f "$file"
+        echo "$RED"Missing file: $file"$NC"
+        set all_files_exist false
+    end
+end
+
+if test "$all_files_exist" = "false"
+    echo "$RED"Error: Some required files are missing"$NC"
+    exit 1
+end
+
+echo "$GREEN"All required files exist"$NC"
 
 # Define installation paths
 set INSTALL_DIR "/usr/local/lib/noesis"
@@ -39,13 +72,26 @@ echo "$YELLOW""Creating installation directories...""$NC"
 mkdir -p $INSTALL_DIR
 mkdir -p $BIN_DIR
 
-# Copy necessary files
+# Copy necessary files to installation directory
 echo "$YELLOW""Copying Noesis files...""$NC"
-cp -r src $INSTALL_DIR/
-cp run.fish $INSTALL_DIR/
+
+# Copy core files
 cp LICENSE $INSTALL_DIR/
 cp README.md $INSTALL_DIR/
+cp run.fish $INSTALL_DIR/
 cp -r docs $INSTALL_DIR/
+
+# Copy all required module files with proper directory structure
+for file in $required_files
+    # Get the directory part of the file path
+    set dir (dirname "$INSTALL_DIR/$file")
+    
+    # Create the directory if it doesn't exist
+    mkdir -p "$dir"
+    
+    # Copy the file
+    cp "$file" "$INSTALL_DIR/$file"
+end
 
 # Create the noesis executable script
 echo "$YELLOW""Creating executable...""$NC"
