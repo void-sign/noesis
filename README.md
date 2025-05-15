@@ -8,6 +8,10 @@
 
 Noesis is a synthetic consciousness simulation engine designed to explore the principles of artificial consciousness and cognition. The project is now structured as two separate repositories with different licenses to facilitate wider adoption and integration.
 
+## Terminal Preview
+
+![Noesis Terminal](noesis-terminal.jpg)
+
 ### Directory Structure
 ```
 noesis/
