@@ -25,23 +25,8 @@ source system/memory/quantum/backend_ibm.fish
 source system/memory/quantum/export_qasm.fish
 source system/memory/quantum/field/quantum_field.fish
 
-# Define colors for better readability
-set GREEN (set_color 32cd32)
-set BLUE (set_color blue)
-set YELLOW (set_color yellow)
-set RED (set_color red)
-set PINK (set_color ff5fd7) # Bright pink
-set NC (set_color normal)
-
-# Print a nice welcome banner
-function print_banner
-    echo
-    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo "$PINK  NOESIS v$NOESIS_VERSION            $NC"
-    echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"
-    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo
-end
+# Note: All color definitions, print_banner, log_with_timestamp, and handle_error functions
+# are now defined in run.fish
 
 # Initialize all systems
 function initialize_systems
@@ -85,21 +70,9 @@ for i in (seq $MAX_INTENTIONS)
     set -g intention_memory[$i] ""
 end
 
-# Custom function to get UTC timestamp
-function log_with_timestamp
-    set message $argv[1]
-    set description $argv[2]
-    
-    set seconds_since_epoch (date +%s)
-    set days (math "$seconds_since_epoch / 86400")
-    set seconds_in_day (math "$seconds_since_epoch % 86400")
-    set hours (math "$seconds_in_day / 3600")
-    set minutes (math "($seconds_in_day % 3600) / 60")
-    set seconds (math "$seconds_in_day % 60")
-    
-    # Format timestamp: Day HH:MM:SS
-    printf "Day %d %02d:%02d:%02d" $days $hours $minutes $seconds
-end
+# Note: Command history functions are now defined in run.fish
+
+# Note: log_with_timestamp and handle_error functions are now defined in run.fish
 
 # Initialize the logic system
 function init_logic_system
@@ -188,8 +161,13 @@ function init_intent_system
     end
     set -g intention_count 0
     
+    # Initialize command history - now defined in run.fish
+    init_command_history
+    
     # Initialize the logic system as well
     init_logic_system
+    
+    log_with_timestamp "Intent system initialized" "SUCCESS"
 end
 
 # Process an intention
@@ -200,33 +178,66 @@ function process_intention
     end
     
     # Log the intention
-    echo "Processing intention: $intention"
+    log_with_timestamp "Processing intention: $intention" "DEBUG"
     
     # Here we would have logic to handle various intentions
     # In the Fish version, we'll use pattern matching
     
     switch $intention
-        case "*help*"
-            echo "Available commands:"
-            echo "  - help: Show this help message"
-            echo "  - exit: Exit the system"
-            echo "  - status: Show system status"
-            echo "  - clear: Clear the screen"
-            echo "  - reason about *: Reason about a problem"
-            echo "  - logic *: Process a logical expression (AND, OR, NOT, XOR, IMPLIES)"
-        case "*exit*" "*e*"
-            echo "Exiting..."
+        case "help"
+            echo "$PURPLE== Cognitive Commands ==$NC"
+            echo "  $GREEN- help:$NC                View this help message"
+            echo "  $GREEN- status:$NC              Show system status"
+            echo "  $GREEN- history:$NC             View command history"
+            echo "  $GREEN- clear:$NC               Clear the screen"
+            echo "  $GREEN- verbose:$NC             Toggle verbose debug mode"
+            echo "  $GREEN- exit:$NC                Exit the system"
+            echo
+            echo "$PURPLE== Reasoning & Logic ==$NC"
+            echo "  $GREEN- reason about <topic>:$NC Reason about a given topic"
+            echo "  $GREEN- logic <expression>:$NC   Process a logical expression (AND, OR, NOT, XOR, IMPLIES)"
+            echo
+            echo "$PURPLE== System Commands ==$NC"
+            echo "  $GREEN- quantum:$NC             Enter quantum processing mode"
+            
+        case "exit" "e"
+            log_with_timestamp "Exiting..." "INFO"
             return 1
-        case "*status*"
-            echo "System is running"
-            echo "Intentions processed: $intention_count"
-        case "*clear*"
+            
+        case "status"
+            echo "$CYAN"System Status"$NC"
+            echo "  Intentions processed: $intention_count"
+            echo "  Commands in history: $history_count"
+            echo "  Verbose mode: $VERBOSE_MODE"
+            
+        case "history"
+            show_history
+            
+        case "verbose"
+            if test "$VERBOSE_MODE" = "true"
+                set -g VERBOSE_MODE false
+                log_with_timestamp "Verbose mode disabled" "INFO"
+            else
+                set -g VERBOSE_MODE true
+                log_with_timestamp "Verbose mode enabled" "INFO"
+            end
+            
+        case "clear"
             clear
+            echo "$CYAN"NOESIS Cognitive Interface"$NC"
+            
+        case "quantum"
+            log_with_timestamp "Switching to quantum mode" "INFO"
+            handle_quantum_io
+            log_with_timestamp "Returned from quantum mode" "INFO"
+            
         case "reason about *"
             set problem (string replace "reason about " "" $intention)
             reason_about $problem
+            
         case "logic *"
             set expression (string replace "logic " "" $intention)
+            log_with_timestamp "Evaluating logical expression: $expression" "DEBUG"
             set operator (parse_logical_expression $expression)
             
             if test $operator -ge 0
@@ -238,13 +249,17 @@ function process_intention
                 end
                 
                 if test $result -eq 0
-                    echo "Expression evaluates to TRUE"
+                    log_with_timestamp "Expression evaluates to TRUE" "SUCCESS"
                 else
-                    echo "Expression evaluates to FALSE"
+                    log_with_timestamp "Expression evaluates to FALSE" "INFO"
                 end
+            else
+                handle_error "Invalid logical expression: $expression" 1
             end
+            
         case "*"
-            echo "Unknown intention: $intention"
+            handle_error "Unknown intention: $intention" 1
+            echo "Type '$GREEN'help'$NC' for available commands"
     end
     
     # Increment intention count
@@ -254,9 +269,10 @@ end
 
 # Handle IO - main interaction loop
 function handle_io
-    echo "Welcome to NOESIS intent system"
-    echo "Type 'help' for available commands"
-    echo "Type 'exit' to exit"
+    echo
+    echo "$CYAN"Welcome to NOESIS intent system"$NC"
+    echo "Type '$GREEN'help'$NC' for available commands"
+    echo "Type '$GREEN'exit'$NC' to exit"
     
     while true
         echo
@@ -267,7 +283,12 @@ function handle_io
             continue
         end
         
+        # Add command to history (function now in run.fish)
+        add_to_history $intention
+        
+        # Process the command
         if not process_intention $intention
+            log_with_timestamp "Exiting NOESIS intent system" "INFO"
             break
         end
     end
@@ -275,13 +296,18 @@ end
 
 # Quantum interaction loop
 function handle_quantum_io
-    echo "Welcome to NOESIS Quantum Interface"
+    echo
+    echo "$CYAN"Welcome to NOESIS Quantum Interface"$NC"
+    echo
     echo "Available quantum demos:"
-    echo "  - demo_quantum_field: Interactive quantum field demo"
-    echo "  - demo_wave_interference: Quantum wave interference demo"
-    echo "  - demo_quantum_vs_classical: Compare quantum and classical computing"
-    echo "  - q_init: Initialize quantum system" 
-    echo "  - exit: Return to main shell"
+    echo "  $GREEN- demo_quantum_field:$NC       Interactive quantum field demo"
+    echo "  $GREEN- demo_wave_interference:$NC   Quantum wave interference demo"
+    echo "  $GREEN- demo_quantum_vs_classical:$NC Compare quantum and classical computing"
+    echo "  $GREEN- q_init:$NC                   Initialize quantum system" 
+    echo "  $GREEN- history:$NC                  View command history"
+    echo "  $GREEN- verbose:$NC                  Toggle verbose debug mode"
+    echo "  $GREEN- help:$NC                     Show this help message"
+    echo "  $GREEN- exit:$NC                     Return to main shell"
     echo
     
     while true
@@ -291,45 +317,91 @@ function handle_quantum_io
             continue
         end
         
+        # Add command to history
+        add_to_history $command
+        
+        # Process command
         switch $command
             case "demo_quantum_field"
-                demo_quantum_field
+                log_with_timestamp "Starting quantum field demo" "INFO"
+                if not demo_quantum_field
+                    handle_error "Quantum field demo failed" 1
+                end
+                log_with_timestamp "Quantum field demo completed" "SUCCESS"
+                
             case "demo_wave_interference"
-                demo_wave_interference
+                log_with_timestamp "Starting wave interference demo" "INFO"
+                if not demo_wave_interference
+                    handle_error "Wave interference demo failed" 1
+                end
+                log_with_timestamp "Wave interference demo completed" "SUCCESS"
+                
             case "demo_quantum_vs_classical"
-                demo_quantum_vs_classical
+                log_with_timestamp "Starting quantum vs classical demo" "INFO"
+                if not demo_quantum_vs_classical
+                    handle_error "Quantum vs classical demo failed" 1
+                end
+                log_with_timestamp "Quantum vs classical demo completed" "SUCCESS"
+                
             case "q_init"
+                log_with_timestamp "Initializing quantum system" "INFO"
                 q_init
-                # Message is already output by q_init function
+                log_with_timestamp "Quantum system initialized" "SUCCESS"
+                
+            case "history"
+                show_history
+                
+            case "verbose"
+                if test "$VERBOSE_MODE" = "true"
+                    set -g VERBOSE_MODE false
+                    log_with_timestamp "Verbose mode disabled" "INFO"
+                else
+                    set -g VERBOSE_MODE true
+                    log_with_timestamp "Verbose mode enabled" "INFO"
+                end
+                
+            case "clear"
+                clear
+                echo "$CYAN"NOESIS Quantum Interface"$NC"
+                
             case "exit" "e"
                 echo
-                echo "Exiting quantum mode..."
+                log_with_timestamp "Exiting quantum mode..." "INFO"
                 echo
                 return 0
+                
             case "help"
-                echo "Available quantum demos:"
+                echo "Available quantum demos and commands:"
                 echo
-                echo "  - demo_quantum_field: Interactive quantum field demo"
-                echo "  - demo_wave_interference: Quantum wave interference demo" 
-                echo "  - demo_quantum_vs_classical: Compare quantum and classical computing"
-                echo "  - q_init: Initialize quantum system"
-                echo "  - exit: Return to main shell"
+                echo "$PURPLE== Demo Programs ==$NC"
+                echo "  $GREEN- demo_quantum_field:$NC       Interactive quantum field demo"
+                echo "  $GREEN- demo_wave_interference:$NC   Quantum wave interference demo" 
+                echo "  $GREEN- demo_quantum_vs_classical:$NC Compare quantum and classical computing"
+                echo
+                echo "$PURPLE== System Commands ==$NC"
+                echo "  $GREEN- q_init:$NC                   Initialize quantum system"
+                echo "  $GREEN- history:$NC                  View command history"
+                echo "  $GREEN- verbose:$NC                  Toggle verbose debug mode"
+                echo "  $GREEN- clear:$NC                    Clear the screen"
+                echo "  $GREEN- help:$NC                     Show this help message"
+                echo "  $GREEN- exit:$NC                     Return to main shell"
+                
             case "*"
-                echo "Unknown command: $command"
-                echo "Type 'help' for available commands"
+                handle_error "Unknown command: $command" 1
+                echo "Type '$GREEN'help'$NC' for available commands"
         end
     end
 end
 
 # Main function - central entry point for the system
 function main
-    print_banner
+    # Banner is now printed in run.fish
     initialize_systems
     
     # Check if we're in quantum mode by looking at the arguments
     for arg in $argv
         if test "$arg" = "--quantum" -o "$arg" = "-q"
-            echo "$BLUE"Starting quantum IO interface..."$NC"
+            log_with_timestamp "Starting quantum IO interface..." "INFO"
             echo
             handle_quantum_io
             return 0
@@ -337,15 +409,16 @@ function main
     end
     
     # Regular mode
-    echo "$BLUE"Starting cognitive IO interface..."$NC"
+    log_with_timestamp "Starting cognitive IO interface..." "INFO"
     echo
     handle_io
-    echo -e "\n$YELLOW"NOESIS sleep"$NC\n"
+    echo
+    log_with_timestamp "NOESIS sleep" "INFO"
+    echo
     return 0
 end
 
-# Execute main function when intent.fish is run directly
-# Use a more compatible method to check if sourced
+# When intent.fish is executed directly, check if it's being sourced
 set -l is_sourced 0
 if status --is-interactive
     if test (count $argv) -eq 0
@@ -358,8 +431,13 @@ else
 end
 
 if test $is_sourced -eq 0
+    # When run directly, use the main function
+    # Note: Generally, you should run via run.fish instead
+    log_with_timestamp "Running intent.fish directly (prefer using run.fish)" "WARNING"
+    
     # Execute main when run directly
     main
+    
     # Make sure we exit cleanly
     exit $status
 end

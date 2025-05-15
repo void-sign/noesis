@@ -22,7 +22,65 @@ set BLUE (set_color blue)
 set YELLOW (set_color yellow)
 set RED (set_color red)
 set PINK (set_color ff5fd7) # Bright pink
+set ORANGE (set_color ff8c00) # Dark orange
+set PURPLE (set_color 8a2be2) # Blue violet
+set CYAN (set_color 00ffff) # Cyan
 set NC (set_color normal)
+
+# Global settings
+set -g VERBOSE_MODE false   # Set to true for verbose debugging output
+
+# Command history implementation
+set -g MAX_COMMAND_HISTORY 50 # Maximum number of commands to store in history
+set -g command_history
+set -g history_count 0
+
+# Custom function to get UTC timestamp with improved formatting
+function log_with_timestamp
+    set message $argv[1]
+    set level $argv[2]
+    if test -z "$level"
+        set level "INFO" # Default log level
+    end
+    
+    set seconds_since_epoch (date +%s)
+    set days (math "$seconds_since_epoch / 86400")
+    set seconds_in_day (math "$seconds_since_epoch % 86400")
+    set hours (math "$seconds_in_day / 3600")
+    set minutes (math "($seconds_in_day % 3600) / 60")
+    set seconds (math "$seconds_in_day % 60")
+    
+    # Format timestamp and colorize based on log level
+    set timestamp (printf "Day %d %02d:%02d:%02d" $days $hours $minutes $seconds)
+    
+    switch $level
+        case "ERROR"
+            echo "$RED[$timestamp] ERROR: $message$NC"
+        case "WARNING"
+            echo "$YELLOW[$timestamp] WARNING: $message$NC"
+        case "SUCCESS"
+            echo "$GREEN[$timestamp] SUCCESS: $message$NC"
+        case "DEBUG"
+            if test "$VERBOSE_MODE" = "true"
+                echo "$BLUE[$timestamp] DEBUG: $message$NC"
+            end
+        case "*" # INFO and any other level
+            echo "$BLUE[$timestamp] INFO: $message$NC"
+    end
+end
+
+# Error handling function
+function handle_error
+    set error_message $argv[1]
+    set error_code $argv[2]
+    
+    if test -z "$error_code"
+        set error_code 1
+    end
+    
+    log_with_timestamp "$error_message" "ERROR"
+    return $error_code
+end
 
 # Initialize all systems
 function initialize_systems
@@ -164,8 +222,76 @@ function show_help
     return 0
 end
 
-# Main function
-function main
+# Initialize command history
+function init_command_history
+    set -g history_count 0
+    set -g command_history
+    
+    for i in (seq $MAX_COMMAND_HISTORY)
+        set -g command_history[$i] ""
+    end
+    
+    log_with_timestamp "Command history initialized" "DEBUG"
+end
+
+# Add command to history
+function add_to_history
+    set command $argv[1]
+    
+    # Don't add empty commands or duplicates of the most recent command
+    if test -z "$command" -o "$command" = "$command_history[1]"
+        return 0
+    end
+    
+    # Shift history entries
+    for i in (seq (math $MAX_COMMAND_HISTORY - 1) -1 1)
+        set next_idx (math $i + 1)
+        set -g command_history[$next_idx] $command_history[$i]
+    end
+    
+    # Add new command to the first position
+    set -g command_history[1] $command
+    
+    # Update count if needed
+    if test $history_count -lt $MAX_COMMAND_HISTORY
+        set -g history_count (math $history_count + 1)
+    end
+    
+    return 0
+end
+
+# Display command history
+function show_history
+    if test $history_count -eq 0
+        echo "No command history available"
+        return 0
+    end
+    
+    echo "Command history (most recent first):"
+    echo
+    
+    for i in (seq 1 $history_count)
+        printf "%3d: %s\n" $i "$command_history[$i]"
+    end
+    
+    return 0
+end
+
+# Print a nice welcome banner
+function print_banner
+    echo
+    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
+    echo "$PINK  NOESIS v$NOESIS_VERSION            $NC"
+    echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"
+    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
+    echo
+end
+
+# Main function for run.fish
+function noesis_main
+    # Initialize command history first
+    init_command_history
+    
     # Process command-line arguments
     if test (count $argv) -gt 0
         switch $argv[1]
@@ -182,33 +308,49 @@ function main
                 return $status
                 
             case "test"
-                echo "$YELLOW"Running Noesis tests..."$NC"
+                log_with_timestamp "Running Noesis tests..." "INFO"
                 load_modules
                 # Add test logic here
-                echo "$GREEN"All tests completed successfully"$NC"
+                log_with_timestamp "All tests completed successfully" "SUCCESS"
                 return 0
                 
             case "-q" "--quantum"
-                echo "$YELLOW"Starting Noesis in quantum mode..."$NC"
+                log_with_timestamp "Starting Noesis in quantum mode..." "INFO"
                 # Source intent.fish which will handle everything
                 source soul/intent.fish
+                # Call main function from intent.fish with quantum flag
                 main --quantum
                 return $status
                 
+            case "verbose"
+                # Toggle verbose mode
+                if test "$VERBOSE_MODE" = "true"
+                    set -g VERBOSE_MODE false
+                    log_with_timestamp "Verbose mode disabled" "INFO"
+                else
+                    set -g VERBOSE_MODE true
+                    log_with_timestamp "Verbose mode enabled" "INFO"
+                end
+                return 0
+                
             case '*'
-                echo "$RED"Unknown option: $argv[1]"$NC"
+                log_with_timestamp "Unknown option: $argv[1]" "ERROR"
                 show_help
                 return 1
         end
     else
+        # Print banner
+        print_banner
+        
         # Source intent.fish which will handle loading all other required modules
         source soul/intent.fish
-        # Explicitly call main function from intent.fish
+        
+        # Explicitly call main function from intent.fish (regular mode)
         main
         return $status
     end
 end
 
-# Execute main function with all arguments
-main $argv
+# Execute noesis_main function with all arguments
+noesis_main $argv
 exit $status
