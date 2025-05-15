@@ -25,7 +25,6 @@ set required_files \
     "src/core/main.fish" \
     "src/core/memory.fish" \
     "src/core/perception.fish" \
-    "src/core/logic.fish" \
     "src/core/emotion.fish" \
     "src/core/intent.fish" \
     "src/quantum/quantum.fish" \
@@ -37,7 +36,7 @@ set required_files \
     "src/utils/noesis_lib.fish" \
     "src/utils/data.fish" \
     "src/api/noesis_api.fish" \
-    "fish-only-run.fish"
+    "build/fish-only/fish-only-run.fish"
 
 set all_files_exist true
 

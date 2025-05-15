@@ -11,19 +11,9 @@ set -g NOESIS_VERSION "2.0.0"
 
 # Function to source all required modules when needed
 function load_modules
-    # Source all required modules
-    source src/core/main.fish
-    source src/core/memory.fish
-    source src/core/perception.fish
-    source src/core/logic.fish
-    source src/core/emotion.fish
-    source src/core/intent.fish
-    source src/quantum/quantum.fish
-    source src/quantum/compiler.fish
-    source src/quantum/backend_stub.fish
-    source src/quantum/backend_ibm.fish
-    source src/quantum/export_qasm.fish
-    source src/quantum/field/quantum_field.fish
+    # With the centralized intent.fish, we only need to source that file
+    # as it will handle loading all other required modules
+    source soul/intent.fish
 end
 
 # Define colors for better readability
@@ -37,7 +27,7 @@ set NC (set_color normal)
 # Print a nice welcome banner
 function print_banner
     echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo "$PINK  NOESIS v$NOESIS_VERSION - FISH ONLY EDITION  $NC"
+    echo "$PINK  NOESIS v$NOESIS_VERSION  $NC"
     echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM           $NC"
     echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
     echo

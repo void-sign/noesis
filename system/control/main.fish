@@ -9,10 +9,9 @@
 # Source required dependency scripts
 source src/core/memory.fish
 source src/core/perception.fish
-source src/core/logic.fish
 source src/core/emotion.fish
 source src/utils/noesis_lib.fish
-source src/core/intent.fish
+source src/core/intent.fish  # logic.fish functionality is now merged into intent.fish
 
 # Source quantum modules
 source src/quantum/quantum.fish

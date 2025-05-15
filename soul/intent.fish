@@ -12,13 +12,12 @@
 set -g NOESIS_VERSION "2.0.0"
 
 # Source dependent modules - absolute minimum needed here since intent.fish is now central
-source src/utils/data.fish
-source src/utils/noesis_lib.fish
-source src/core/memory.fish
-source src/core/perception.fish
-source src/core/emotion.fish
+# Using the new system directory structure - no need to load utils files anymore
+source system/memory/unit.fish
+source system/perception/unit.fish
+source system/emotion/unit.fish
 
-# Source quantum modules - path adjusted for new directory structure
+# Source quantum modules directly from the system directory
 source system/memory/quantum/unit.fish
 source system/memory/quantum/compiler.fish
 source system/memory/quantum/backend_stub.fish
@@ -37,7 +36,7 @@ set NC (set_color normal)
 # Print a nice welcome banner
 function print_banner
     echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo "$PINK  NOESIS v$NOESIS_VERSION   $NC"
+    echo "$PINK  NOESIS v$NOESIS_VERSION            $NC"
     echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"
     echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
     echo
@@ -288,9 +287,18 @@ function main
     return 0
 end
 
-# Execute main function when intent.fish is run directly
-if status is-script-sourced
-    # Do nothing when sourced, allow the importing script to call functions
+# Check if we're being sourced or run directly
+# Use older fish shell compatibility approach
+set -l sourced_status $status
+if test $sourced_status -eq 0
+    # Fish shell doesn't have a standardized way to check if script is sourced in all versions
+    # So we just check the caller variable which is set when sourced
+    if set -q _
+        # Do nothing when sourced
+    else
+        # Execute main when run directly
+        main
+    end
 else
     # Execute main when run directly
     main

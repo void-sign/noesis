@@ -4,12 +4,7 @@
 # Licensed under Noesis License - See LICENSE file for details
 #
 
-# intent.fish - Central implementation and main entry point for the Noesis system
-# This file combines functionality from main.fish and fish-only-run.fish making intent.fish
-# the central component of the Noesis system
-
-# Current version of Noesis
-set -g NOESIS_VERSION "2.0.0"
+# intent.fish - Central implementation of the Noesis system combining logic, intent handling, and main execution
 
 # Source dependent modules - absolute minimum needed here since intent.fish is now central
 source src/utils/data.fish
@@ -18,13 +13,13 @@ source src/core/memory.fish
 source src/core/perception.fish
 source src/core/emotion.fish
 
-# Source quantum modules - path adjusted for new directory structure
-source system/memory/quantum/unit.fish
-source system/memory/quantum/compiler.fish
-source system/memory/quantum/backend_stub.fish
-source system/memory/quantum/backend_ibm.fish
-source system/memory/quantum/export_qasm.fish
-source system/memory/quantum/field/quantum_field.fish
+# Source quantum modules
+source src/quantum/quantum.fish
+source src/quantum/compiler.fish
+source src/quantum/backend_stub.fish
+source src/quantum/backend_ibm.fish
+source src/quantum/export_qasm.fish
+source src/quantum/field/quantum_field.fish
 
 # Define colors for better readability
 set GREEN (set_color green)
@@ -33,35 +28,6 @@ set YELLOW (set_color yellow)
 set RED (set_color red)
 set PINK (set_color ff5fd7) # Bright pink
 set NC (set_color normal)
-
-# Print a nice welcome banner
-function print_banner
-    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo "$PINK  NOESIS v$NOESIS_VERSION   $NC"
-    echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"
-    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo
-end
-
-# Initialize all systems
-function initialize_systems
-    echo "$YELLOW"Initializing Noesis systems..."$NC"
-    
-    # Initialize core systems
-    init_memory_system
-    init_perception
-    # init_logic_system - Now handled inside intent_system
-    init_emotion_system
-    init_intent_system
-    
-    # Initialize quantum systems - using the new unit.fish functions
-    q_init
-    stub_init
-    
-    echo "$GREEN"All systems initialized successfully"$NC"
-    echo
-    return 0
-end
 
 # Define constants for types of logical operations
 set -g LOGIC_AND 0
@@ -274,24 +240,4 @@ function handle_io
             break
         end
     end
-end
-
-# Main function - central entry point for the system
-function main
-    print_banner
-    initialize_systems
-    
-    echo "$BLUE"Starting cognitive IO interface..."$NC"
-    handle_io
-    
-    echo -e "\n\n$YELLOW"NOESIS sleep"$NC\n\n"
-    return 0
-end
-
-# Execute main function when intent.fish is run directly
-if status is-script-sourced
-    # Do nothing when sourced, allow the importing script to call functions
-else
-    # Execute main when run directly
-    main
 end
