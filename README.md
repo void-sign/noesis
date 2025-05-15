@@ -45,5 +45,4 @@ requirements for attribution and profit-sharing for commercial use.
 
 Documentation for Noesis is organized into several key resources:
 
-- **Changelogs** - Complete version history with detailed changes:
-  - [CHANGELOG_v2.1.1.md](docs/changelogs/CHANGELOG_v2.1.1.md)
+- **Changelogs** - Complete version history with detailed changes:[CHANGELOG_v2.1.1.md](docs/changelogs/CHANGELOG_v2.1.1.md)
