@@ -131,10 +131,10 @@ else
     ls -la soul/
 end
 
-if test -e system/ai/unit.fish
+if test -e system/ai-model/unit.fish
     echo "Found unit.fish"
 else
-    echo "ERROR: system/ai/unit.fish not found" 
+    echo "ERROR: system/ai-model/unit.fish not found" 
 end
 
 # Run tests regardless of interactive status

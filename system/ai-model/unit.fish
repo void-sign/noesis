@@ -7,7 +7,7 @@
 # unit.fish - AI integration with Hugging Face models for Noesis
 
 # Source consciousness module
-source system/ai/consciousness.fish
+source system/ai-model/consciousness.fish
 
 # AI system settings
 set -g AI_SYSTEM_ENABLED false

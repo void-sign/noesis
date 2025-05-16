@@ -28,15 +28,15 @@ set NC (set_color normal)
 source system/memory/unit.fish
 source system/perception/unit.fish
 source system/emotion/unit.fish
-source system/ai/unit.fish
+source system/ai-model/unit.fish
 
 # Source quantum modules directly from the system directory
 source system/memory/quantum/unit.fish
 source system/memory/quantum/compiler.fish
-source system/memory/quantum/backend_stub.fish
-source system/memory/quantum/backend_ibm.fish
-source system/memory/quantum/export_qasm.fish
-source system/memory/quantum/field/quantum_field.fish
+source system/memory/quantum/backend-stub.fish
+source system/memory/quantum/backend-ibm.fish
+source system/memory/quantum/export-qasm.fish
+source system/memory/quantum/field/quantum-field.fish
 
 # Note: All color definitions, print_banner, log_with_timestamp, and handle_error functions
 # are now defined in run.fish
