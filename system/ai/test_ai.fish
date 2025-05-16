@@ -7,6 +7,7 @@
 # test_ai.fish - Test script for AI and consciousness integration
 
 # Source necessary modules
+# No need to cd, we're already in the noesis directory
 source soul/intent.fish
 
 # Print a nice header

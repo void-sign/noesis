@@ -236,7 +236,7 @@ function ai_emotional_response
     ai_generate "$prompt" > $temp_output
     
     # Process the output to extract just the response
-    set response (cat $temp_output | string match -r "^(?:.*?:)?\s*(.*?)$" | head -1)
+    set response (cat $temp_output | string replace -r "^.*?:" "" | head -1)
     
     # Clean up
     rm -f $temp_output
@@ -378,7 +378,7 @@ function ai_check_license_compatibility
     
     # Create a Python script to check model licenses
     set temp_script (mktemp)
-    echo '
+    echo "
 import sys
 from huggingface_hub import HfApi, hf_hub_url
 import requests
@@ -391,38 +391,38 @@ def check_model_license(model_name):
         model_info = api.model_info(model_name)
         
         # Check license
-        license_info = getattr(model_info, "license", "Unknown")
+        license_info = getattr(model_info, \"license\", \"Unknown\")
         
         # List of permissive licenses compatible with Noesis License
         permissive_licenses = [
-            "mit", "apache-2.0", "apache2.0", "apache", "bsd", "cc-by", "cc-by-sa", 
-            "cc-by-nc", "cc0", "openrail", "bigscience-openrail-m",
-            "creativeml-openrail-m", "bigcode-openrail-m", "llama2"
+            \"mit\", \"apache-2.0\", \"apache2.0\", \"apache\", \"bsd\", \"cc-by\", \"cc-by-sa\", 
+            \"cc-by-nc\", \"cc0\", \"openrail\", \"bigscience-openrail-m\",
+            \"creativeml-openrail-m\", \"bigcode-openrail-m\", \"llama2\"
         ]
         
         # Check if the license is permissive enough
         is_compatible = any(pl in license_info.lower() for pl in permissive_licenses) if license_info else False
         
-        print(f"Model: {model_name}")
-        print(f"License: {license_info}")
-        print(f"Compatible with Noesis License: {'Yes' if is_compatible else 'Needs review'}")
+        print(f\"Model: {model_name}\")
+        print(f\"License: {license_info}\")
+        print(f\"Compatible with Noesis License: {'Yes' if is_compatible else 'Needs review'}\")
         
         if not is_compatible:
-            print("Note: This model's license may have restrictions. Please review and ensure")
-            print("compatibility with the Noesis License, particularly regarding commercial use")
-            print("and the donation requirement in Section 6.")
+            print(\"Note: This model's license may have restrictions. Please review and ensure\")
+            print(\"compatibility with the Noesis License, particularly regarding commercial use\")
+            print(\"and the donation requirement in Section 6.\")
         
         return is_compatible
         
     except Exception as e:
-        print(f"Error checking model license: {str(e)}")
-        print("Could not determine license compatibility. Please verify manually.")
+        print(f\"Error checking model license: {str(e)}\")
+        print(\"Could not determine license compatibility. Please verify manually.\")
         return False
 
-if __name__ == "__main__":
+if __name__ == \"__main__\":
     model_name = sys.argv[1]
     check_model_license(model_name)
-' > $temp_script
+" > $temp_script
 
     # Execute the script if huggingface_hub is installed
     if python3 -c "import huggingface_hub" 2>/dev/null
