@@ -51,8 +51,7 @@ else
     # Create minimal compatibility module if not exists from the Python script
     if not test -f ~/.noesis/torch_compat.py
         echo "$YELLOW""Creating minimal PyTorch compatibility layer...""$NC"
-        cat > ~/.noesis/torch_compat.py <<'EOL'
-# PyTorch compatibility layer
+        echo '# PyTorch compatibility layer
 import sys
 import warnings
 
@@ -73,8 +72,8 @@ class FakeTorch:
 
 class FakeNN:
     def __init__(self):
-        self.Module = type('Module', (), {'__init__': lambda self: None})
-        self.functional = type('functional', (), {})
+        self.Module = type(\'Module\', (), {\'__init__\': lambda self: None})
+        self.functional = type(\'functional\', (), {})
 
 class FakeCuda:
     def __init__(self):
@@ -84,18 +83,16 @@ class FakeCuda:
         return False
 
 # Create and export the compatibility module
-sys.modules['torch'] = FakeTorch()
-warnings.warn("Using PyTorch compatibility layer. Limited functionality available.")
-EOL
+sys.modules["torch"] = FakeTorch()
+warnings.warn("Using PyTorch compatibility layer. Limited functionality available.")' > ~/.noesis/torch_compat.py
     end
 
     # Create a script to use the compatibility layer
-    cat > ~/.noesis/use_torch_compat.py <<'EOL'
-import sys
+    echo 'import sys
 import os
 
 # Add the compatibility layer to Python path
-sys.path.insert(0, os.path.expanduser('~/.noesis'))
+sys.path.insert(0, os.path.expanduser("~/.noesis"))
 
 # Try importing proper torch first (in case it was installed)
 try:
@@ -104,8 +101,7 @@ try:
 except ImportError:
     # Fall back to compatibility layer
     import torch_compat
-    print("Using PyTorch compatibility layer")
-EOL
+    print("Using PyTorch compatibility layer")' > ~/.noesis/use_torch_compat.py
 
     # Install numpy if missing (needed for the compatibility layer)
     echo "$YELLOW""Installing numpy (required for compatibility)...""$NC"
@@ -129,7 +125,7 @@ if python3 -c "import transformers" 2>/dev/null
     set ai_installed 1
 else
     echo "$RED""Failed to install Transformers.""$NC"
-fi
+end
 
 # Final status report
 echo
@@ -148,7 +144,7 @@ if test $ai_installed -eq 1
         # Check if it's the compatibility layer
         if python3 -c "import torch; exit(0 if torch.__version__ == '0.1.0-compat' else 1)" 2>/dev/null
             echo "    $YELLOW""(Compatibility layer - limited functionality)""$NC"
-        fi
+        end
     else
         echo "  $RED""✗ PyTorch (not available)""$NC"
     end
