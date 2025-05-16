@@ -7,7 +7,7 @@
 # install.fish - Installation script for Noesis
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.1.1"
+set -g NOESIS_VERSION "2.1.2"
 
 # Define colors for better readability
 set GREEN (set_color green)

@@ -10,7 +10,7 @@
 # and behavioral regulation. Integrates with memory and emotion subsystems.
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.1.1"
+set -g NOESIS_VERSION "2.1.2"
 
 # Define global variables for the limbic system
 set -g LIMBIC_AROUSAL 0.5      # Baseline arousal level (0-1)

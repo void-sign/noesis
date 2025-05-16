@@ -14,7 +14,7 @@ source /system/emotion/unit.fish
 source /soul/intent.fish
 
 # API version
-set -g API_VERSION "2.1.1"
+set -g API_VERSION "2.1.2"
 
 # Initialize the API
 function api_init

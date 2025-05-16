@@ -25,11 +25,11 @@ set -g F_OK 0
 # Detect environment - determine what sensors are available
 function detect_environment
     set -l os (uname)
-    set -l hostname (hostname)
+    set -l host_name (hostname)
     
     echo "Environment detection:"
     echo "Operating system: $os"
-    echo "Hostname: $hostname"
+    echo "Hostname: $host_name"
     
     # Check for common interfaces
     if test -d /dev/input

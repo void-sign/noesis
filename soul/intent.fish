@@ -9,7 +9,19 @@
 # the central component of the Noesis system
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.1.1"
+set -g NOESIS_VERSION "2.1.2"
+
+# Make sure color variables are available
+# These are defined in run.fish but we need to ensure they're accessible here
+set GREEN (set_color green)
+set BLUE (set_color blue)
+set YELLOW (set_color yellow)
+set RED (set_color red) 
+set PINK (set_color ff5fd7)
+set ORANGE (set_color ff8c00)
+set PURPLE (set_color 8a2be2)
+set CYAN (set_color 00ffff)
+set NC (set_color normal)
 
 # Source dependent modules - absolute minimum needed here since intent.fish is now central
 # Using the new system directory structure - no need to load utils files anymore
@@ -162,12 +174,19 @@ function init_intent_system
     set -g intention_count 0
     
     # Initialize command history - now defined in run.fish
-    init_command_history
+    # This function might already be called by run.fish, but call again to be safe
+    if functions -q init_command_history
+        init_command_history
+    end
     
     # Initialize the logic system as well
     init_logic_system
     
-    log_with_timestamp "Intent system initialized" "SUCCESS"
+    if functions -q log_with_timestamp
+        log_with_timestamp "Intent system initialized" "SUCCESS"
+    else
+        echo "$GREEN"Intent system initialized"$NC"
+    end
 end
 
 # Process an intention
@@ -201,7 +220,7 @@ function process_intention
             echo "  $GREEN- quantum:$NC             Enter quantum processing mode"
             
         case "exit" "e"
-            log_with_timestamp "Exiting..." "INFO"
+            # No log message here - we'll only use one at the end
             return 1
             
         case "status"
@@ -269,8 +288,8 @@ end
 
 # Handle IO - main interaction loop
 function handle_io
-    echo
     echo "$CYAN"Welcome to NOESIS intent system"$NC"
+    echo
     echo "Type '$GREEN'help'$NC' for available commands"
     echo "Type '$GREEN'exit'$NC' to exit"
     
@@ -288,7 +307,7 @@ function handle_io
         
         # Process the command
         if not process_intention $intention
-            log_with_timestamp "Exiting NOESIS intent system" "INFO"
+            # No log message here - we'll only use one at the end
             break
         end
     end
@@ -323,18 +342,46 @@ function handle_quantum_io
         # Process command
         switch $command
             case "demo_quantum_field"
+                if functions -q log_with_timestamp
                 log_with_timestamp "Starting quantum field demo" "INFO"
-                if not demo_quantum_field
+            else
+                echo "Starting quantum field demo"
+            end
+            
+            if not demo_quantum_field
+                if functions -q handle_error
                     handle_error "Quantum field demo failed" 1
+                else
+                    echo $RED"Error: Quantum field demo failed"$NC
                 end
+            end
+            
+            if functions -q log_with_timestamp
                 log_with_timestamp "Quantum field demo completed" "SUCCESS"
+            else
+                echo $GREEN"Quantum field demo completed"$NC 
+            end
                 
             case "demo_wave_interference"
+                if functions -q log_with_timestamp
                 log_with_timestamp "Starting wave interference demo" "INFO"
-                if not demo_wave_interference
+            else
+                echo "Starting wave interference demo"
+            end
+            
+            if not demo_wave_interference
+                if functions -q handle_error
                     handle_error "Wave interference demo failed" 1
+                else
+                    echo $RED"Error: Wave interference demo failed"$NC
                 end
+            end
+            
+            if functions -q log_with_timestamp
                 log_with_timestamp "Wave interference demo completed" "SUCCESS"
+            else
+                echo $GREEN"Wave interference demo completed"$NC
+            end
                 
             case "demo_quantum_vs_classical"
                 log_with_timestamp "Starting quantum vs classical demo" "INFO"
@@ -401,7 +448,11 @@ function main
     # Check if we're in quantum mode by looking at the arguments
     for arg in $argv
         if test "$arg" = "--quantum" -o "$arg" = "-q"
-            log_with_timestamp "Starting quantum IO interface..." "INFO"
+            if functions -q log_with_timestamp
+                log_with_timestamp "Starting quantum IO interface..." "INFO"
+            else
+                echo $BLUE"Starting quantum IO interface..."$NC
+            end
             echo
             handle_quantum_io
             return 0
@@ -409,11 +460,19 @@ function main
     end
     
     # Regular mode
-    log_with_timestamp "Starting cognitive IO interface..." "INFO"
+    if functions -q log_with_timestamp
+        log_with_timestamp "Starting cognitive IO interface..." "INFO"
+    else
+        echo $BLUE"Starting cognitive IO interface..."$NC
+    end
     echo
     handle_io
     echo
-    log_with_timestamp "NOESIS sleep" "INFO"
+    if functions -q log_with_timestamp
+        log_with_timestamp "NOESIS system exiting" "INFO"
+    else
+        echo $YELLOW"NOESIS system exiting"$NC
+    end
     echo
     return 0
 end

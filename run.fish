@@ -7,7 +7,7 @@
 # run.fish - Main entry point for the Noesis implementation
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.1.1"
+set -g NOESIS_VERSION "2.1.2"
 
 # Function to source all required modules when needed
 function load_modules
@@ -43,30 +43,51 @@ function log_with_timestamp
         set level "INFO" # Default log level
     end
     
+    # Get Unix timestamp (seconds since epoch)
     set seconds_since_epoch (date +%s)
-    set days (math "$seconds_since_epoch / 86400")
-    set seconds_in_day (math "$seconds_since_epoch % 86400")
-    set hours (math "$seconds_in_day / 3600")
-    set minutes (math "($seconds_in_day % 3600) / 60")
-    set seconds (math "$seconds_in_day % 60")
     
-    # Format timestamp and colorize based on log level
-    set timestamp (printf "Day %d %02d:%02d:%02d" $days $hours $minutes $seconds)
+    # Calculate days since epoch for reference
+    set days (math --scale=0 (math "$seconds_since_epoch / 86400"))
     
+    # Get exact current time in the local system's timezone
+    set formatted_date (date +"%d %b %Y %H:%M:%S")
+    
+    # Create padded timestamp strings with background highlighting
+    set time_line "    [Time[$formatted_date]]    "
+    set unix_line "    [Unix Time[$days days, $seconds_since_epoch seconds]]    "
+    
+    # Set background colors based on log level
     switch $level
         case "ERROR"
-            echo "$RED[$timestamp] ERROR: $message$NC"
+            set bg_color (set_color --background=red --bold)
+            set fg_color $RED
+            set level_display "    ERROR    "
         case "WARNING"
-            echo "$YELLOW[$timestamp] WARNING: $message$NC"
+            set bg_color (set_color --background=yellow --bold)
+            set fg_color $YELLOW
+            set level_display "    WARNING    "
         case "SUCCESS"
-            echo "$GREEN[$timestamp] SUCCESS: $message$NC"
+            set bg_color (set_color --background=green --bold)
+            set fg_color $GREEN
+            set level_display "    SUCCESS    "
         case "DEBUG"
-            if test "$VERBOSE_MODE" = "true"
-                echo "$BLUE[$timestamp] DEBUG: $message$NC"
-            end
+            set bg_color (set_color --background=blue --bold)
+            set fg_color $BLUE
+            set level_display "    DEBUG    "
         case "*" # INFO and any other level
-            echo "$BLUE[$timestamp] INFO: $message$NC"
+            set bg_color (set_color --background=ff5fd7 --bold)
+            set fg_color $PINK
+            set level_display "    INFO    "
     end
+    
+    # Display the formatted message with better spacing
+    echo
+    echo $bg_color$level_display$NC
+    echo
+    echo $fg_color$time_line$NC
+    echo
+    echo $fg_color"    $message    "$NC
+    echo
 end
 
 # Error handling function
@@ -279,7 +300,6 @@ end
 
 # Print a nice welcome banner
 function print_banner
-    echo
     echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
     echo "$PINK  NOESIS v$NOESIS_VERSION            $NC"
     echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"

@@ -1,4 +1,4 @@
-# Noesis v2.1.1
+# Noesis v2.1.2
 
 ![Noesis Logo](noesis-logo.jpg)
 
@@ -30,7 +30,7 @@ noesis/
 ├── docs/                                  # Documentation files
 │   ├── SECURITY.md                        # Security policy
 │   └── changelogs/                        # Version history and release notes
-│       └── CHANGELOG_v2.1.0.md            # Latest version changelog
+│       └── CHANGELOG_v2.1.2.md            # Latest version changelog
 ├── build.fish                             # Main build script for Fish shell
 ├── run.fish                               # Main run script for Fish shell
 ├── test.fish                              # Test execution script
@@ -49,4 +49,4 @@ requirements for attribution and profit-sharing for commercial use.
 
 Documentation for Noesis is organized into several key resources:
 
-**Changelogs** - Complete version history with detailed changes: [CHANGELOG_v2.1.1.md](docs/changelogs/CHANGELOG_v2.1.1.md)
+**Changelogs** - Complete version history with detailed changes: [CHANGELOG_v2.1.2.md](docs/changelogs/CHANGELOG_v2.1.2.md)
