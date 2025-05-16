@@ -133,6 +133,23 @@ function show_version
     return 0
 end
 
+# Function to check if Python version is 3.13+
+function check_python_version_compatibility
+    if command -sq python3
+        set py_version (python3 --version 2>&1)
+        set py_minor (python3 -c "import sys; print(sys.version_info.minor)" 2>/dev/null)
+        
+        if test "$py_minor" -ge "13"
+            echo "$YELLOW"WARNING: Python $py_version detected."$NC"
+            echo "$YELLOW"This version may have compatibility issues with PyTorch."$NC"
+            echo "$YELLOW"Using compatibility mode for AI features."$NC"
+            echo
+            return 1
+        end
+    end
+    return 0
+end
+
 # Function to check for updates and update Noesis
 function check_for_updates
     echo "$YELLOW"Checking for updates..."$NC"
@@ -313,6 +330,10 @@ function noesis_main
     # Initialize command history first
     init_command_history
     
+    # Check Python version compatibility
+    check_python_version_compatibility
+    set python_compatible $status
+    
     # Process command-line arguments
     if test (count $argv) -gt 0
         switch $argv[1]
@@ -327,6 +348,15 @@ function noesis_main
             case "update"
                 check_for_updates
                 return $status
+                
+            case "status"
+                # Check terminal status
+                if test -f ./tools/terminal-status.fish
+                    ./tools/terminal-status.fish
+                else
+                    log_with_timestamp "Terminal status script not found" "ERROR"
+                end
+                return 0
                 
             case "test"
                 log_with_timestamp "Running Noesis tests..." "INFO"

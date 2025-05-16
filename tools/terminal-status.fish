@@ -33,7 +33,7 @@ if command -sq python3
     if test "$py_minor" -ge "13"
         echo "$RED"WARNING: Python 3.13+ detected - may have compatibility issues with PyTorch"$NC"
         echo "Consider using the Python 3.13+ specific AI tools:"
-        echo "  ./fast-ai-install-py13.fish"
+        echo "  ./tools/fast-ai-install-py13.fish"
         echo "  or 'ai install-py13' within the Noesis interface"
     end
 else

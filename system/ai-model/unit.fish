@@ -41,8 +41,8 @@ function init_ai_system
     if not python3 -c "import transformers" 2>/dev/null
         echo "Warning: Transformers package not found"
         echo "To enable AI capabilities, run one of the following:"
-        echo "  ./fast-ai-install.fish        # For Python 3.9-3.10"
-        echo "  ./fast-ai-install-py13.fish   # For Python 3.13+"
+        echo "  ./tools/fast-ai-install.fish        # For Python 3.9-3.10"
+        echo "  ./tools/fast-ai-install-py13.fish   # For Python 3.13+"
         set -g AI_SYSTEM_ENABLED false
         return 1
     end
@@ -59,16 +59,16 @@ function init_ai_system
             else
                 echo "Warning: PyTorch or compatibility layer not available"
                 echo "To enable AI capabilities, run one of the following:"
-                echo "  ./fast-ai-install.fish        # For Python 3.9-3.10"
-                echo "  ./fast-ai-install-py13.fish   # For Python 3.13+"
+                echo "  ./tools/fast-ai-install.fish        # For Python 3.9-3.10"
+                echo "  ./tools/fast-ai-install-py13.fish   # For Python 3.13+"
                 set -g AI_SYSTEM_ENABLED false
                 return 1
             end
         else
             echo "Warning: PyTorch not found"
             echo "To enable AI capabilities, run one of the following:"
-            echo "  ./fast-ai-install.fish        # For Python 3.9-3.10"
-            echo "  ./fast-ai-install-py13.fish   # For Python 3.13+"
+            echo "  ./tools/fast-ai-install.fish        # For Python 3.9-3.10"
+            echo "  ./tools/fast-ai-install-py13.fish   # For Python 3.13+"
             set -g AI_SYSTEM_ENABLED false
             return 1
         end
@@ -426,8 +426,8 @@ function ai_install_dependencies
     # For Python 3.13+, use the specialized installer
     if test "$py_minor" -ge "13"
         echo "Detected Python $py_version - using specialized installer for Python 3.13+"
-        if test -f ./fast-ai-install-py13.fish
-            if ./fast-ai-install-py13.fish
+        if test -f ./tools/fast-ai-install-py13.fish
+            if ./tools/fast-ai-install-py13.fish
                 echo "Dependencies installed successfully for Python 3.13+"
                 set -g AI_SYSTEM_ENABLED true
                 return 0
@@ -443,10 +443,10 @@ function ai_install_dependencies
     end
     
     # For Python 3.9-3.12, use the regular fast installer
-    if test -f ./fast-ai-install.fish
+    if test -f ./tools/fast-ai-install.fish
         echo "Using fast AI dependency installation..."
         
-        if ./fast-ai-install.fish
+        if ./tools/fast-ai-install.fish
             echo "Dependencies installed successfully using fast method"
             set -g AI_SYSTEM_ENABLED true
             return 0
@@ -457,10 +457,10 @@ function ai_install_dependencies
     
     # Use macOS-specific script for macOS systems
     if test (uname) = "Darwin"
-        if test -f ./setup-torch-mac.fish
+        if test -f ./tools/setup-torch-mac.fish
             echo "Using macOS-specific PyTorch installation script..."
             
-            if ./setup-torch-mac.fish
+            if ./tools/setup-torch-mac.fish
                 echo "Dependencies installed successfully"
                 set -g AI_SYSTEM_ENABLED true
                 return 0
@@ -474,10 +474,10 @@ function ai_install_dependencies
     end
     
     # Use the general installation script if available
-    if test -f ./install-ai-deps.fish
+    if test -f ./tools/install-ai-deps.fish
         echo "Using the dedicated AI dependency installation script..."
         
-        if ./install-ai-deps.fish
+        if ./tools/install-ai-deps.fish
             echo "Dependencies installed successfully"
             set -g AI_SYSTEM_ENABLED true
             return 0

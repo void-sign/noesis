@@ -123,15 +123,15 @@ function handle_ai_command
             ai_install_dependencies
         case "install-py13"
             # Execute the specialized Python 3.13+ installer script directly
-            if test -f ./fast-ai-install-py13.fish
+            if test -f ./tools/fast-ai-install-py13.fish
                 echo "Installing AI dependencies for Python 3.13+..."
-                ./fast-ai-install-py13.fish
+                ./tools/fast-ai-install-py13.fish
                 if test $status -eq 0
                     set -g AI_SYSTEM_ENABLED true
                     echo "Python 3.13+ AI dependencies installed successfully."
                 end
             else
-                echo "Error: Could not find fast-ai-install-py13.fish"
+                echo "Error: Could not find tools/fast-ai-install-py13.fish"
                 echo "Please download it from the Noesis repository."
                 return 1
             end
