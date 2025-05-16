@@ -38,12 +38,40 @@ function init_ai_system
     end
     
     # Check if required packages are installed
-    if not python3 -c "import transformers, torch" 2>/dev/null
-        echo "Warning: Required Python packages not found"
-        echo "To enable AI capabilities, install the following:"
-        echo "pip install transformers torch"
+    if not python3 -c "import transformers" 2>/dev/null
+        echo "Warning: Transformers package not found"
+        echo "To enable AI capabilities, run one of the following:"
+        echo "  ./fast-ai-install.fish        # For Python 3.9-3.10"
+        echo "  ./fast-ai-install-py13.fish   # For Python 3.13+"
         set -g AI_SYSTEM_ENABLED false
         return 1
+    end
+
+    # Check for PyTorch or compatibility layer
+    if not python3 -c "import torch" 2>/dev/null
+        # Check for compatibility layer
+        if test -f ~/.noesis/torch_compat.py
+            python3 -c "import sys; sys.path.insert(0, '$HOME/.noesis'); import torch_compat" 2>/dev/null
+            if test $status -eq 0
+                echo "Using PyTorch compatibility layer"
+                set -g AI_SYSTEM_ENABLED true
+                echo "AI integration system initialized with compatibility layer"
+            else
+                echo "Warning: PyTorch or compatibility layer not available"
+                echo "To enable AI capabilities, run one of the following:"
+                echo "  ./fast-ai-install.fish        # For Python 3.9-3.10"
+                echo "  ./fast-ai-install-py13.fish   # For Python 3.13+"
+                set -g AI_SYSTEM_ENABLED false
+                return 1
+            end
+        else
+            echo "Warning: PyTorch not found"
+            echo "To enable AI capabilities, run one of the following:"
+            echo "  ./fast-ai-install.fish        # For Python 3.9-3.10"
+            echo "  ./fast-ai-install-py13.fish   # For Python 3.13+"
+            set -g AI_SYSTEM_ENABLED false
+            return 1
+        end
     else
         set -g AI_SYSTEM_ENABLED true
         echo "AI integration system initialized successfully"
@@ -144,7 +172,23 @@ function ai_generate
     set temp_script (mktemp)
     echo '
 import sys
-import torch
+import os
+
+# Add compatibility layer path if needed
+sys.path.insert(0, os.path.expanduser("~/.noesis"))
+
+# Try to import torch - fall back to compatibility layer if needed
+try:
+    import torch
+    print(f"Using PyTorch: {torch.__version__}", file=sys.stderr)
+except ImportError:
+    try:
+        import torch_compat
+        print("Using PyTorch compatibility layer", file=sys.stderr)
+    except ImportError:
+        print("ERROR: No PyTorch or compatibility layer available", file=sys.stderr)
+        sys.exit(1)
+
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 
 def main():
@@ -152,10 +196,24 @@ def main():
     prompt = sys.argv[2]
     
     try:
+        # Check if we have real PyTorch or compatibility layer
+        is_compat = getattr(torch, "__version__", "") == "0.1.0-compat"
+        
+        if is_compat:
+            # Simplified approach for compatibility layer
+            print(f"Using compatibility mode for model: {model_name}")
+            print(f"Generating response to: {prompt}")
+            print(f"*** Generated response (simulated) ***")
+            print(f"I am the Noesis system responding to your prompt: {prompt}")
+            print(f"Due to Python 3.13 compatibility mode, full AI model capabilities are limited.")
+            print(f"Please install Python 3.9 or 3.10 for full AI capabilities.")
+            sys.exit(0)
+            
+        # Regular execution with actual PyTorch
         # Load the tokenizer and model
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", 
-                                                    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
+                                                    torch_dtype=torch.float16 if hasattr(torch, "cuda") and torch.cuda.is_available() else torch.float32)
         
         # Create a text generation pipeline
         generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
@@ -361,7 +419,30 @@ end
 function ai_install_dependencies
     echo "Installing AI dependencies..."
     
-    # Check for fast installation script first (best option)
+    # Check Python version to determine which installer to use
+    set py_version (python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')" 2>/dev/null)
+    set py_minor (python3 -c "import sys; print(sys.version_info.minor)" 2>/dev/null)
+    
+    # For Python 3.13+, use the specialized installer
+    if test "$py_minor" -ge "13"
+        echo "Detected Python $py_version - using specialized installer for Python 3.13+"
+        if test -f ./fast-ai-install-py13.fish
+            if ./fast-ai-install-py13.fish
+                echo "Dependencies installed successfully for Python 3.13+"
+                set -g AI_SYSTEM_ENABLED true
+                return 0
+            else
+                echo "Installation failed for Python 3.13+"
+                return 1
+            end
+        else
+            echo "Specialized installer for Python 3.13+ not found."
+            echo "Please download it from the Noesis repository."
+            return 1
+        end
+    end
+    
+    # For Python 3.9-3.12, use the regular fast installer
     if test -f ./fast-ai-install.fish
         echo "Using fast AI dependency installation..."
         

@@ -97,6 +97,7 @@ function handle_ai_command
         echo "AI system commands:"
         echo "  ai status              - Display AI system status"
         echo "  ai install             - Install AI dependencies"
+        echo "  ai install-py13        - Install AI dependencies for Python 3.13+"
         echo "  ai list-models         - List available AI models"
         echo "  ai set-model MODEL     - Set active AI model"
         echo "  ai thinking LEVEL      - Set AI thinking level (0-5)"
@@ -120,6 +121,20 @@ function handle_ai_command
             ai_status
         case "install"
             ai_install_dependencies
+        case "install-py13"
+            # Execute the specialized Python 3.13+ installer script directly
+            if test -f ./fast-ai-install-py13.fish
+                echo "Installing AI dependencies for Python 3.13+..."
+                ./fast-ai-install-py13.fish
+                if test $status -eq 0
+                    set -g AI_SYSTEM_ENABLED true
+                    echo "Python 3.13+ AI dependencies installed successfully."
+                end
+            else
+                echo "Error: Could not find fast-ai-install-py13.fish"
+                echo "Please download it from the Noesis repository."
+                return 1
+            end
         case "list-models"
             ai_list_models
         case "set-model"
