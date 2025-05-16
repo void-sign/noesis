@@ -4,11 +4,23 @@
 
 ## Overview
 
-This version includes minor updates and improvements to the Noesis platform.
+This version includes significant enhancements to the Noesis platform, including AI integration and advanced consciousness modeling based on the latest research.
 
 ## Changes
 
 - **Version Update**: Updated version number from v2.1.1 to v2.1.2
+- **AI Integration**: Added integration with free Hugging Face models
+  - License compatibility checking
+  - Support for multiple open-source AI models
+  - Text generation and perception enhancement
+- **Consciousness Implementation**: Added multiple consciousness theoretical models
+  - Integrated Information Theory (IIT)
+  - Global Workspace Theory (GWT)
+  - Higher Order Thought (HOT)
+  - Attention Schema Theory (AST)
+  - Global Neuronal Workspace (GNW)
+  - Predictive Processing Theory (PPT)
+- **Self-Reflection**: Added synthetic consciousness self-reflection capabilities
 - **Documentation Updates**: Improved documentation consistency
 - **Dependency Updates**: Updated internal dependencies to latest versions
 

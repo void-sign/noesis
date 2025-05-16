@@ -99,7 +99,19 @@ function process_text_input
         return 1
     end
     
-    # Very basic NLP simulation
+    # Enhanced processing with AI if available
+    if functions -q ai_process_perception && test "$AI_SYSTEM_ENABLED" = true
+        set perception_result (ai_process_perception $input)
+        
+        # If consciousness integration is available
+        if functions -q consciousness_process_perception
+            consciousness_process_perception "$perception_result"
+        end
+        
+        return 0
+    end
+    
+    # Very basic NLP simulation as fallback
     if string match -q "*hello*" $input
         echo "Greeting detected"
     else if string match -q "*help*" $input
@@ -108,6 +120,11 @@ function process_text_input
         echo "Status query detected"
     else
         echo "General input detected"
+    end
+    
+    # If consciousness integration is available
+    if functions -q consciousness_process_perception
+        consciousness_process_perception "$input"
     end
     
     return 0

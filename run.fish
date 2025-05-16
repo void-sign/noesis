@@ -7,7 +7,7 @@
 # run.fish - Main entry point for the Noesis implementation
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.1.2"
+set -g NOESIS_VERSION "2.2.0"
 
 # Function to source all required modules when needed
 function load_modules

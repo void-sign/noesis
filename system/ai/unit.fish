@@ -6,6 +6,9 @@
 
 # unit.fish - AI integration with Hugging Face models for Noesis
 
+# Source consciousness module
+source system/ai/consciousness.fish
+
 # AI system settings
 set -g AI_SYSTEM_ENABLED false
 set -g AI_MODEL_NAME "default"
@@ -45,6 +48,9 @@ function init_ai_system
         set -g AI_SYSTEM_ENABLED true
         echo "AI integration system initialized successfully"
     end
+    
+    # Initialize consciousness module
+    init_consciousness
     
     return 0
 end

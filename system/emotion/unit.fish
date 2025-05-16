@@ -94,6 +94,12 @@ end
 function emotional_response
     set -l input $argv[1]
     
+    # Check if we should use AI-enhanced response
+    if functions -q ai_emotional_response && test "$AI_SYSTEM_ENABLED" = true
+        ai_emotional_response $input
+        return $status
+    end
+    
     # Simple keyword-based emotion response
     switch $current_emotion
         case $EMOTION_HAPPY
@@ -108,6 +114,11 @@ function emotional_response
             echo "I'm concerned about the implications."
         case "*"  # Default to neutral
             echo "I acknowledge this information."
+    end
+    
+    # If consciousness system is available, integrate with it
+    if functions -q consciousness_emotion_integration
+        consciousness_emotion_integration $current_emotion $emotion_intensity
     end
     
     return 0

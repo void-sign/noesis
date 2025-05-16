@@ -1,4 +1,4 @@
-# Noesis v2.1.2
+# Noesis v2.2.0
 
 ![Noesis Logo](noesis-logo.jpg)
 
@@ -18,6 +18,8 @@ noesis/
 ├── soul/                                  # Consciousness core implementation
 │   └── intent.fish                        # Intent processing system
 ├── system/                                # System components
+│   ├── ai/                                # AI integration with Hugging Face models
+│   │   └── consciousness.fish             # Consciousness theories implementation
 │   ├── control/                           # Control subsystems
 │   │   ├── limbric/                       # Limbric system
 │   │   └── ...
@@ -30,7 +32,7 @@ noesis/
 ├── docs/                                  # Documentation files
 │   ├── SECURITY.md                        # Security policy
 │   └── changelogs/                        # Version history and release notes
-│       └── CHANGELOG_v2.1.2.md            # Latest version changelog
+│       └── CHANGELOG_v2.2.0.md            # Latest version changelog
 ├── build.fish                             # Main build script for Fish shell
 ├── run.fish                               # Main run script for Fish shell
 ├── test.fish                              # Test execution script
@@ -49,4 +51,40 @@ requirements for attribution and profit-sharing for commercial use.
 
 Documentation for Noesis is organized into several key resources:
 
-**Changelogs** - Complete version history with detailed changes: [CHANGELOG_v2.1.2.md](docs/changelogs/CHANGELOG_v2.1.2.md)
+## AI and Consciousness Integration
+
+Noesis v2.2.0 now includes AI integration with free models from Hugging Face to enhance the synthetic consciousness capabilities. The system implements various consciousness theories:
+
+- **Integrated Information Theory (IIT)**: Focuses on integration and differentiation of information
+- **Global Workspace Theory (GWT)**: Models consciousness as global broadcasting of information
+- **Higher Order Thought (HOT)**: Implements metacognitive awareness of mental states
+- **Attention Schema Theory (AST)**: Models consciousness as an internal representation of attention
+- **Global Neuronal Workspace (GNW)**: Detailed implementation of workspace broadcasting
+- **Predictive Processing Theory (PPT)**: Incorporates prediction and error correction mechanisms
+
+### AI Features
+
+- Integration with free Hugging Face models (MIT, Apache 2.0 licensed)
+- License compatibility checking with Noesis License
+- Enhanced perception and emotion processing
+- Introspection capabilities
+- Self-reflection based on consciousness theories
+
+### Using AI Features
+
+```bash
+# Install AI dependencies
+noesis
+> ai install
+
+# Set up a model
+> ai set-model google/flan-t5-large
+
+# Set consciousness model
+> ai consciousness model IIT
+
+# Perform self-reflection
+> ai consciousness reflect
+```
+
+Note: AI features require Python 3 with the `transformers` and `torch` packages installed.

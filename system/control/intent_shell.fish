@@ -97,6 +97,14 @@ function handle_ai_command
         echo "  ai generate PROMPT     - Generate text using the active model"
         echo "  ai introspect          - Perform AI introspection"
         echo "  ai license MODEL       - Check license compatibility for a model"
+        echo
+        echo "Consciousness commands:"
+        echo "  ai consciousness status           - Show consciousness status"
+        echo "  ai consciousness model MODEL      - Set consciousness model"
+        echo "  ai consciousness level LEVEL      - Set consciousness level (0-5)"
+        echo "  ai consciousness reflect          - Perform self-reflection"
+        echo "  ai consciousness research         - Get latest consciousness research"
+        echo "  ai consciousness models           - List available consciousness models"
         return 0
     end
     
@@ -139,9 +147,71 @@ function handle_ai_command
                 return 1
             end
             ai_check_license_compatibility $command[2]
+        case "consciousness"
+            if test (count $command) -lt 2
+                echo "Error: Missing consciousness subcommand"
+                echo "Usage: ai consciousness [status|model|level|reflect|research|models]"
+                return 1
+            end
+            handle_consciousness_command $command[2..-1]
         case "*"
             echo "Unknown AI command: $command[1]"
             echo "Type 'ai' for a list of available commands"
+            return 1
+    end
+    
+    return 0
+end
+
+# Handle consciousness-specific commands
+function handle_consciousness_command
+    set -l command $argv
+    
+    if test (count $command) -eq 0
+        echo "Usage: ai consciousness [status|model|level|reflect|research|models]"
+        return 1
+    end
+    
+    switch $command[1]
+        case "status"
+            echo "Consciousness Status:"
+            echo "  Current Model: $CONSCIOUSNESS_MODEL"
+            echo "  Level: $CONSCIOUSNESS_LEVEL/5"
+            echo "  Self-Reflection Interval: $SELF_REFLECTION_INTERVAL seconds"
+            echo "  Last Reflection: "(date -d @$LAST_REFLECTION_TIME +"%H:%M:%S")
+            
+        case "model"
+            if test (count $command) -lt 2
+                echo "Error: Missing model name"
+                echo "Usage: ai consciousness model MODEL_NAME"
+                echo "Available models: $CONSCIOUSNESS_MODELS"
+                return 1
+            end
+            set_consciousness_model $command[2]
+            
+        case "level"
+            if test (count $command) -lt 2
+                echo "Error: Missing level value"
+                echo "Usage: ai consciousness level LEVEL (0-5)"
+                return 1
+            end
+            set_consciousness_level $command[2]
+            
+        case "reflect"
+            perform_self_reflection
+            
+        case "research"
+            get_latest_consciousness_research
+            
+        case "models"
+            echo "Available Consciousness Models:"
+            for i in (seq (count $CONSCIOUSNESS_MODELS))
+                echo "  $CONSCIOUSNESS_MODELS[$i] - $CONSCIOUSNESS_MODEL_NAMES[$i]"
+            end
+            
+        case "*"
+            echo "Unknown consciousness command: $command[1]"
+            echo "Available commands: status, model, level, reflect, research, models"
             return 1
     end
     

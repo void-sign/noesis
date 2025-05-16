@@ -9,7 +9,7 @@
 # the central component of the Noesis system
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.1.2"
+set -g NOESIS_VERSION "2.2.0"
 
 # Make sure color variables are available
 # These are defined in run.fish but we need to ensure they're accessible here
