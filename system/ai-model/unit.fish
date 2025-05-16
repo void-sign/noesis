@@ -361,6 +361,19 @@ end
 function ai_install_dependencies
     echo "Installing AI dependencies..."
     
+    # Check for fast installation script first (best option)
+    if test -f ./fast-ai-install.fish
+        echo "Using fast AI dependency installation..."
+        
+        if ./fast-ai-install.fish
+            echo "Dependencies installed successfully using fast method"
+            set -g AI_SYSTEM_ENABLED true
+            return 0
+        else
+            echo "Fast installation method failed, trying alternative methods..."
+        end
+    end
+    
     # Use macOS-specific script for macOS systems
     if test (uname) = "Darwin"
         if test -f ./setup-torch-mac.fish
@@ -452,7 +465,6 @@ function ai_install_dependencies
         end
         return 1
     end
-end
 end
 
 # Check model license compatibility with Noesis License

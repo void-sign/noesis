@@ -8,6 +8,31 @@
 
 Noesis is a synthetic consciousness simulation engine designed to explore the principles of artificial consciousness and cognition. The project is now structured as two separate repositories with different licenses to facilitate wider adoption and integration.
 
+## AI Installation Options
+
+Noesis includes several methods to install AI dependencies, depending on your needs:
+
+1. **Fast Installation (Recommended)**: 
+   ```
+   ./fast-ai-install.fish
+   ```
+   Uses pre-compiled binary wheels for the fastest installation experience.
+
+2. **macOS-specific Installation**:
+   ```
+   ./setup-torch-mac.fish
+   ```
+   Optimized specifically for macOS systems (both Intel and Apple Silicon).
+
+3. **Standard Installation**:
+   ```
+   ./install-ai-deps.fish
+   ```
+   Comprehensive installation that works across platforms.
+
+4. **In-app Installation**:
+   Run Noesis and use the command `ai install` within the interface.
+
 ## Terminal Preview
 
 ![Noesis Terminal](noesis-terminal.jpg)
