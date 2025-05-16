@@ -339,9 +339,65 @@ function ai_status
     return 0
 end
 
+# Check if conda is a better option for macOS
+function check_macos_conda_recommendation
+    set os_type (uname)
+    if test "$os_type" = "Darwin"
+        # Check if conda is already installed
+        if command -sq conda
+            echo "Notice: conda is installed, which is recommended for PyTorch on macOS"
+            echo "To use conda instead of pip, run these commands:"
+            echo "conda create -n noesis python=3.9"
+            echo "conda activate noesis"
+            echo "conda install pytorch torchvision torchaudio -c pytorch"
+            echo "conda install pip"
+            echo "pip install transformers accelerate huggingface_hub"
+            echo "Continuing with pip installation attempt..."
+        end
+    end
+end
+
 # Install AI dependencies
 function ai_install_dependencies
     echo "Installing AI dependencies..."
+    
+    # Use macOS-specific script for macOS systems
+    if test (uname) = "Darwin"
+        if test -f ./setup-torch-mac.fish
+            echo "Using macOS-specific PyTorch installation script..."
+            
+            if ./setup-torch-mac.fish
+                echo "Dependencies installed successfully"
+                set -g AI_SYSTEM_ENABLED true
+                return 0
+            else
+                echo "Error installing dependencies via macOS script"
+                return 1
+            end
+        else
+            echo "macOS-specific script not found. Consider downloading it from the Noesis repository."
+        end
+    end
+    
+    # Use the general installation script if available
+    if test -f ./install-ai-deps.fish
+        echo "Using the dedicated AI dependency installation script..."
+        
+        if ./install-ai-deps.fish
+            echo "Dependencies installed successfully"
+            set -g AI_SYSTEM_ENABLED true
+            return 0
+        else
+            echo "Error installing dependencies via script"
+            return 1
+        end
+    end
+    
+    # Fallback to basic method if no scripts found
+    echo "Installation scripts not found, using basic installation method..."
+    
+    # Check if conda might be a better option on macOS
+    check_macos_conda_recommendation
     
     # Check if Python is installed
     if not command -sq python3
@@ -351,47 +407,52 @@ function ai_install_dependencies
     end
     
     # Check if pip is installed
-    if not command -sq pip3 && not python3 -m pip --version &>/dev/null
+    if not python3 -m pip --version &>/dev/null
         echo "Error: pip is required but not installed"
         echo "Please install pip and try again"
         return 1
     end
     
-    # Get OS type
-    set os_type (uname)
-    
-    # Install required packages with OS-specific commands
-    echo "Installing PyTorch and Transformers (this may take some time)..."
+    # Try a simple installation for any OS
+    echo "Installing dependencies with pip..."
     python3 -m pip install --upgrade pip
+    python3 -m pip install transformers accelerate huggingface_hub
     
-    # Different installation commands based on OS
-    if test "$os_type" = "Darwin" # macOS
-        # Get architecture (arm64 for M1/M2/M3, x86_64 for Intel)
-        set arch (uname -m)
-        
-        if test "$arch" = "arm64"
-            echo "Installing PyTorch for Apple Silicon (M1/M2/M3)..."
-            python3 -m pip install transformers accelerate huggingface_hub
-            # For M1/M2/M3 Macs we use the Apple MPS backend
-            python3 -m pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu
+    # Different approach based on OS
+    if test (uname) = "Darwin"
+        echo "Installing PyTorch for macOS..."
+        if set -q CONDA_PREFIX
+            # If conda is active, use conda installation
+            conda install -y pytorch torchvision torchaudio -c pytorch
         else
-            echo "Installing PyTorch for Intel Mac..."
-            python3 -m pip install transformers accelerate huggingface_hub
-            python3 -m pip install torch torchvision torchaudio
+            # For macOS with pip, try with a version known to work
+            python3 -m pip install --no-cache-dir torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 --index-url https://download.pytorch.org/whl/cpu
         end
-    else # Linux/Windows/Other
-        echo "Installing PyTorch for $os_type..."
-        python3 -m pip install torch transformers accelerate huggingface_hub
+    else
+        # Generic installation for other platforms
+        python3 -m pip install torch
     end
     
-    if test $status -eq 0
+    # Check if installation succeeded
+    if python3 -c "import torch, transformers" &>/dev/null
         echo "Dependencies installed successfully"
         set -g AI_SYSTEM_ENABLED true
         return 0
     else
-        echo "Error installing dependencies"
+        echo "Error installing dependencies."
+        if test (uname) = "Darwin"
+            echo "For macOS, we strongly recommend using conda:"
+            echo "  1. Install miniforge: brew install miniforge"
+            echo "  2. Create environment: conda create -n noesis python=3.9"
+            echo "  3. Activate: conda activate noesis"
+            echo "  4. Install PyTorch: conda install pytorch torchvision torchaudio -c pytorch"
+            echo "  5. Install HF: pip install transformers accelerate huggingface_hub"
+        else
+            echo "Try installing PyTorch manually following the instructions at pytorch.org"
+        end
         return 1
     end
+end
 end
 
 # Check model license compatibility with Noesis License
