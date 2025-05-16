@@ -53,8 +53,8 @@ function log_with_timestamp
     set formatted_date (date +"%d %b %Y %H:%M:%S")
     
     # Create padded timestamp strings with background highlighting
-    set time_line "    [Time[$formatted_date]]    "
-    set unix_line "    [Unix Time[$days days, $seconds_since_epoch seconds]]    "
+    set time_line "    Time: $formatted_date    "
+    set unix_line "    Unix Time: $days days $seconds_since_epoch seconds    "
     
     # Set background colors based on log level
     switch $level
@@ -85,6 +85,7 @@ function log_with_timestamp
     echo $bg_color$level_display$NC
     echo
     echo $fg_color$time_line$NC
+    echo $fg_color"    Unix Time: $days days $seconds_since_epoch seconds    "$NC
     echo
     echo $fg_color"    $message    "$NC
     echo

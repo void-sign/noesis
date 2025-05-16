@@ -28,6 +28,7 @@ set NC (set_color normal)
 source system/memory/unit.fish
 source system/perception/unit.fish
 source system/emotion/unit.fish
+source system/ai/unit.fish
 
 # Source quantum modules directly from the system directory
 source system/memory/quantum/unit.fish
@@ -51,6 +52,9 @@ function initialize_systems
     # init_logic_system - Now handled inside intent_system
     init_emotion_system
     init_intent_system
+    
+    # Initialize AI integration system
+    init_ai_system
     
     # Initialize quantum systems - using the new unit.fish functions
     stub_init
