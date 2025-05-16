@@ -357,10 +357,32 @@ function ai_install_dependencies
         return 1
     end
     
-    # Install required packages
+    # Get OS type
+    set os_type (uname)
+    
+    # Install required packages with OS-specific commands
     echo "Installing PyTorch and Transformers (this may take some time)..."
     python3 -m pip install --upgrade pip
-    python3 -m pip install torch transformers accelerate huggingface_hub
+    
+    # Different installation commands based on OS
+    if test "$os_type" = "Darwin" # macOS
+        # Get architecture (arm64 for M1/M2/M3, x86_64 for Intel)
+        set arch (uname -m)
+        
+        if test "$arch" = "arm64"
+            echo "Installing PyTorch for Apple Silicon (M1/M2/M3)..."
+            python3 -m pip install transformers accelerate huggingface_hub
+            # For M1/M2/M3 Macs we use the Apple MPS backend
+            python3 -m pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu
+        else
+            echo "Installing PyTorch for Intel Mac..."
+            python3 -m pip install transformers accelerate huggingface_hub
+            python3 -m pip install torch torchvision torchaudio
+        end
+    else # Linux/Windows/Other
+        echo "Installing PyTorch for $os_type..."
+        python3 -m pip install torch transformers accelerate huggingface_hub
+    end
     
     if test $status -eq 0
         echo "Dependencies installed successfully"
