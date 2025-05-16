@@ -117,7 +117,7 @@ function main
     # Check PyTorch availability
     if not check_pytorch
         echo "$YELLOW""Warning: PyTorch not available, attempting to install compatibility layer""$NC"
-        ./fast-ai-install-py13.fish
+        ./tools/fast-ai-install-py13.fish
         
         # Check again
         if not check_pytorch
