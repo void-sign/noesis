@@ -7,7 +7,14 @@
 # intent_shell.fish - Shell command processor for intent system
 
 # Source required dependencies
-source src/utils/noesis_lib.fish
+# Adjust path to look for noesis_lib.fish in the proper location
+if test -f system/utils/noesis_lib.fish
+    source system/utils/noesis_lib.fish
+else if test -f ../utils/noesis_lib.fish
+    source ../utils/noesis_lib.fish
+else
+    echo "Warning: noesis_lib.fish not found, some functions may be unavailable"
+end
 
 # Initialize the intent shell system
 function init_intent_shell
@@ -47,7 +54,7 @@ function parse_command_for_intent
         echo "EXECUTE_INTENT"
     else if string match -q "*analyze*" $command
         echo "ANALYZE_INTENT"
-    else if string match -q "*ai*" -o string match -q "*AI*" $command
+    else if string match -q "*ai*" $command; or string match -q "*AI*" $command
         echo "AI_COMMAND"
     else
         echo "UNKNOWN_INTENT"
@@ -86,7 +93,7 @@ end
 function handle_ai_command
     set -l command $argv
     
-    if test (count $command) -eq 0
+    if test (count $command) -eq 0; or test "$command" = "ai"; or test "$command" = ""
         echo "AI system commands:"
         echo "  ai status              - Display AI system status"
         echo "  ai install             - Install AI dependencies"

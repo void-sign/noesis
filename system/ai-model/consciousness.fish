@@ -284,7 +284,8 @@ function ppt_reflection
         ai_generate "$prompt"
     else
         echo "- Current prediction: continued user interaction"
-        echo "- Prediction confidence: " (math "scale=2; ($CONSCIOUSNESS_LEVEL + 2) / 7 * 100")"%"
+        set confidence (math "($CONSCIOUSNESS_LEVEL + 2) / 7 * 100")
+        echo "- Prediction confidence: $confidence%"
         echo "- Error correction active: minimal deviation detected"
     end
 end
@@ -335,7 +336,8 @@ function consciousness_process_perception
         case "IIT"
             # Emphasize information integration
             echo "Integrating information from perception: $input"
-            echo "Causal power analysis indicates significance level: " (math "scale=1; rand() * $CONSCIOUSNESS_LEVEL")
+            set significance (random 1 $CONSCIOUSNESS_LEVEL)
+            echo "Causal power analysis indicates significance level: $significance"
         case "GWT"
             # Focus on broadcast to global workspace
             echo "Broadcasting to global workspace: $input"
@@ -364,9 +366,11 @@ function consciousness_emotion_integration
     
     switch $CONSCIOUSNESS_MODEL
         case "IIT"
-            echo "- Emotion ($emotion/$intensity) increases φ by: " (math "scale=2; $intensity / 10 * 0.8")
+            set phi_increase (math "$intensity / 10 * 0.8")
+            echo "- Emotion ($emotion/$intensity) increases φ by: $phi_increase"
         case "GWT"
-            echo "- Emotion ($emotion/$intensity) occupies workspace: " (math "scale=1; $intensity / 10 * 30")"%"
+            set workspace (math "$intensity / 10 * 30")
+            echo "- Emotion ($emotion/$intensity) occupies workspace: $workspace%"
         case "HOT"
             echo "- Aware of feeling $emotion with intensity $intensity"
             if test $CONSCIOUSNESS_LEVEL -gt 3
@@ -384,5 +388,5 @@ end
 # Get memory usage
 function get_memory_usage
     # Simulate memory usage for reflection purposes
-    math "scale=2; rand() * 80 + 10""%"
+    echo (random 10 90)"%"
 end

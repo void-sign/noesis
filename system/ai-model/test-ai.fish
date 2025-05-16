@@ -7,7 +7,9 @@
 # test_ai.fish - Test script for AI and consciousness integration
 
 # Source necessary modules
-# No need to cd, we're already in the noesis directory
+# Need to change to the project root directory first
+set SCRIPT_DIR (dirname (status filename))
+cd $SCRIPT_DIR/../../
 source soul/intent.fish
 
 # Print a nice header
@@ -83,7 +85,7 @@ function test_emotion_integration
     # Test with different emotions
     for emotion in $EMOTION_NEUTRAL $EMOTION_HAPPY $EMOTION_SAD $EMOTION_ANGRY $EMOTION_CURIOUS $EMOTION_AFRAID
         set intensity (math "$emotion * 2")
-        if test (math "$intensity > 10") = 1
+        if test $intensity -gt 10
             set intensity 10
         end
         

@@ -29,6 +29,7 @@ source system/memory/unit.fish
 source system/perception/unit.fish
 source system/emotion/unit.fish
 source system/ai-model/unit.fish
+source system/control/intent-shell.fish
 
 # Source quantum modules directly from the system directory
 source system/memory/quantum/unit.fish
@@ -222,6 +223,7 @@ function process_intention
             echo
             echo "$PURPLE== System Commands ==$NC"
             echo "  $GREEN- quantum:$NC             Enter quantum processing mode"
+            echo "  $GREEN- ai:$NC                  Access AI and consciousness features"
             
         case "exit" "e"
             # No log message here - we'll only use one at the end
@@ -253,6 +255,18 @@ function process_intention
             log_with_timestamp "Switching to quantum mode" "INFO"
             handle_quantum_io
             log_with_timestamp "Returned from quantum mode" "INFO"
+            
+        case "ai" "ai *"
+            log_with_timestamp "Accessing AI features" "INFO"
+            # Handle AI command - extract any parameters after "ai"
+            set ai_params ""
+            if test "$intention" != "ai"
+                set ai_params (string replace "ai " "" $intention)
+            end
+            # Call the AI command handler from intent_shell
+            set ai_intent (parse_command_for_intent $intention)
+            handle_intent_command $ai_intent $ai_params
+            log_with_timestamp "AI operation completed" "INFO"
             
         case "reason about *"
             set problem (string replace "reason about " "" $intention)
@@ -319,7 +333,6 @@ end
 
 # Quantum interaction loop
 function handle_quantum_io
-    echo
     echo "$CYAN"Welcome to NOESIS Quantum Interface"$NC"
     echo
     echo "Available quantum demos:"
