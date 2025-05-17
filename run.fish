@@ -1,20 +1,7 @@
 #!/usr/bin/env fish
-#
-# Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)
-# Licensed under Noesis License - See LICENSE file for details
-#
-
-# run.fish - Main entry point for the Noesis implementation
 
 # Current version of Noesis
 set -g NOESIS_VERSION "2.2.0"
-
-# Function to source all required modules when needed
-function load_modules
-    # With the centralized intent.fish, we only need to source that file
-    # as it will handle loading all other required modules
-    source soul/intent.fish
-end
 
 # Define colors for better readability
 set GREEN (set_color green)
@@ -22,20 +9,14 @@ set BLUE (set_color blue)
 set YELLOW (set_color yellow)
 set RED (set_color red)
 set PINK (set_color ff5fd7) # Bright pink
-set ORANGE (set_color ff8c00) # Dark orange
-set PURPLE (set_color 8a2be2) # Blue violet
-set CYAN (set_color 00ffff) # Cyan
 set NC (set_color normal)
 
-# Global settings
-set -g VERBOSE_MODE false   # Set to true for verbose debugging output
+# Function to source all required modules when needed
+function load_modules
+    source soul/intent.fish
+end
 
-# Command history implementation
-set -g MAX_COMMAND_HISTORY 50 # Maximum number of commands to store in history
-set -g command_history
-set -g history_count 0
-
-# Custom function to get UTC timestamp with improved formatting
+# Custom function to get timestamp with improved formatting
 function log_with_timestamp
     set message $argv[1]
     set level $argv[2]
@@ -43,208 +24,19 @@ function log_with_timestamp
         set level "INFO" # Default log level
     end
     
-    # Get Unix timestamp (seconds since epoch)
-    set seconds_since_epoch (date +%s)
-    
-    # Calculate days since epoch for reference
-    set days (math --scale=0 (math "$seconds_since_epoch / 86400"))
-    
-    # Get exact current time in the local system's timezone
+    # Get current time in the local system's timezone
     set formatted_date (date +"%d %b %Y %H:%M:%S")
     
-    # Create padded timestamp strings with background highlighting
-    set time_line "    Time: $formatted_date    "
-    set unix_line "    Unix Time: $days days $seconds_since_epoch seconds    "
-    
-    # Set background colors based on log level
-    switch $level
-        case "ERROR"
-            set bg_color (set_color --background=red --bold)
-            set fg_color $RED
-            set level_display "    ERROR    "
-        case "WARNING"
-            set bg_color (set_color --background=yellow --bold)
-            set fg_color $YELLOW
-            set level_display "    WARNING    "
-        case "SUCCESS"
-            set bg_color (set_color --background=green --bold)
-            set fg_color $GREEN
-            set level_display "    SUCCESS    "
-        case "DEBUG"
-            set bg_color (set_color --background=blue --bold)
-            set fg_color $BLUE
-            set level_display "    DEBUG    "
-        case "*" # INFO and any other level
-            set bg_color (set_color --background=ff5fd7 --bold)
-            set fg_color $PINK
-            set level_display "    INFO    "
-    end
-    
-    # Display the formatted message with better spacing
+    # Display the formatted message
     echo
-    echo $bg_color$level_display$NC
+    echo "    $level    "
     echo
-    echo $fg_color$time_line$NC
-    echo $fg_color"    Unix Time: $days days $seconds_since_epoch seconds    "$NC
+    echo "    Time: $formatted_date    "
     echo
-    echo $fg_color"    $message    "$NC
+    echo "    $message    "
     echo
 end
 
-# Error handling function
-function handle_error
-    set error_message $argv[1]
-    set error_code $argv[2]
-    
-    if test -z "$error_code"
-        set error_code 1
-    end
-    
-    log_with_timestamp "$error_message" "ERROR"
-    return $error_code
-end
-
-# Initialize all systems
-function initialize_systems
-    echo "$YELLOW"Initializing Noesis systems..."$NC"
-    
-    # Initialize core systems
-    init_memory_system
-    init_perception
-    init_logic_system
-    init_emotion_system
-    init_intent_system
-    
-    # Initialize quantum systems
-    q_init
-    stub_init
-    
-    echo "$GREEN"All systems initialized successfully"$NC"
-    echo
-    return 0
-end
-
-# Print version information
-function show_version
-    echo "Noesis v$NOESIS_VERSION"
-    echo "Synthetic Conscious System"
-    echo "Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)"
-    echo "Licensed under Noesis License - See LICENSE file for details"
-    return 0
-end
-
-# Function to check if Python version is 3.13+
-function check_python_version_compatibility
-    if command -sq python3
-        set py_version (python3 --version 2>&1)
-        set py_minor (python3 -c "import sys; print(sys.version_info.minor)" 2>/dev/null)
-        
-        if test "$py_minor" -ge "13"
-            echo "$YELLOW"WARNING: Python $py_version detected."$NC"
-            echo "$YELLOW"This version may have compatibility issues with PyTorch."$NC"
-            echo "$YELLOW"Using compatibility mode for AI features."$NC"
-            echo
-            return 1
-        end
-    end
-    return 0
-end
-
-# Function to check for updates and update Noesis
-function check_for_updates
-    echo "$YELLOW"Checking for updates..."$NC"
-    
-    # Store the current directory
-    set current_dir (pwd)
-    
-    # Check if git is installed
-    if not command -sq git
-        echo "$RED"Error: Git is not installed. Cannot check for updates."$NC"
-        return 1
-    end
-    
-    # Create a temporary directory
-    set tmp_dir (mktemp -d)
-    cd $tmp_dir
-    
-    # Clone the repository to check for updates
-    if git clone --quiet https://github.com/napol/noesis.git 2>/dev/null
-        cd noesis
-        
-        # Get the latest version from the repository
-        set latest_version (grep "NOESIS_VERSION" run.fish | head -1 | string match -r '"[0-9]+\.[0-9]+\.[0-9]+"' | tr -d '"')
-        
-        if test -z "$latest_version"
-            echo "$RED"Error: Could not determine the latest version."$NC"
-            cd $current_dir
-            rm -rf $tmp_dir
-            return 1
-        end
-        
-        # Compare versions
-        if test "$latest_version" = "$NOESIS_VERSION"
-            echo "$GREEN"You are already running the latest version (v$NOESIS_VERSION)."$NC"
-            cd $current_dir
-            rm -rf $tmp_dir
-            return 0
-        else
-            echo "$GREEN"A new version of Noesis is available: v$latest_version (you have v$NOESIS_VERSION)"$NC"
-            
-            # Ask if user wants to update
-            echo
-            
-            echo -n "$YELLOW"update > "$NC"
-            read -l confirm
-            
-            echo
-            
-            if test "$confirm" = "y" -o "$confirm" = "Y"
-                echo "$YELLOW"Updating Noesis..."$NC"
-                
-                # Check if Noesis is installed system-wide
-                if test -d "/usr/local/lib/noesis"
-                    echo "$YELLOW"Noesis appears to be installed system-wide."$NC"
-                    echo "$YELLOW"Running installer with sudo..."$NC"
-                    
-                    # Copy the installer script
-                    cp install.fish $current_dir/install.fish
-                    
-                    # Go back to the original directory and run the installer
-                    cd $current_dir
-                    sudo ./install.fish
-                    
-                    echo "$GREEN"Noesis has been updated to v$latest_version."$NC"
-                else
-                    echo "$YELLOW"Updating local copy..."$NC"
-                    
-                    # Copy files to the current repository
-                    cd $tmp_dir/noesis
-                    cp -r src $current_dir/
-                    cp run.fish $current_dir/
-                    cp build.fish $current_dir/
-                    cp install.fish $current_dir/
-                    
-                    echo "$GREEN"Noesis files have been updated to v$latest_version."$NC"
-                    echo "$YELLOW"You may need to rebuild the project with './build.fish'"$NC"
-                end
-            else
-                echo "$YELLOW"Update cancelled."$NC"
-            end
-            
-            cd $current_dir
-            rm -rf $tmp_dir
-            return 0
-        end
-    else
-        echo "$RED"Error: Could not connect to the repository."$NC"
-        echo "$RED"Please check your internet connection and try again."$NC"
-        cd $current_dir
-        rm -rf $tmp_dir
-        return 1
-    end
-end
-
-# Print help information
 # Function to start a conscious pixel in noesis-web
 function awake_conscious_pixel
     log_with_timestamp "Awakening synthetic conscious pixel in noesis-web..." "INFO"
@@ -294,8 +86,18 @@ function awake_conscious_pixel
     cd $noesis_web_dir && python3 -m http.server 8000
     
     return 0
-}
+end
 
+# Print version information
+function show_version
+    echo "Noesis v$NOESIS_VERSION"
+    echo "Synthetic Conscious System"
+    echo "Copyright (c) 2025 Napol Thanarangkaun (napol@noesis.run)"
+    echo "Licensed under Noesis License - See LICENSE file for details"
+    return 0
+end
+
+# Print help information
 function show_help
     echo "Noesis v$NOESIS_VERSION - Synthetic Conscious System"
     echo
@@ -309,164 +111,14 @@ function show_help
     echo "  update            Check for updates and update Noesis"
     echo "  awake             Start a synthetic conscious pixel in noesis-web"
     echo "  logs [date] [level]  View log files with optional filtering"
-    echo "                    Example: noesis logs 2025-05-17 ERROR"
     echo "  verbose           Toggle verbose debug mode"
     echo
     echo "Without options, Noesis starts in interactive mode."
     return 0
 end
 
-# Initialize command history
-function init_command_history
-    set -g history_count 0
-    set -g command_history
-    
-    for i in (seq $MAX_COMMAND_HISTORY)
-        set -g command_history[$i] ""
-    end
-    
-    log_with_timestamp "Command history initialized" "DEBUG"
-end
-
-# Add command to history
-function add_to_history
-    set command $argv[1]
-    
-    # Don't add empty commands or duplicates of the most recent command
-    if test -z "$command" -o "$command" = "$command_history[1]"
-        return 0
-    end
-    
-    # Shift history entries
-    for i in (seq (math $MAX_COMMAND_HISTORY - 1) -1 1)
-        set next_idx (math $i + 1)
-        set -g command_history[$next_idx] $command_history[$i]
-    end
-    
-    # Add new command to the first position
-    set -g command_history[1] $command
-    
-    # Update count if needed
-    if test $history_count -lt $MAX_COMMAND_HISTORY
-        set -g history_count (math $history_count + 1)
-    end
-    
-    return 0
-end
-
-# Display command history
-function show_history
-    if test $history_count -eq 0
-        echo "No command history available"
-        return 0
-    end
-    
-    echo "Command history (most recent first):"
-    echo
-    
-    for i in (seq 1 $history_count)
-        printf "%3d: %s\n" $i "$command_history[$i]"
-    end
-    
-    return 0
-end
-
-# Print a nice welcome banner
-function print_banner
-    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo "$PINK  NOESIS v$NOESIS_VERSION            $NC"
-    echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"
-    echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-    echo
-end
-
-# Function to perform log rotation
-function rotate_logs
-    # Keep only the last 7 daily log files by default
-    set retention_days $argv[1]
-    if test -z "$retention_days"
-        set retention_days 7
-    end
-    
-    # Ensure logs directory exists
-    if not test -d "logs"
-        mkdir -p logs
-        echo "Created logs directory"
-        return 0
-    end
-    
-    # Log rotation only makes sense if there are logs to rotate
-    set log_count (find logs -name "noesis-*.log" | wc -l | string trim)
-    if test $log_count -eq 0
-        echo "No logs to rotate"
-        return 0
-    end
-    
-    echo "Rotating logs (keeping $retention_days days)..."
-    
-    # List log files sorted by name (chronological by date)
-    set log_files (find logs -name "noesis-*.log" | sort)
-    set files_to_keep (math "$log_count - $retention_days")
-    
-    # If we have more logs than retention days, delete the oldest ones
-    if test $files_to_keep -gt 0
-        for i in (seq 1 $files_to_keep)
-            set file_to_remove $log_files[$i]
-            echo "Removing old log file: $file_to_remove"
-            rm $file_to_remove
-        end
-        echo "Log rotation complete"
-    else
-        echo "No log files need rotation at this time"
-    end
-    
-    return 0
-end
-
-# Function to view logs
-function view_logs
-    set log_date $argv[1]
-    set log_level $argv[2]
-    
-    # If no date specified, use today's date
-    if test -z "$log_date"
-        set log_date (date +"%Y-%m-%d")
-    end
-    
-    set log_file "logs/noesis-$log_date.log"
-    
-    if not test -f $log_file
-        echo "$RED"No log file found for date: $log_date"$NC"
-        echo "Available logs:"
-        ls -1 logs/ | grep "noesis-" | sed 's/noesis-//' | sed 's/.log//' 2>/dev/null || echo "No logs found"
-        return 1
-    end
-    
-    # If log level specified, filter by that level
-    if test -n "$log_level"
-        set log_level (string upper $log_level)
-        echo "$YELLOW"Showing $log_level logs for $log_date:"$NC"
-        grep -i "\[$log_level\]" $log_file
-    else
-        echo "$YELLOW"Showing all logs for $log_date:"$NC"
-        cat $log_file
-    end
-    
-    return 0
-end
-
 # Main function for run.fish
 function noesis_main
-    # Initialize command history first
-    init_command_history
-    
-    # Check Python version compatibility
-    check_python_version_compatibility
-    set python_compatible $status
-    
-    # Perform log rotation (keeping 7 days of logs by default)
-    rotate_logs 7
-    
     # Process command-line arguments
     if test (count $argv) -gt 0
         switch $argv[1]
@@ -478,78 +130,28 @@ function noesis_main
                 show_help
                 return 0
                 
-            case "update"
-                check_for_updates
-                return $status
-                
-            case "status"
-                # Check terminal status
-                if test -f ./tools/terminal-status.fish
-                    ./tools/terminal-status.fish
-                else
-                    log_with_timestamp "Terminal status script not found" "ERROR"
-                end
-                return 0
-                
-            case "test"
-                log_with_timestamp "Running Noesis tests..." "INFO"
-                load_modules
-                # Add test logic here
-                log_with_timestamp "All tests completed successfully" "SUCCESS"
-                return 0
-                
-            case "-q" "--quantum"
-                log_with_timestamp "Starting Noesis in quantum mode..." "INFO"
-                # Source intent.fish which will handle everything
-                source soul/intent.fish
-                # Call main function from intent.fish with quantum flag
-                main --quantum
-                return $status
-                
-            case "verbose"
-                # Toggle verbose mode
-                if test "$VERBOSE_MODE" = "true"
-                    set -g VERBOSE_MODE false
-                    log_with_timestamp "Verbose mode disabled" "INFO"
-                else
-                    set -g VERBOSE_MODE true
-                    log_with_timestamp "Verbose mode enabled" "INFO"
-                end
-                return 0
-                
             case "awake"
                 # Start the conscious pixel in noesis-web
                 awake_conscious_pixel
                 return $status
                 
-            case "logs"
-                # View logs with optional date and level filtering
-                if test (count $argv) -gt 1
-                    if test (count $argv) -gt 2
-                        view_logs $argv[2] $argv[3]
-                    else
-                        view_logs $argv[2]
-                    end
-                else
-                    view_logs
-                end
-                return $status
-                
             case '*'
-                log_with_timestamp "Unknown option: $argv[1]" "ERROR"
+                echo "$RED"Unknown option: $argv[1]"$NC"
                 show_help
                 return 1
         end
     else
         # Print banner
-        print_banner
+        echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
+        echo "$PINK  NOESIS v$NOESIS_VERSION            $NC"
+        echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"
+        echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
+        echo
         
-        # Source intent.fish which will handle loading all other required modules
+        # Source intent.fish
         source soul/intent.fish
         
-        # Explicitly call main function from intent.fish (regular mode)
-        main
-        return $status
+        return 0
     end
 end
 
