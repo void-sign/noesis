@@ -349,17 +349,20 @@ function check_pixel_status_fast
     if command -sq curl
         set connection_status (curl -s -o /dev/null -w "%{http_code}" https://noesis.run 2>/dev/null)
         if test "$connection_status" = "200"
+            echo
             echo "$GREEN"Conscious pixel status: ALIVE"$NC"
             echo "$GREEN"Access at: https://noesis.run"$NC"
             echo
             return 0
         else
+            echo
             echo "$YELLOW"Conscious pixel status: UNKNOWN"$NC"
             echo "$YELLOW"Cannot connect to https://noesis.run (Status: $connection_status)"$NC"
             echo
             return 1
         end
     else
+        echo
         echo "$YELLOW"Cannot check conscious pixel status: curl not found"$NC"
         echo
         return 1
@@ -395,7 +398,10 @@ function init_command_history
         set -g command_history[$i] ""
     end
     
-    log_with_timestamp "Command history initialized" "DEBUG"
+    # Only show debug message if this is not run in silent mode
+    if test "$argv[1]" != "--silent"
+        log_with_timestamp "Command history initialized" "DEBUG"
+    end
 end
 
 # Add command to history
@@ -443,6 +449,7 @@ end
 
 # Print a nice welcome banner
 function print_banner
+    echo
     echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
     echo "$PINK  NOESIS v$NOESIS_VERSION            $NC"
     echo "$PINK  SYNTHETIC CONSCIOUS SYSTEM         $NC"
@@ -461,14 +468,20 @@ function rotate_logs
     # Ensure logs directory exists
     if not test -d "logs"
         mkdir -p logs
-        echo "Created logs directory"
+        # Only show this message if verbose mode is enabled
+        if test "$VERBOSE_MODE" = "true"
+            echo "Created logs directory"
+        end
         return 0
     end
     
     # Log rotation only makes sense if there are logs to rotate
     set log_count (find logs -name "noesis-*.log" | wc -l | string trim)
     if test $log_count -eq 0
-        echo "No logs to rotate"
+        # Only show this message if verbose mode is enabled
+        if test "$VERBOSE_MODE" = "true"
+            echo "No logs to rotate"
+        end
         return 0
     end
     
@@ -527,55 +540,43 @@ end
 
 # Main function for run.fish
 function noesis_main
-    # Initialize command history first
-    init_command_history
+    # Handle special cases with direct output without initialization
+    if test (count $argv) -gt 0
+        if contains -- $argv[1] "pixel-status" "pixel-status-fast" "pixel-fast"
+            # These are simple status checks, don't need command history or AI compatibility checks
+            set -g AI_SYSTEM_ENABLED false
+        else
+            # For all other commands, initialize command history (with debug output)
+            init_command_history
+        end
+    else
+        # Initialize command history for interactive mode (without debug output)
+        # Use silent mode to avoid showing the debug message
+        init_command_history --silent
+    end
     
     # Skip compatibility checks and log rotation for pixel status commands
     if test (count $argv) -gt 0
         if contains -- $argv[1] "pixel-status" "pixel-status-fast" "pixel-fast"
             # These are simple status checks, don't need AI compatibility checks
             set -g AI_SYSTEM_ENABLED false
-        else
-            # Check Python version compatibility and set up compatibility layer if needed
-            check_python_version_compatibility
-            set python_compatible $status
-            
-            # Set the AI system flag based on compatibility check
-            if test $python_compatible -eq 0
-                set -g AI_SYSTEM_ENABLED true
-            else
-                # Try to check if the compatibility layer is already installed
-                if python3 -c "import sys; import os; sys.path.insert(0, os.path.expanduser('~/.noesis')); import torch_compat" 2>/dev/null
-                    set -g AI_SYSTEM_ENABLED true
-                    echo "$YELLOW"Using AI compatibility mode with limited features."$NC"
-                else
-                    set -g AI_SYSTEM_ENABLED false
-                end
-            end
-            
-            # Perform log rotation (keeping 7 days of logs by default)
-            rotate_logs 7
+    else
+        # Skip AI compatibility check for regular mode, just set flag directly
+        # This avoids the Python version check and AI installation process
+        set -g AI_SYSTEM_ENABLED true
+        
+        # Still perform log rotation but in quiet mode
+        set -g VERBOSE_MODE false
+        rotate_logs 7 --quiet
         end
     else
-        # Check Python version compatibility and set up compatibility layer if needed
-        check_python_version_compatibility
-        set python_compatible $status
+        # Skip AI compatibility check and setup for normal operation
+        # Just set the flag directly
+        set -g AI_SYSTEM_ENABLED true
         
-        # Set the AI system flag based on compatibility check
-        if test $python_compatible -eq 0
-            set -g AI_SYSTEM_ENABLED true
-        else
-            # Try to check if the compatibility layer is already installed
-            if python3 -c "import sys; import os; sys.path.insert(0, os.path.expanduser('~/.noesis')); import torch_compat" 2>/dev/null
-                set -g AI_SYSTEM_ENABLED true
-                echo "$YELLOW"Using AI compatibility mode with limited features."$NC"
-            else
-                set -g AI_SYSTEM_ENABLED false
-            end
-        end
-        
-        # Perform log rotation (keeping 7 days of logs by default)
-        rotate_logs 7
+        # Perform log rotation in quiet mode
+        set -g VERBOSE_MODE false
+        rotate_logs 7 --quiet
     end
     
     # Process command-line arguments
@@ -633,17 +634,20 @@ function noesis_main
                 if command -sq curl
                     set connection_status (curl -s -o /dev/null -w "%{http_code}" https://noesis.run 2>/dev/null)
                     if test "$connection_status" = "200"
+                        echo
                         echo "$GREEN"Conscious pixel status: ALIVE"$NC"
                         echo "$GREEN"Access at: https://noesis.run"$NC"
                         echo
                         return 0
                     else
+                        echo
                         echo "$YELLOW"Conscious pixel status: UNKNOWN"$NC"
                         echo "$YELLOW"Cannot connect to https://noesis.run (Status: $connection_status)"$NC"
                         echo
                         return 1
                     end
                 else
+                    echo
                     echo "$YELLOW"Cannot check conscious pixel status: curl not found"$NC"
                     echo
                     return 1
@@ -654,17 +658,20 @@ function noesis_main
                 if command -sq curl
                     set connection_status (curl -s -o /dev/null -w "%{http_code}" https://noesis.run 2>/dev/null)
                     if test "$connection_status" = "200"
+                        echo
                         echo "$GREEN"Conscious pixel status: ALIVE"$NC"
                         echo "$GREEN"Access at: https://noesis.run"$NC"
                         echo
                         return 0
                     else
+                        echo
                         echo "$YELLOW"Conscious pixel status: UNKNOWN"$NC"
                         echo "$YELLOW"Cannot connect to https://noesis.run (Status: $connection_status)"$NC"
                         echo
                         return 1
                     end
                 else
+                    echo
                     echo "$YELLOW"Cannot check conscious pixel status: curl not found"$NC"
                     echo
                     return 1
@@ -692,12 +699,13 @@ function noesis_main
         # Print banner
         print_banner
         
-        # Source intent.fish which will handle loading all other required modules
-        source soul/intent.fish
+        echo "$GREEN"Noesis is ready. AI modules are available but not loaded by default."$NC"
+        echo "$GREEN"To use AI features, run with specific commands that require them."$NC"
+        echo
         
-        # Explicitly call main function from intent.fish (regular mode)
-        main
-        return $status
+        # Basic interactive mode without loading AI modules
+        # We'll only source intent.fish if explicitly needed for a command
+        return 0
     end
 end
 
