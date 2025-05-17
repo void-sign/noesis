@@ -1,4 +1,4 @@
-# Noesis v2.2.1
+# Noesis v2.2.2
 
 ![Noesis Logo](noesis-logo.jpg)
 
@@ -51,13 +51,12 @@ noesis/
 ├── system/                                # System components
 │   ├── ai-model/                          # AI integration with Hugging Face models
 │   │   ├── consciousness.fish             # Consciousness theories implementation
-│   │   ├── service-py.fish              # Python specific service
+│   │   ├── service-py.fish                # Python specific service
 │   │   ├── test-ai.fish                   # AI testing framework
 │   │   └── unit.fish                      # AI core module
 │   ├── control/                           # Control subsystems
 │   │   ├── intent-shell.fish              # Shell command processor
 │   │   ├── limbric/                       # Limbric system
-│   │   └── ...
 │   ├── emotion/                           # Emotion processing
 │   │   └── unit.fish                      # Emotion core module
 │   ├── memory/                            # Memory subsystems
@@ -72,30 +71,28 @@ noesis/
 │   │   │   ├── unit.fish                  # Quantum core module
 │   │   │   └── field/                     # Quantum field implementation
 │   │   │       └── quantum-field.fish     # Quantum field module
-│   │   └── ...
 │   └── perception/                        # Perception processing
 │       ├── api.fish                       # Perception API
 │       └── unit.fish                      # Perception core module
 ├── docs/                                  # Documentation files
 │   ├── SECURITY.md                        # Security policy
 │   └── changelogs/                        # Version history and release notes
-│       └── CHANGELOG_v2.2.1.md            # Latest version changelog
+│       └── CHANGELOG_v2.2.2.md            # Latest version changelog
 ├── tools/                                 # Utility scripts
-│   ├── fast-ai-install.fish              # Fast AI installation script
-│   ├── fast-ai-install-py.fish         # Fast AI installation for Python
-│   ├── install-ai-deps.fish              # AI dependencies installation
-│   ├── install.fish                      # General installation script
-│   ├── run-simplified.fish               # Simplified run script
-│   ├── setup-torch-mac.fish              # macOS-specific PyTorch setup
-│   ├── setup-torch-mac.py                # Python script for macOS PyTorch setup
-│   ├── setup-torch-py.py               # Python script for PyTorch setup
-│   ├── terminal-status.fish              # Terminal status display
-│   ├── test-syntax.fish                  # Syntax testing
-│   ├── test.fish                         # Test execution script
-│   ├── setup-git-config.sh               # Git configuration setup
-│   └── update-last-commit.sh             # Update last commit information
+│   ├── fast-ai-install.fish               # Fast AI installation script
+│   ├── fast-ai-install-py.fish            # Fast AI installation for Python
+│   ├── install-ai-deps.fish               # AI dependencies installation
+│   ├── install.fish                       # General installation script
+│   ├── run-simplified.fish                # Simplified run script
+│   ├── setup-torch-mac.fish               # macOS-specific PyTorch setup
+│   ├── setup-torch-mac.py                 # Python script for macOS PyTorch setup
+│   ├── setup-torch-py.py                  # Python script for PyTorch setup
+│   ├── terminal-status.fish               # Terminal status display
+│   ├── test-syntax.fish                   # Syntax testing
+│   ├── test.fish                          # Test execution script
+│   ├── setup-git-config.sh                # Git configuration setup
+│   └── update-last-commit.sh              # Update last commit information
 ├── run.fish                               # Main run script for Fish shell
-# All other script files moved to tools directory
 ├── Dockerfile                             # Docker configuration file
 ├── LICENSE                                # License file
 └── noesis-logo.jpg                        # Project logo image
@@ -112,7 +109,7 @@ Documentation for Noesis is organized into several key resources:
 
 ## AI and Consciousness Integration
 
-Noesis v2.2.1 includes comprehensive AI integration with free models from Hugging Face to enhance synthetic consciousness capabilities. Located in the `system/ai-model` directory, the system implements various consciousness theories:
+Noesis v2.2.2 includes comprehensive AI integration with free models from Hugging Face to enhance synthetic consciousness capabilities. Located in the `system/ai-model` directory, the system implements various consciousness theories:
 
 > **Note**: The legacy `system/ai` directory is deprecated and will be removed in future versions. Please use the `system/ai-model` components instead.
 

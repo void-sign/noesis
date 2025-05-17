@@ -7,7 +7,7 @@
 # run.fish - Main entry point for the Noesis implementation
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.2.1"
+set -g NOESIS_VERSION "2.2.2"
 
 # Function to source all required modules when needed
 function load_modules
@@ -398,8 +398,8 @@ function init_command_history
         set -g command_history[$i] ""
     end
     
-    # Only show debug message if this is not run in silent mode
-    if test "$argv[1]" != "--silent"
+    # Only show debug message if this is not run in silent mode AND verbose mode is enabled
+    if test "$argv[1]" != "--silent" -a "$VERBOSE_MODE" = "true"
         log_with_timestamp "Command history initialized" "DEBUG"
     end
 end
@@ -703,9 +703,13 @@ function noesis_main
         echo "$GREEN"To use AI features, run with specific commands that require them."$NC"
         echo
         
-        # Basic interactive mode without loading AI modules
-        # We'll only source intent.fish if explicitly needed for a command
-        return 0
+        # Skip showing help menu unless explicitly requested with -h
+        # Load the soul/intent.fish module to start the interactive mode
+        load_modules
+        
+        # Call the main function from intent.fish to start interactive mode
+        main
+        return $status
     end
 end
 
