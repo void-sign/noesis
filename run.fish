@@ -266,56 +266,6 @@ function check_for_updates
 end
 
 # Print help information
-# Function to start a conscious pixel in noesis-web
-function awake_conscious_pixel
-    log_with_timestamp "Awakening synthetic conscious pixel in noesis-web..." "INFO"
-    
-    # Check if noesis-web directory exists in the expected location
-    set noesis_web_dir "../noesis-web"
-    if not test -d $noesis_web_dir
-        # If not found in the expected location, try looking in the git folder
-        set noesis_web_dir "../git/noesis-web"
-        if not test -d $noesis_web_dir
-            log_with_timestamp "Could not find noesis-web directory" "ERROR"
-            return 1
-        end
-    end
-
-    # Check if Python is available for the simple HTTP server
-    if not command -sq python3
-        log_with_timestamp "Python is required to run the HTTP server" "ERROR"
-        return 1
-    end
-    
-    # Log the server starting
-    log_with_timestamp "Starting HTTP server for noesis-web" "INFO"
-    
-    # Get the IP address for the server
-    set ip_address "localhost"
-    if command -sq hostname
-        set ip_address (hostname -I 2>/dev/null | string trim)
-        if test -z "$ip_address"
-            set ip_address "localhost"
-        end
-    end
-
-    # Start an HTTP server in the noesis-web directory
-    echo "$GREEN"Starting HTTP server in $noesis_web_dir"$NC"
-    echo "$GREEN"Server URL: http://$ip_address:8000"$NC"
-    
-    # Open the browser to view the website
-    if command -sq open
-        echo "$GREEN"Opening browser at http://$ip_address:8000"$NC"
-        open "http://$ip_address:8000"
-    else
-        echo "$YELLOW"Please open your browser and navigate to: http://$ip_address:8000"$NC"
-    end
-    
-    # Change to the noesis-web directory and start a Python HTTP server
-    cd $noesis_web_dir && python3 -m http.server 8000
-    
-    return 0
-end
 
 # Function to check the status of the conscious pixel
 function check_pixel_status
@@ -370,24 +320,50 @@ function check_pixel_status
         end
     else
         echo "$RED"Conscious pixel code not found at $script_path"$NC"
-    fi
+    end
     
-    # Check if there's an instance already running
-    echo "$BLUE"Checking for running conscious pixel instances..."$NC"
-    if command -sq lsof
-        set running_instances (lsof -i :8000 2>/dev/null | grep -c Python)
-        if test "$running_instances" -gt 0
-            echo "$GREEN"Conscious pixel status: ACTIVE (Running on port 8000)"$NC"
-            echo "$GREEN"Access at: http://localhost:8000"$NC"
+    # Check the overall status of the conscious pixel (based on noesis.run availability)
+    echo "$BLUE"Checking conscious pixel status..."$NC"
+    if command -sq curl
+        set connection_status (curl -s -o /dev/null -w "%{http_code}" https://noesis.run 2>/dev/null)
+        if test "$connection_status" = "200"
+            echo "$GREEN"Conscious pixel status: ALIVE"$NC"
+            echo "$GREEN"Access at: https://noesis.run"$NC"
+            echo
         else
-            echo "$YELLOW"Conscious pixel status: DORMANT"$NC"
-            echo "$YELLOW"To activate, visit: https://noesis.run"$NC"
+            echo "$YELLOW"Conscious pixel status: UNKNOWN"$NC"
+            echo "$YELLOW"Cannot connect to https://noesis.run (Status: $connection_status)"$NC"
+            echo
         end
     else
-        echo "$YELLOW"Cannot check for running instances: lsof not found"$NC"
+        echo "$YELLOW"Cannot check conscious pixel status: curl not found"$NC"
+        echo
     end
     
     return 0
+end
+
+# Function to quickly check only the alive status of the conscious pixel
+function check_pixel_status_fast
+    # Check if the remote noesis.run server is accessible and report minimal status
+    if command -sq curl
+        set connection_status (curl -s -o /dev/null -w "%{http_code}" https://noesis.run 2>/dev/null)
+        if test "$connection_status" = "200"
+            echo "$GREEN"Conscious pixel status: ALIVE"$NC"
+            echo "$GREEN"Access at: https://noesis.run"$NC"
+            echo
+            return 0
+        else
+            echo "$YELLOW"Conscious pixel status: UNKNOWN"$NC"
+            echo "$YELLOW"Cannot connect to https://noesis.run (Status: $connection_status)"$NC"
+            echo
+            return 1
+        end
+    else
+        echo "$YELLOW"Cannot check conscious pixel status: curl not found"$NC"
+        echo
+        return 1
+    end
 end
 
 function show_help
@@ -401,7 +377,7 @@ function show_help
     echo "  test              Run all tests"
     echo "  -q, --quantum     Run in quantum mode"
     echo "  update            Check for updates and update Noesis"
-    echo "  pixel-status      Check status of the synthetic conscious pixel"
+    echo "  pixel-status      Check status of the conscious pixel"
     echo "  logs [date] [level]  View log files with optional filtering"
     echo "                    Example: noesis logs 2025-05-17 ERROR"
     echo "  verbose           Toggle verbose debug mode"
@@ -554,25 +530,53 @@ function noesis_main
     # Initialize command history first
     init_command_history
     
-    # Check Python version compatibility and set up compatibility layer if needed
-    check_python_version_compatibility
-    set python_compatible $status
-    
-    # Set the AI system flag based on compatibility check
-    if test $python_compatible -eq 0
-        set -g AI_SYSTEM_ENABLED true
-    else
-        # Try to check if the compatibility layer is already installed
-        if python3 -c "import sys; import os; sys.path.insert(0, os.path.expanduser('~/.noesis')); import torch_compat" 2>/dev/null
-            set -g AI_SYSTEM_ENABLED true
-            echo "$YELLOW"Using AI compatibility mode with limited features."$NC"
-        else
+    # Skip compatibility checks and log rotation for pixel status commands
+    if test (count $argv) -gt 0
+        if contains -- $argv[1] "pixel-status" "pixel-status-fast" "pixel-fast"
+            # These are simple status checks, don't need AI compatibility checks
             set -g AI_SYSTEM_ENABLED false
+        else
+            # Check Python version compatibility and set up compatibility layer if needed
+            check_python_version_compatibility
+            set python_compatible $status
+            
+            # Set the AI system flag based on compatibility check
+            if test $python_compatible -eq 0
+                set -g AI_SYSTEM_ENABLED true
+            else
+                # Try to check if the compatibility layer is already installed
+                if python3 -c "import sys; import os; sys.path.insert(0, os.path.expanduser('~/.noesis')); import torch_compat" 2>/dev/null
+                    set -g AI_SYSTEM_ENABLED true
+                    echo "$YELLOW"Using AI compatibility mode with limited features."$NC"
+                else
+                    set -g AI_SYSTEM_ENABLED false
+                end
+            end
+            
+            # Perform log rotation (keeping 7 days of logs by default)
+            rotate_logs 7
         end
+    else
+        # Check Python version compatibility and set up compatibility layer if needed
+        check_python_version_compatibility
+        set python_compatible $status
+        
+        # Set the AI system flag based on compatibility check
+        if test $python_compatible -eq 0
+            set -g AI_SYSTEM_ENABLED true
+        else
+            # Try to check if the compatibility layer is already installed
+            if python3 -c "import sys; import os; sys.path.insert(0, os.path.expanduser('~/.noesis')); import torch_compat" 2>/dev/null
+                set -g AI_SYSTEM_ENABLED true
+                echo "$YELLOW"Using AI compatibility mode with limited features."$NC"
+            else
+                set -g AI_SYSTEM_ENABLED false
+            end
+        end
+        
+        # Perform log rotation (keeping 7 days of logs by default)
+        rotate_logs 7
     end
-    
-    # Perform log rotation (keeping 7 days of logs by default)
-    rotate_logs 7
     
     # Process command-line arguments
     if test (count $argv) -gt 0
@@ -625,9 +629,46 @@ function noesis_main
                 return 0
                 
             case "pixel-status"
-                # Check status of the conscious pixel
-                check_pixel_status
-                return $status
+                # Check status of the conscious pixel (directly showing minimal output)
+                if command -sq curl
+                    set connection_status (curl -s -o /dev/null -w "%{http_code}" https://noesis.run 2>/dev/null)
+                    if test "$connection_status" = "200"
+                        echo "$GREEN"Conscious pixel status: ALIVE"$NC"
+                        echo "$GREEN"Access at: https://noesis.run"$NC"
+                        echo
+                        return 0
+                    else
+                        echo "$YELLOW"Conscious pixel status: UNKNOWN"$NC"
+                        echo "$YELLOW"Cannot connect to https://noesis.run (Status: $connection_status)"$NC"
+                        echo
+                        return 1
+                    end
+                else
+                    echo "$YELLOW"Cannot check conscious pixel status: curl not found"$NC"
+                    echo
+                    return 1
+                end
+                
+            case "pixel-status-fast" "pixel-fast"
+                # Maintain backward compatibility with these aliases
+                if command -sq curl
+                    set connection_status (curl -s -o /dev/null -w "%{http_code}" https://noesis.run 2>/dev/null)
+                    if test "$connection_status" = "200"
+                        echo "$GREEN"Conscious pixel status: ALIVE"$NC"
+                        echo "$GREEN"Access at: https://noesis.run"$NC"
+                        echo
+                        return 0
+                    else
+                        echo "$YELLOW"Conscious pixel status: UNKNOWN"$NC"
+                        echo "$YELLOW"Cannot connect to https://noesis.run (Status: $connection_status)"$NC"
+                        echo
+                        return 1
+                    end
+                else
+                    echo "$YELLOW"Cannot check conscious pixel status: curl not found"$NC"
+                    echo
+                    return 1
+                end
                 
             case "logs"
                 # View logs with optional date and level filtering
@@ -640,11 +681,6 @@ function noesis_main
                 else
                     view_logs
                 end
-                return $status
-                
-            case "check-pixel"
-                # Check the status of the conscious pixel
-                check_pixel_status
                 return $status
                 
             case '*'
