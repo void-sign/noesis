@@ -11,16 +11,16 @@
 # Required functions are now integrated directly into the relevant modules
 
 # Define color codes for terminal output
-set -g NC "\033[0m" # No Color
-set -g BLACK "\033[0;30m"
-set -g RED "\033[0;31m"
-set -g GREEN "\033[0;32m"
-set -g YELLOW "\033[0;33m"
-set -g BLUE "\033[0;34m"
-set -g PURPLE "\033[0;35m"
-set -g CYAN "\033[0;36m"
-set -g WHITE "\033[0;37m"
-set -g BOLD "\033[1m"
+set -g GREEN (set_color green)
+set -g BLUE (set_color blue)
+set -g YELLOW (set_color yellow)
+set -g RED (set_color red)
+set -g PINK (set_color ff5fd7) # Bright pink
+set -g ORANGE (set_color ff8c00) # Dark orange
+set -g PURPLE (set_color 8a2be2) # Blue violet
+set -g CYAN (set_color 00ffff) # Cyan
+set -g WHITE (set_color white)
+set -g NC (set_color normal)
 
 # Set up global variables needed for intent shell functionality
 set -g INTENT_SHELL_ENABLED true
