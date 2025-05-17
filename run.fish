@@ -245,6 +245,57 @@ function check_for_updates
 end
 
 # Print help information
+# Function to start a conscious pixel in noesis-web
+function awake_conscious_pixel
+    log_with_timestamp "Awakening synthetic conscious pixel in noesis-web..." "INFO"
+    
+    # Check if noesis-web directory exists in the expected location
+    set noesis_web_dir "../noesis-web"
+    if not test -d $noesis_web_dir
+        # If not found in the expected location, try looking in the git folder
+        set noesis_web_dir "../git/noesis-web"
+        if not test -d $noesis_web_dir
+            log_with_timestamp "Could not find noesis-web directory" "ERROR"
+            return 1
+        end
+    end
+
+    # Check if Python is available for the simple HTTP server
+    if not command -sq python3
+        log_with_timestamp "Python is required to run the HTTP server" "ERROR"
+        return 1
+    end
+    
+    # Log the server starting
+    log_with_timestamp "Starting HTTP server for noesis-web" "INFO"
+    
+    # Get the IP address for the server
+    set ip_address "localhost"
+    if command -sq hostname
+        set ip_address (hostname -I 2>/dev/null | string trim)
+        if test -z "$ip_address"
+            set ip_address "localhost"
+        end
+    end
+
+    # Start an HTTP server in the noesis-web directory
+    echo "$GREEN"Starting HTTP server in $noesis_web_dir"$NC"
+    echo "$GREEN"Server URL: http://$ip_address:8000"$NC"
+    
+    # Open the browser to view the website
+    if command -sq open
+        echo "$GREEN"Opening browser at http://$ip_address:8000"$NC"
+        open "http://$ip_address:8000"
+    else
+        echo "$YELLOW"Please open your browser and navigate to: http://$ip_address:8000"$NC"
+    end
+    
+    # Change to the noesis-web directory and start a Python HTTP server
+    cd $noesis_web_dir && python3 -m http.server 8000
+    
+    return 0
+}
+
 function show_help
     echo "Noesis v$NOESIS_VERSION - Synthetic Conscious System"
     echo
@@ -256,6 +307,7 @@ function show_help
     echo "  test              Run all tests"
     echo "  -q, --quantum     Run in quantum mode"
     echo "  update            Check for updates and update Noesis"
+    echo "  awake             Start a synthetic conscious pixel in noesis-web"
     echo "  logs [date] [level]  View log files with optional filtering"
     echo "                    Example: noesis logs 2025-05-17 ERROR"
     echo "  verbose           Toggle verbose debug mode"
@@ -464,6 +516,11 @@ function noesis_main
                     log_with_timestamp "Verbose mode enabled" "INFO"
                 end
                 return 0
+                
+            case "awake"
+                # Start the conscious pixel in noesis-web
+                awake_conscious_pixel
+                return $status
                 
             case "logs"
                 # View logs with optional date and level filtering
