@@ -256,6 +256,9 @@ function show_help
     echo "  test              Run all tests"
     echo "  -q, --quantum     Run in quantum mode"
     echo "  update            Check for updates and update Noesis"
+    echo "  logs [date] [level]  View log files with optional filtering"
+    echo "                    Example: noesis logs 2025-05-17 ERROR"
+    echo "  verbose           Toggle verbose debug mode"
     echo
     echo "Without options, Noesis starts in interactive mode."
     return 0
@@ -325,6 +328,81 @@ function print_banner
     echo
 end
 
+# Function to perform log rotation
+function rotate_logs
+    # Keep only the last 7 daily log files by default
+    set retention_days $argv[1]
+    if test -z "$retention_days"
+        set retention_days 7
+    end
+    
+    # Ensure logs directory exists
+    if not test -d "logs"
+        mkdir -p logs
+        echo "Created logs directory"
+        return 0
+    end
+    
+    # Log rotation only makes sense if there are logs to rotate
+    set log_count (find logs -name "noesis-*.log" | wc -l | string trim)
+    if test $log_count -eq 0
+        echo "No logs to rotate"
+        return 0
+    end
+    
+    echo "Rotating logs (keeping $retention_days days)..."
+    
+    # List log files sorted by name (chronological by date)
+    set log_files (find logs -name "noesis-*.log" | sort)
+    set files_to_keep (math "$log_count - $retention_days")
+    
+    # If we have more logs than retention days, delete the oldest ones
+    if test $files_to_keep -gt 0
+        for i in (seq 1 $files_to_keep)
+            set file_to_remove $log_files[$i]
+            echo "Removing old log file: $file_to_remove"
+            rm $file_to_remove
+        end
+        echo "Log rotation complete"
+    else
+        echo "No log files need rotation at this time"
+    end
+    
+    return 0
+end
+
+# Function to view logs
+function view_logs
+    set log_date $argv[1]
+    set log_level $argv[2]
+    
+    # If no date specified, use today's date
+    if test -z "$log_date"
+        set log_date (date +"%Y-%m-%d")
+    end
+    
+    set log_file "logs/noesis-$log_date.log"
+    
+    if not test -f $log_file
+        echo "$RED"No log file found for date: $log_date"$NC"
+        echo "Available logs:"
+        ls -1 logs/ | grep "noesis-" | sed 's/noesis-//' | sed 's/.log//' 2>/dev/null || echo "No logs found"
+        return 1
+    end
+    
+    # If log level specified, filter by that level
+    if test -n "$log_level"
+        set log_level (string upper $log_level)
+        echo "$YELLOW"Showing $log_level logs for $log_date:"$NC"
+        grep -i "\[$log_level\]" $log_file
+    else
+        echo "$YELLOW"Showing all logs for $log_date:"$NC"
+        cat $log_file
+    end
+    
+    return 0
+end
+
 # Main function for run.fish
 function noesis_main
     # Initialize command history first
@@ -333,6 +411,9 @@ function noesis_main
     # Check Python version compatibility
     check_python_version_compatibility
     set python_compatible $status
+    
+    # Perform log rotation (keeping 7 days of logs by default)
+    rotate_logs 7
     
     # Process command-line arguments
     if test (count $argv) -gt 0
@@ -383,6 +464,19 @@ function noesis_main
                     log_with_timestamp "Verbose mode enabled" "INFO"
                 end
                 return 0
+                
+            case "logs"
+                # View logs with optional date and level filtering
+                if test (count $argv) -gt 1
+                    if test (count $argv) -gt 2
+                        view_logs $argv[2] $argv[3]
+                    else
+                        view_logs $argv[2]
+                    end
+                else
+                    view_logs
+                end
+                return $status
                 
             case '*'
                 log_with_timestamp "Unknown option: $argv[1]" "ERROR"
