@@ -133,7 +133,7 @@ function show_version
     return 0
 end
 
-# Function to check if Python version is 3.13+
+# Function to check if Python version is 3.13+ and set up compatibility if needed
 function check_python_version_compatibility
     if command -sq python3
         set py_version (python3 --version 2>&1)
@@ -142,9 +142,30 @@ function check_python_version_compatibility
         if test "$py_minor" -ge "13"
             echo "$YELLOW"WARNING: Python $py_version detected."$NC"
             echo "$YELLOW"This version may have compatibility issues with PyTorch."$NC"
-            echo "$YELLOW"Using compatibility mode for AI features."$NC"
-            echo
-            return 1
+            
+            # Check if we should automatically install compatibility layer
+            if test -f ./tools/fast-ai-install-py13.fish
+                echo "$YELLOW"Installing Python 3.13+ compatibility layer for AI features..."$NC"
+                ./tools/fast-ai-install-py13.fish
+                
+                # Check if installation was successful
+                if test $status -eq 0
+                    echo "$GREEN"Compatibility layer successfully installed!"$NC"
+                    echo "$GREEN"AI features should now work properly."$NC"
+                    echo
+                    return 0
+                else
+                    echo "$YELLOW"Using basic compatibility mode for AI features."$NC"
+                    echo "$YELLOW"Some AI features may be limited."$NC"
+                    echo
+                    return 1
+                end
+            else
+                echo "$YELLOW"Using compatibility mode for AI features."$NC"
+                echo "$YELLOW"Run './tools/fast-ai-install-py13.fish' manually for full compatibility."$NC"
+                echo
+                return 1
+            end
         end
     end
     return 0
@@ -460,9 +481,22 @@ function noesis_main
     # Initialize command history first
     init_command_history
     
-    # Check Python version compatibility
+    # Check Python version compatibility and set up compatibility layer if needed
     check_python_version_compatibility
     set python_compatible $status
+    
+    # Set the AI system flag based on compatibility check
+    if test $python_compatible -eq 0
+        set -g AI_SYSTEM_ENABLED true
+    else
+        # Try to check if the compatibility layer is already installed
+        if python3 -c "import sys; import os; sys.path.insert(0, os.path.expanduser('~/.noesis')); import torch_compat" 2>/dev/null
+            set -g AI_SYSTEM_ENABLED true
+            echo "$YELLOW"Using AI compatibility mode with limited features."$NC"
+        else
+            set -g AI_SYSTEM_ENABLED false
+        end
+    end
     
     # Perform log rotation (keeping 7 days of logs by default)
     rotate_logs 7
