@@ -7,18 +7,59 @@
 # intent_shell.fish - Shell command processor for intent system
 
 # Source required dependencies
-# Adjust path to look for noesis_lib.fish in the proper location
-if test -f system/utils/noesis_lib.fish
-    source system/utils/noesis_lib.fish
-else if test -f ../utils/noesis_lib.fish
-    source ../utils/noesis_lib.fish
-else
-    echo "Warning: noesis_lib.fish not found, some functions may be unavailable"
+# Note: Utils directory is no longer used as of May 2025
+# Required functions are now integrated directly into the relevant modules
+
+# Define color codes for terminal output
+set -g NC "\033[0m" # No Color
+set -g BLACK "\033[0;30m"
+set -g RED "\033[0;31m"
+set -g GREEN "\033[0;32m"
+set -g YELLOW "\033[0;33m"
+set -g BLUE "\033[0;34m"
+set -g PURPLE "\033[0;35m"
+set -g CYAN "\033[0;36m"
+set -g WHITE "\033[0;37m"
+set -g BOLD "\033[1m"
+
+# Set up global variables needed for intent shell functionality
+set -g INTENT_SHELL_ENABLED true
+
+# Define default values for AI system variables if not already set
+if not set -q AI_SYSTEM_ENABLED
+    set -g AI_SYSTEM_ENABLED false
+end
+
+if not set -q CONSCIOUSNESS_MODEL
+    set -g CONSCIOUSNESS_MODEL "reflective-v2"
+end
+
+if not set -q CONSCIOUSNESS_LEVEL
+    set -g CONSCIOUSNESS_LEVEL 3
+end
+
+if not set -q SELF_REFLECTION_INTERVAL
+    set -g SELF_REFLECTION_INTERVAL 300
+end
+
+if not set -q LAST_REFLECTION_TIME
+    set -g LAST_REFLECTION_TIME (date +%s)
+end
+
+if not set -q CONSCIOUSNESS_MODELS
+    set -g CONSCIOUSNESS_MODELS reflective-v1 reflective-v2 introspective-v1 metacognitive-v1 synthetic-awareness-v1
+end
+
+if not set -q CONSCIOUSNESS_MODEL_NAMES
+    set -g CONSCIOUSNESS_MODEL_NAMES "Basic Reflection" "Advanced Reflection" "Introspection Engine" "Metacognitive Framework" "Synthetic Awareness"
 end
 
 # Initialize the intent shell system
 function init_intent_shell
-    echo "Intent shell initialized"
+    echo "$BLUE╔════════════════════════════════════════════════════════════╗$NC"
+    echo "$BLUE║               $YELLOW NOESIS INTENT SHELL INITIALIZED $BLUE              ║$NC"
+    echo "$BLUE╚════════════════════════════════════════════════════════════╝$NC"
+    echo
     return 0
 end
 
@@ -94,25 +135,29 @@ function handle_ai_command
     set -l command $argv
     
     if test (count $command) -eq 0; or test "$command" = "ai"; or test "$command" = ""
-        echo "AI system commands:"
-        echo "  ai status              - Display AI system status"
-        echo "  ai install             - Install AI dependencies"
-        echo "  ai install-py13        - Install AI dependencies for Python 3.13+"
-        echo "  ai list-models         - List available AI models"
-        echo "  ai set-model MODEL     - Set active AI model"
-        echo "  ai thinking LEVEL      - Set AI thinking level (0-5)"
-        echo "  ai memory TOGGLE       - Toggle AI memory integration (on/off)"
-        echo "  ai generate PROMPT     - Generate text using the active model"
-        echo "  ai introspect          - Perform AI introspection"
-        echo "  ai license MODEL       - Check license compatibility for a model"
+        echo "$BLUE╔════════════════════════════════════════════════════════════╗$NC"
+        echo "$BLUE║               $YELLOW NOESIS AI COMMAND INTERFACE $BLUE               ║$NC"
+        echo "$BLUE╚════════════════════════════════════════════════════════════╝$NC"
         echo
-        echo "Consciousness commands:"
-        echo "  ai consciousness status           - Show consciousness status"
-        echo "  ai consciousness model MODEL      - Set consciousness model"
-        echo "  ai consciousness level LEVEL      - Set consciousness level (0-5)"
-        echo "  ai consciousness reflect          - Perform self-reflection"
-        echo "  ai consciousness research         - Get latest consciousness research"
-        echo "  ai consciousness models           - List available consciousness models"
+        echo "$GREEN"AI system commands:"$NC"
+        echo "  $CYAN"ai status"$NC              - Display AI system status"
+        echo "  $CYAN"ai install"$NC             - Install AI dependencies"
+        echo "  $CYAN"ai install-py13"$NC        - Install AI dependencies for Python 3.13+"
+        echo "  $CYAN"ai list-models"$NC         - List available AI models"
+        echo "  $CYAN"ai set-model MODEL"$NC     - Set active AI model"
+        echo "  $CYAN"ai thinking LEVEL"$NC      - Set AI thinking level (0-5)"
+        echo "  $CYAN"ai memory TOGGLE"$NC       - Toggle AI memory integration (on/off)"
+        echo "  $CYAN"ai generate PROMPT"$NC     - Generate text using the active model"
+        echo "  $CYAN"ai introspect"$NC          - Perform AI introspection"
+        echo "  $CYAN"ai license MODEL"$NC       - Check license compatibility for a model"
+        echo
+        echo "$PURPLE"Consciousness commands:"$NC"
+        echo "  $CYAN"ai consciousness status"$NC           - Show consciousness status"
+        echo "  $CYAN"ai consciousness model MODEL"$NC      - Set consciousness model"
+        echo "  $CYAN"ai consciousness level LEVEL"$NC      - Set consciousness level (0-5)"
+        echo "  $CYAN"ai consciousness reflect"$NC          - Perform self-reflection"
+        echo "  $CYAN"ai consciousness research"$NC         - Get latest consciousness research"
+        echo "  $CYAN"ai consciousness models"$NC           - List available consciousness models"
         return 0
     end
     
