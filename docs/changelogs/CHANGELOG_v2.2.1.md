@@ -9,16 +9,16 @@ This version includes important bug fixes, performance improvements, and enhance
 ## Changes
 
 - **Version Update**: Updated version number from v2.2.0 to v2.2.1
-- **Python 3.13 Support**: Enhanced compatibility with Python 3.13
-  - Added dedicated `service-py13.fish` implementation
-  - Created specialized installation script `fast-ai-install-py13.fish`
-  - Improved fallback options for Python 3.13 environments
+- **Python Support**: Enhanced compatibility with Python
+  - Added dedicated `service-py.fish` implementation
+  - Created specialized installation script `fast-ai-install-py.fish`
+  - Improved fallback options for Python environments
 - **AI System Refinements**: Improved AI model integration
   - Fixed model loading issues with larger Hugging Face models
   - Enhanced caching mechanism for faster model initialization
   - Reduced memory footprint during inference
 - **Documentation Updates**: Improved documentation for AI features
-  - Added detailed instructions for Python 3.13 installation
+  - Added detailed instructions for Python installation
   - Updated AI model compatibility information
   - Enhanced code comments for better maintainability
 

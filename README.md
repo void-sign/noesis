@@ -24,11 +24,11 @@ Noesis includes several methods to install AI dependencies, depending on your ne
    ```
    Optimized specifically for macOS systems (both Intel and Apple Silicon).
 
-3. **Python 3.13 Installation**:
+3. **Python Installation**:
    ```
-   ./tools/setup-torch-py13.fish
+   ./tools/setup-torch-py.fish
    ```
-   Specialized installation for Python 3.13 compatibility with fallback options.
+   Specialized installation for Python compatibility with fallback options.
 
 4. **Standard Installation**:
    ```
@@ -51,7 +51,7 @@ noesis/
 ├── system/                                # System components
 │   ├── ai-model/                          # AI integration with Hugging Face models
 │   │   ├── consciousness.fish             # Consciousness theories implementation
-│   │   ├── service-py13.fish              # Python 3.13 specific service
+│   │   ├── service-py.fish              # Python specific service
 │   │   ├── test-ai.fish                   # AI testing framework
 │   │   └── unit.fish                      # AI core module
 │   ├── control/                           # Control subsystems
@@ -82,13 +82,13 @@ noesis/
 │       └── CHANGELOG_v2.2.1.md            # Latest version changelog
 ├── tools/                                 # Utility scripts
 │   ├── fast-ai-install.fish              # Fast AI installation script
-│   ├── fast-ai-install-py13.fish         # Fast AI installation for Python 3.13
+│   ├── fast-ai-install-py.fish         # Fast AI installation for Python
 │   ├── install-ai-deps.fish              # AI dependencies installation
 │   ├── install.fish                      # General installation script
 │   ├── run-simplified.fish               # Simplified run script
 │   ├── setup-torch-mac.fish              # macOS-specific PyTorch setup
 │   ├── setup-torch-mac.py                # Python script for macOS PyTorch setup
-│   ├── setup-torch-py13.py               # Python script for Python 3.13 PyTorch setup
+│   ├── setup-torch-py.py               # Python script for PyTorch setup
 │   ├── terminal-status.fish              # Terminal status display
 │   ├── test-syntax.fish                  # Syntax testing
 │   ├── test.fish                         # Test execution script

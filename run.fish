@@ -144,9 +144,9 @@ function check_python_version_compatibility
             echo "$YELLOW"This version may have compatibility issues with PyTorch."$NC"
             
             # Check if we should automatically install compatibility layer
-            if test -f ./tools/fast-ai-install-py13.fish
-                echo "$YELLOW"Installing Python 3.13+ compatibility layer for AI features..."$NC"
-                ./tools/fast-ai-install-py13.fish
+            if test -f ./tools/fast-ai-install-py.fish
+                echo "$YELLOW"Installing Python compatibility layer for AI features..."$NC"
+                ./tools/fast-ai-install-py.fish
                 
                 # Check if installation was successful
                 if test $status -eq 0
@@ -162,7 +162,7 @@ function check_python_version_compatibility
                 end
             else
                 echo "$YELLOW"Using compatibility mode for AI features."$NC"
-                echo "$YELLOW"Run './tools/fast-ai-install-py13.fish' manually for full compatibility."$NC"
+                echo "$YELLOW"Run './tools/fast-ai-install-py.fish' manually for full compatibility."$NC"
                 echo
                 return 1
             end
