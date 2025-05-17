@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 
 # Current version of Noesis
-set -g NOESIS_VERSION "2.2.0"
+set -g NOESIS_VERSION "2.2.1"
 
 # Define colors for better readability
 set GREEN (set_color green)

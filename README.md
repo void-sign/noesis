@@ -1,4 +1,4 @@
-# Noesis v2.2.0
+# Noesis v2.2.1
 
 ![Noesis Logo](noesis-logo.jpg)
 
@@ -79,7 +79,7 @@ noesis/
 ├── docs/                                  # Documentation files
 │   ├── SECURITY.md                        # Security policy
 │   └── changelogs/                        # Version history and release notes
-│       └── CHANGELOG_v2.2.0.md            # Latest version changelog
+│       └── CHANGELOG_v2.2.1.md            # Latest version changelog
 ├── tools/                                 # Utility scripts
 │   ├── fast-ai-install.fish              # Fast AI installation script
 │   ├── fast-ai-install-py13.fish         # Fast AI installation for Python 3.13
@@ -113,7 +113,7 @@ Documentation for Noesis is organized into several key resources:
 
 ## AI and Consciousness Integration
 
-Noesis v2.2.0 includes comprehensive AI integration with free models from Hugging Face to enhance synthetic consciousness capabilities. Located in the `system/ai-model` directory, the system implements various consciousness theories:
+Noesis v2.2.1 includes comprehensive AI integration with free models from Hugging Face to enhance synthetic consciousness capabilities. Located in the `system/ai-model` directory, the system implements various consciousness theories:
 
 > **Note**: The legacy `system/ai` directory is deprecated and will be removed in future versions. Please use the `system/ai-model` components instead.
 
