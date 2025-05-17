@@ -14,23 +14,29 @@ Noesis includes several methods to install AI dependencies, depending on your ne
 
 1. **Fast Installation (Recommended)**: 
    ```
-   ./fast-ai-install.fish
+   ./tools/fast-ai-install.fish
    ```
    Uses pre-compiled binary wheels for the fastest installation experience.
 
 2. **macOS-specific Installation**:
    ```
-   ./setup-torch-mac.fish
+   ./tools/setup-torch-mac.fish
    ```
    Optimized specifically for macOS systems (both Intel and Apple Silicon).
 
-3. **Standard Installation**:
+3. **Python 3.13 Installation**:
    ```
-   ./install-ai-deps.fish
+   ./tools/setup-torch-py13.fish
+   ```
+   Specialized installation for Python 3.13 compatibility with fallback options.
+
+4. **Standard Installation**:
+   ```
+   ./tools/install-ai-deps.fish
    ```
    Comprehensive installation that works across platforms.
 
-4. **In-app Installation**:
+5. **In-app Installation**:
    Run Noesis and use the command `ai install` within the interface.
 
 ## Terminal Preview
@@ -45,6 +51,7 @@ noesis/
 ├── system/                                # System components
 │   ├── ai-model/                          # AI integration with Hugging Face models
 │   │   ├── consciousness.fish             # Consciousness theories implementation
+│   │   ├── service-py13.fish              # Python 3.13 specific service
 │   │   ├── test-ai.fish                   # AI testing framework
 │   │   └── unit.fish                      # AI core module
 │   ├── control/                           # Control subsystems
@@ -73,11 +80,23 @@ noesis/
 │   ├── SECURITY.md                        # Security policy
 │   └── changelogs/                        # Version history and release notes
 │       └── CHANGELOG_v2.2.0.md            # Latest version changelog
-├── build.fish                             # Main build script for Fish shell
+├── tools/                                 # Utility scripts
+│   ├── fast-ai-install.fish              # Fast AI installation script
+│   ├── fast-ai-install-py13.fish         # Fast AI installation for Python 3.13
+│   ├── install-ai-deps.fish              # AI dependencies installation
+│   ├── install.fish                      # General installation script
+│   ├── run-simplified.fish               # Simplified run script
+│   ├── setup-torch-mac.fish              # macOS-specific PyTorch setup
+│   ├── setup-torch-mac.py                # Python script for macOS PyTorch setup
+│   ├── setup-torch-py13.py               # Python script for Python 3.13 PyTorch setup
+│   ├── terminal-status.fish              # Terminal status display
+│   ├── test-syntax.fish                  # Syntax testing
+│   └── test.fish                         # Test execution script
 ├── run.fish                               # Main run script for Fish shell
-├── run-simplified.fish                    # Simplified run script
-├── test.fish                              # Test execution script
-├── install.fish                           # Installation script
+├── setup-git-config.sh                    # Git configuration setup
+├── setup-torch-mac.py                     # macOS PyTorch setup (root level)
+├── setup-torch-py13.py                    # Python 3.13 PyTorch setup (root level)
+├── update-last-commit.sh                  # Update last commit information
 ├── Dockerfile                             # Docker configuration file
 ├── LICENSE                                # License file
 └── noesis-logo.jpg                        # Project logo image
@@ -94,7 +113,7 @@ Documentation for Noesis is organized into several key resources:
 
 ## AI and Consciousness Integration
 
-Noesis v2.2.0 includes AI integration with free models from Hugging Face to enhance synthetic consciousness capabilities. Located in the `system/ai-model` directory, the system implements various consciousness theories:
+Noesis v2.2.0 includes comprehensive AI integration with free models from Hugging Face to enhance synthetic consciousness capabilities. Located in the `system/ai-model` directory, the system implements various consciousness theories:
 
 > **Note**: The legacy `system/ai` directory is deprecated and will be removed in future versions. Please use the `system/ai-model` components instead.
 
@@ -107,11 +126,15 @@ Noesis v2.2.0 includes AI integration with free models from Hugging Face to enha
 
 ### AI Features
 
-- Integration with free Hugging Face models (MIT, Apache 2.0 licensed)
-- License compatibility checking with Noesis License
-- Enhanced perception and emotion processing
-- Introspection capabilities
-- Self-reflection based on consciousness theories
+- Complete integration with free and open-source Hugging Face models
+- License compatibility verification to ensure compliance with Noesis License
+- Support for multiple high-quality open-source AI models
+- Enhanced text generation and natural language understanding
+- Real-time AI-powered perception enhancement
+- Advanced self-reflection capabilities with model-specific reflection mechanisms
+- Configurable consciousness levels (0-5)
+- Temporal integration of experience
+- Python 3.13 compatibility with specialized installation scripts
 
 ### Using AI Features
 
@@ -133,4 +156,16 @@ noesis
 > ./system/ai-model/test-ai.fish
 ```
 
-Note: AI features require Python 3 with the `transformers` and `torch` packages installed.
+### Compatibility Notes
+
+- Requires Python 3.7+ for AI functionality (with special support for Python 3.13)
+- Optional dependencies: transformers, torch, and huggingface_hub Python packages
+- All AI models are compatible with the Noesis License
+- Backward compatible with v2.1.x configuration files
+
+### Coming in Future Releases
+
+- Advanced quantum consciousness integration
+- Multi-modal perception using vision models
+- Emotional state prediction and simulation
+- Cross-model consciousness theory integration
