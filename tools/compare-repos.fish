@@ -22,7 +22,8 @@ set REMOTE_PATH "/opt/noesis"
 
 # Print header with nice styling
 echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-echo (set_color -b pink)(set_color black)"  REPOSITORY COMPARISON                          "(set_color normal)
+echo
+echo (set_color -b green)"$PINK  REPOSITORY COMPARISON                          $NC"(set_color normal)
 echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
 echo
 echo "$CYAN  Local:  $LOCAL_REPO_PATH $NC"
@@ -33,8 +34,8 @@ echo
 
 # Get local git info
 echo
-echo (set_color -b purple)(set_color white)"   LOCAL GIT INFORMATION   "(set_color normal)
-echo "$CYAN----------------------------------------$NC"
+echo (set_color -b green)"$PURPLE   LOCAL GIT INFORMATION   $NC"(set_color normal)
+echo
 git log -1 --pretty=format:"$GREEN Last commit: %h - %s (%ar) by %an $NC"
 echo
 echo
@@ -47,8 +48,8 @@ echo
 
 # Get remote git info
 echo
-echo (set_color -b purple)(set_color white)"   REMOTE GIT INFORMATION   "(set_color normal)
-echo "$CYAN----------------------------------------$NC"
+echo (set_color -b green)"$PURPLE   REMOTE GIT INFORMATION   $NC"(set_color normal)
+echo
 set remote_commit (ssh $REMOTE_SERVER "cd $REMOTE_PATH && git log -1 --pretty=format:\"%h - %s (%ar) by %an\"")
 echo "$GREEN Last commit: $remote_commit $NC"
 echo
@@ -61,8 +62,8 @@ echo
 
 # Compare head commits
 echo
-echo (set_color -b purple)(set_color white)"   COMPARING HEAD COMMITS   "(set_color normal)
-echo "$CYAN----------------------------------------$NC"
+echo (set_color -b green)"$PURPLE   COMPARING HEAD COMMITS   $NC"(set_color normal)
+echo
 git rev-parse HEAD | read -l local_head
 ssh $REMOTE_SERVER "cd $REMOTE_PATH && git rev-parse HEAD" | read -l remote_head
 
@@ -75,8 +76,8 @@ else
     
     # Get commit difference count
     echo
-    echo (set_color -b purple)(set_color white)"   COMMIT DIFFERENCES   "(set_color normal)
-    echo "$CYAN----------------------------------------$NC"
+    echo "$PURPLE   COMMIT DIFFERENCES   $NC"
+    echo
     git rev-list --count "$remote_head..$local_head" 2>/dev/null | read -l ahead_count
     git rev-list --count "$local_head..$remote_head" 2>/dev/null | read -l behind_count
     
@@ -89,8 +90,8 @@ else
     
     # Show some of the different commits
     echo
-    echo (set_color -b purple)(set_color white)"   UNIQUE COMMITS ON REMOTE   "(set_color normal)
-    echo "$CYAN----------------------------------------$NC"
+    echo "$PURPLE   UNIQUE COMMITS ON REMOTE   $NC"
+    echo
     set remote_unique (ssh $REMOTE_SERVER "cd $REMOTE_PATH && git log --pretty=format:\"- %h: %s\" -n 3 $local_head..$remote_head" 2>/dev/null)
     if test -n "$remote_unique"
         echo "$ORANGE$remote_unique$NC"
@@ -99,8 +100,8 @@ else
     end
     
     echo
-    echo (set_color -b purple)(set_color white)"   UNIQUE COMMITS ON LOCAL   "(set_color normal)
-    echo "$CYAN----------------------------------------$NC"
+    echo "$PURPLE   UNIQUE COMMITS ON LOCAL   $NC"
+    echo
     set local_unique (git log --pretty=format:"- %h: %s" -n 3 $remote_head..$local_head 2>/dev/null)
     if test -n "$local_unique"
         echo "$GREEN$local_unique$NC"
@@ -111,9 +112,8 @@ end
 
 # Check for specific files related to Python 3.13 compatibility
 echo
+echo "$PURPLE   PYTHON 3.13 COMPATIBILITY FILES   $NC"
 echo
-echo (set_color -b purple)(set_color white)"   PYTHON 3.13 COMPATIBILITY FILES   "(set_color normal)
-echo "$CYAN----------------------------------------$NC"
 echo "$BLUE Local: $NC"
 echo
 test -f "tools/fast-ai-install-py13.fish" && echo "$GREEN ✓ tools/fast-ai-install-py13.fish exists $NC" || echo "$RED ✗ tools/fast-ai-install-py13.fish missing $NC"
@@ -127,9 +127,8 @@ ssh $REMOTE_SERVER "test -f $REMOTE_PATH/system/ai-model/service-py13.fish" && e
 
 # Check if run.fish is the only file in root directory on remote server
 echo
+echo "$PURPLE   FILE STRUCTURE ON REMOTE SERVER   $NC"
 echo
-echo (set_color -b purple)(set_color white)"   FILE STRUCTURE ON REMOTE SERVER   "(set_color normal)
-echo "$CYAN----------------------------------------$NC"
 ssh $REMOTE_SERVER "find $REMOTE_PATH -maxdepth 1 -type f | grep -v 'run.fish' | wc -l" | read -l non_run_files
 if test "$non_run_files" -gt 0
     echo "$RED Warning: Found $non_run_files files other than run.fish in root directory on remote server $NC"
@@ -149,5 +148,5 @@ end
 
 echo
 echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
-echo (set_color -b green)(set_color black)"                     DONE                      "(set_color normal)
+echo "$GREEN                     DONE                      $NC"
 echo "$PINK━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$NC"
