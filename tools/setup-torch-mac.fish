@@ -34,7 +34,7 @@ else
 end
 
 # Run the Python installation script
-python3 setup-torch-mac.py
+python3 tools/setup-torch-mac.py
 
 if test $status -eq 0
     echo "$GREEN"PyTorch installation successful!"$NC"

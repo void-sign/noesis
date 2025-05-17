@@ -91,12 +91,11 @@ noesis/
 │   ├── setup-torch-py13.py               # Python script for Python 3.13 PyTorch setup
 │   ├── terminal-status.fish              # Terminal status display
 │   ├── test-syntax.fish                  # Syntax testing
-│   └── test.fish                         # Test execution script
+│   ├── test.fish                         # Test execution script
+│   ├── setup-git-config.sh               # Git configuration setup
+│   └── update-last-commit.sh             # Update last commit information
 ├── run.fish                               # Main run script for Fish shell
-├── setup-git-config.sh                    # Git configuration setup
-├── setup-torch-mac.py                     # macOS PyTorch setup (root level)
-├── setup-torch-py13.py                    # Python 3.13 PyTorch setup (root level)
-├── update-last-commit.sh                  # Update last commit information
+# All other script files moved to tools directory
 ├── Dockerfile                             # Docker configuration file
 ├── LICENSE                                # License file
 └── noesis-logo.jpg                        # Project logo image
